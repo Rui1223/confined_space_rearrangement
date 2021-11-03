@@ -1,0 +1,6 @@
+# This srv file defines the service
+# for generating the IK/configs for object start positions in advance
+
+string armType
+---
+bool success

@@ -1,0 +1,72 @@
+<launch>
+	<group ns="motoman_robot">
+		<!-- specification of the motoman robot -->
+		<rosparam param="basePosition">[0.0, 0.0, 0.0]</rosparam>
+		<rosparam param="baseOrientation">[0.0, 0.0, 0.0, 1.0]</rosparam>
+<!-- 		<rosparam param="leftArmHomeConfiguration">[2.827, 0.00, 2.67, 0.00, -1.571, -1.571, 0.00]</rosparam>
+		<rosparam param="rightArmHomeConfiguration">[2.827, 0.00, 2.67, 0.00, -1.571, -1.571, 0.00]</rosparam> -->
+<!-- 		<rosparam param="leftArmHomeConfiguration">[2.827, -1.257, 2.67, 0.000, -1.571, -1.571, 0.000]</rosparam>
+		<rosparam param="rightArmHomeConfiguration">[2.827, -1.257, 2.67, 0.000, -1.571, -1.571, 0.000]</rosparam> -->
+		<!-- <rosparam param="leftArmHomeConfiguration">[0.0, 0.0, 0.0, -0.2, 0.0, 0.0, 0.0]</rosparam>
+		<rosparam param="rightArmHomeConfiguration">[0.0, 0.0, 0.0, -0.2, 0.0, 0.0, 0.0]</rosparam> -->
+		<rosparam param="leftArmHomeConfiguration">[1.75, 0.8, 0.0, -0.66, 0.0, 0.0, 0.0]</rosparam>
+		<!-- <rosparam param="rightArmHomeConfiguration">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</rosparam> -->
+		<rosparam param="rightArmHomeConfiguration">[0.0, 0.0, 0.0, -2.08, 0.0, 0.0, 0.0]</rosparam>
+		<rosparam param="torsoHomeConfiguration">0.0</rosparam>
+		<rosparam param="urdfFile">urdf/motoman.urdf</rosparam>
+	</group>
+
+	<group ns="workspace_table">
+		<!-- specification of the workspace (table scene) -->
+		<rosparam param="standingBase_dim">[0.915, 0.62, 0.19]</rosparam>
+		<rosparam param="table_dim">[0.50, 1.5, 1.23]</rosparam>
+		<!-- <rosparam param="table_dim">[0.52, 1.225, 0.95]</rosparam> -->
+		<!-- <rosparam param="table_dim">[0.762, 1.215, 0.8]</rosparam> -->
+		<!-- the following parameter specifies how far the table (inner edge) is from the robot rigid body in x direction -->
+		<!-- <rosparam param="table_offset_x">0.585</rosparam> -->
+		<rosparam param="table_offset_x">0.84</rosparam>
+		<!-- the following parameter specifies the height up to which the left arm transfer the object (either drop or trigger handoff) -->
+<!-- 		<rosparam param="transitCenterHeight">0.8</rosparam> -->
+	</group>
+
+	<group ns="constrained_area">
+		<!-- specification of the constrained area where the objects are situated -->
+		<!-- now the constrained area (planner): [0.48-0.005=0.475, 1.225-0.005*2=1.215] -->
+		<!-- <rosparam param="constrained_area_dim">[0.50, 0.80, 0.80]</rosparam> -->
+		<!-- <rosparam param="constrained_area_dim">[0.50, 1.1, 0.80]</rosparam> -->
+		<rosparam param="ceiling_height">0.5</rosparam>
+		<!-- <rosparam param="ceiling_height">0.9</rosparam> -->
+		<rosparam param="thickness_flank">0.005</rosparam>
+	</group>
+
+	<group ns="simulated_camera">
+		<!-- specification of the simulated camera -->
+		<rosparam param="camera_extrinsic">[[-0.0182505, -0.724286, 0.689259, 0.329174],[-0.999453, 0.0322427, 0.00741728, -0.036492],[-0.0275958, -0.688746, -0.724478, 1.24839],[0.0, 0.0, 0.0, 1.0]]</rosparam>
+		<!-- the following four camera intrinsic parameters: (1) fov (2) aspect (3) nearVal (4) farVal-->
+		<rosparam param="camera_intrinsic">[90.0, 1.78, 0.1, 1.5]</rosparam>
+	</group>
+
+	<group ns="uniform_cylinder_object">
+		<!-- specification of the dimension of the uniform cylinder objects-->
+		<rosparam param="radius">0.03</rosparam>
+		<rosparam param="height">0.25</rosparam>
+	</group>
+
+	<group ns="object_goal_deployment">
+		<!-- specification of deploying object goal positions -->
+		<rosparam param="discretization_x">0.06</rosparam>
+		<rosparam param="discretization_y">0.06</rosparam>
+		<rosparam param="object_interval_x">0.18</rosparam>
+		<rosparam param="object_interval_y">0.24</rosparam>
+		<rosparam param="side_clearance_x">0.05</rosparam>
+		<rosparam param="side_clearance_y">0.11</rosparam>
+	</group>
+
+	<group ns="object_mesh_to_drop_in_real_scene">
+		<!-- specification of the object mesh in the real pybullet scene -->
+		<rosparam param="object_mesh_path">mesh</rosparam>
+		<rosparam param="dropHeight">0.15</rosparam>
+	</group>
+
+
+</launch>

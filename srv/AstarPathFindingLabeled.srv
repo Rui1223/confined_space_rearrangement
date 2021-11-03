@@ -1,0 +1,20 @@
+# This srv file defines the service for astar path finding on labeled roadmap
+# given the start and the goal node (query)
+# and their connected neighbors
+
+int32 query_idx 
+int32 start_idx
+int32 goal_idx
+float32[] start_config
+float32[] goal_config
+int32[] start_neighbors_idx
+int32[] goal_neighbors_idx
+float32[] start_neighbors_cost
+float32[] goal_neighbors_cost
+int32[] occupied_labels
+bool isInHandManipulation
+confined_space_rearrangement/Edge[] violated_edges
+string armType
+---
+bool searchSuccess
+int32[] path

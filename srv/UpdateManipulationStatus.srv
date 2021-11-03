@@ -1,0 +1,6 @@
+# This srv file defines the service
+# to disable any relationship between the robot and any of the object
+
+string armType
+---
+bool success

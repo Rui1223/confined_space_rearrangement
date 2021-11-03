@@ -1,0 +1,5 @@
+# This srv file defines the service
+# get the current configuration of the robot in the planning scene
+
+---
+sensor_msgs/JointState robot_config

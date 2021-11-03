@@ -1,0 +1,10 @@
+# This srv file defines the service
+# for attaching or detaching an object
+# given (1) attach/detach command, 
+# (2) object and (3) armType specified
+
+bool attach
+int32 object_idx
+string armType
+---
+bool success

@@ -1,0 +1,8 @@
+# This srv file defines the service
+# to set the scene based on a specific arrangement
+
+int32[] arrangement
+sensor_msgs/JointState robot_config
+string armType
+---
+bool success

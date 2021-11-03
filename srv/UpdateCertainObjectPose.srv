@@ -1,0 +1,7 @@
+# This srv file defines the service
+# to update an object to the specified position_idx
+
+int32 object_idx
+int32 object_position_idx
+---
+bool success

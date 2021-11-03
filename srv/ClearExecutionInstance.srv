@@ -1,0 +1,5 @@
+# This srv file defines the service
+# for clearing an instance of in the execution scene
+
+---
+bool success

@@ -1,0 +1,9 @@
+# This srv file defines the service
+# for generating an instance of cylindrical objects in the scene
+# given the number of objects specified
+
+int32 num_objects
+int32 instance_number
+bool isNewInstance
+---
+bool success

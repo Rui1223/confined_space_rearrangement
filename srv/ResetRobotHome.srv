@@ -1,0 +1,9 @@
+# This srv file defines the service
+# for resetting the robot to home configuration (armType specified) 
+# after finish a task
+
+string armType
+bool isLabeledRoadmapUsed
+---
+bool success
+confined_space_rearrangement/ArmTrajectory resetHome_trajectory

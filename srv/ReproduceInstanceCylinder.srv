@@ -1,0 +1,9 @@
+# This srv file defines the service
+# for reproducing an instance of cylindrical objects in the scene
+# given the perception output (cylinder_objects)
+
+confined_space_rearrangement/CylinderObj[] cylinder_objects
+---
+int32[] initial_arrangement
+int32[] final_arrangement
+bool success

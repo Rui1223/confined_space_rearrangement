@@ -1,0 +1,21 @@
+<launch>
+    <!-- launch specification file to get parameters for the task -->
+    <include file="$(find confined_space_rearrangement)/launch/task_specification.launch"></include>
+
+    <!-- side experiments setting up -->
+    <!-- arg (1)#experiment per object (2)#instances needed per object (3)time_allowed-->
+    <node pkg="confined_space_rearrangement" type="SideExperiments.py" name="side_experiments"
+        args="$(arg side_experiments)" output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PybulletExecutionScene.py" name="pybullet_execution_scene"
+		    output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PybulletPlanScene.py" name="pybullet_plan_scene"
+		    output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PoseEstimator.py" name="fake_pose_estimator"
+        output="screen" required="False" />
+
+    <node pkg="confined_space_rearrangement" type="main_planner_node2" name="main_planner" output="screen" />
+   
+</launch>

@@ -1,0 +1,7 @@
+# This srv file defines the service
+# for resetting the roadmap (armType specified) 
+# after finish an instance
+
+string armType
+---
+bool success

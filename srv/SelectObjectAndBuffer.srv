@@ -1,0 +1,14 @@
+# This srv file defines the service
+# to select an object to be put on a buffer
+# resulting a new arrangement
+
+int32[] objects_to_move
+int32[] final_arrangement
+string armType
+int32 heuristic_level
+bool isLabeledRoadmapUsed
+---
+bool success
+int32 object_idx
+int32 buffer_idx
+confined_space_rearrangement/ObjectRearrangePath path

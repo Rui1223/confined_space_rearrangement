@@ -1,0 +1,5 @@
+# This srv file defines the service
+# for resetting an instance of in the planning scene
+
+---
+bool success

@@ -1,0 +1,13 @@
+<launch>
+    <!-- launch specification file to get parameters for the task -->
+    <include file="$(find confined_space_rearrangement)/launch/task_specification.launch"></include>
+
+    <!-- execute task plan -->
+    <!-- arg (1)#object (2)instance_id -->
+    <node pkg="confined_space_rearrangement" type="ExecuteTaskPlan.py" name="execute_task_plan" 
+        args="$(arg execute_task_plan)" output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PybulletExecutionScene.py" name="pybullet_execution_scene"
+		    output="screen" required="True" />
+   
+</launch>

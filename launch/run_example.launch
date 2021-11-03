@@ -1,0 +1,22 @@
+<launch>
+    <!-- launch specification file to get parameters for the task -->
+    <include file="$(find confined_space_rearrangement)/launch/task_specification.launch"></include>
+
+    <!-- run an example -->
+    <!-- arg (1)#object (2)instance_id (3)generate a new('g') or load an existing('l') instance (4)time_allowed 
+        (5) method name (string)-->
+    <node pkg="confined_space_rearrangement" type="RunExample.py" name="run_example" 
+        args="$(arg run_example)" output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PybulletExecutionScene.py" name="pybullet_execution_scene"
+		    output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PybulletPlanScene.py" name="pybullet_plan_scene"
+		    output="screen" required="True" />
+
+    <node pkg="confined_space_rearrangement" type="PoseEstimator.py" name="fake_pose_estimator"
+        output="screen" required="False" />
+
+    <node pkg="confined_space_rearrangement" type="main_planner_node2" name="main_planner" output="screen" />
+   
+</launch>

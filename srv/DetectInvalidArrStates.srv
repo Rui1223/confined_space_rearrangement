@@ -1,0 +1,8 @@
+# This srv file defines the service
+# to detect all potential invalid arrangement states
+# given the start and the final arrangement
+
+int32[] start_arrangement
+int32[] target_arrangement
+---
+confined_space_rearrangement/ObjArrStates[] all_obj_invalid_arr_states

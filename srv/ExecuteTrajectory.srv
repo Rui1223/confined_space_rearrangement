@@ -1,0 +1,6 @@
+# This srv file defines the service
+# for a need to execute a given trajectory (traj + armType)
+
+confined_space_rearrangement/ArmTrajectory arm_trajectory
+---
+bool success

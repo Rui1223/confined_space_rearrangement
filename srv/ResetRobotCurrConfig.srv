@@ -1,0 +1,6 @@
+# This srv file defines the service
+# to reset the robot to the specified configuration
+
+sensor_msgs/JointState robot_config
+---
+bool success

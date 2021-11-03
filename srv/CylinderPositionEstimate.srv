@@ -1,0 +1,5 @@
+# This srv file defines the service
+# for obtaining the positions of cylindrical objects in the scene
+
+---
+CylinderObj[] cylinder_objects
