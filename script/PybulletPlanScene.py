@@ -31,7 +31,9 @@ from confined_space_rearrangement.msg import ArrState
 from confined_space_rearrangement.msg import ObjArrStates
 from confined_space_rearrangement.srv import ReproduceInstanceCylinder, ReproduceInstanceCylinderResponse
 from confined_space_rearrangement.srv import GenerateConfigsForStartPositions, GenerateConfigsForStartPositionsResponse
+from confined_space_rearrangement.srv import DetectInitialConstraints, DetectInitialConstraintsResponse
 from confined_space_rearrangement.srv import DetectInvalidArrStates, DetectInvalidArrStatesResponse
+from confined_space_rearrangement.srv import DetectInvalidArrStatesMix, DetectInvalidArrStatesMixResponse
 from confined_space_rearrangement.srv import RearrangeCylinderObject, RearrangeCylinderObjectResponse
 from confined_space_rearrangement.srv import GetCurrRobotConfig, GetCurrRobotConfigResponse
 from confined_space_rearrangement.srv import UpdateCertainObjectPose, UpdateCertainObjectPoseResponse
@@ -139,6 +141,14 @@ class PybulletPlanScene(object):
             "generate_configs_for_start_positions", GenerateConfigsForStartPositions,
             self.generate_configs_for_start_positions_callback)
 
+        self.detect_initial_constraints_server = rospy.Service(
+            "detect_initial_constraints", DetectInitialConstraints,
+            self.detect_initial_constraints_callback)
+
+        self.detect_invalid_arr_states_mix_server = rospy.Service(
+            "detect_invalid_arr_states_mix", DetectInvalidArrStatesMix,
+            self.detect_invalid_arr_states_mix_callback)
+
         self.detect_invalid_arr_states_server = rospy.Service(
             "detect_invalid_arr_states", DetectInvalidArrStates,
             self.detect_invalid_arr_states_callback)
@@ -197,6 +207,77 @@ class PybulletPlanScene(object):
         rospy.logwarn("GENERATE CONFIGS FOR START POSITIONS OF ALL OBJECTS")
         self.planner_p.generateAllConfigPoses_startPositions(self.robot_p, self.workspace_p, req.armType)
         return GenerateConfigsForStartPositionsResponse(True)
+
+    def detect_initial_constraints_callback(self, req):
+        rospy.logwarn(
+            "DETECT INITIAL CONSTRAINTS BETWEEN INITIAL POSITIONS AND RELATED CONFIG IN THE LOCAL TASK")
+        self.planner_p.detectInitialConstraintsWithConfigs(
+            req.start_arrangement, req.target_arrangement, self.robot_p, self.workspace_p, "Right_torso")
+        detect_initial_constraints_response = DetectInitialConstraintsResponse(True)
+        return detect_initial_constraints_response
+
+    def detect_invalid_arr_states_mix_callback(self, req):
+        rospy.logwarn("DETECT INVALID ARR STATES WITH MIX CONSTRAINTS")
+        ### data initialization
+        self.planner_p.invalid_arr_states_per_obj = OrderedDict()
+        for obj_idx in range(len(req.start_arrangement)):
+            self.planner_p.invalid_arr_states_per_obj[obj_idx] = []
+        ### reason about each object to be manipulated
+        all_objects = [i for i in range(len(req.start_arrangement)) \
+            if req.start_arrangement[i] != req.target_arrangement[i]]
+        for obj_idx in all_objects:
+            print("obj_idx: " + str(obj_idx))
+            #################################################################################
+            ### get the object's all pre-picking + picking configPoses
+            curr_object_configPoses = \
+                self.planner_p.obtainCurrObjectConfigPoses(self.workspace_p, obj_idx)
+            ### get picking_configPoses_constraints (a list of list of objects) for this object
+            picking_configPoses_constraints = self.planner_p.getConstraintsFromLabels_mix(
+                curr_object_configPoses, obj_idx, req.start_arrangement, req.target_arrangement, "picking")
+            # print("picking_configPoses_constraints: ")
+            # print(picking_configPoses_constraints)
+            self.planner_p.addInvalidArrStates_mix(picking_configPoses_constraints, obj_idx)
+            ##################################################################################
+            ##################################################################################
+            ### get the object's all placing configPoses
+            target_object_configPoses = \
+                self.planner_p.position_candidates_configPoses[req.target_arrangement[obj_idx]]
+            ### get placing_configPoses_constraints (a list of list of objects) for this object
+            placing_configPoses_constraints = self.planner_p.getConstraintsFromLabels_mix(
+                target_object_configPoses, obj_idx, req.start_arrangement, req.target_arrangement, "placing")
+            # print("placing_configPoses_constraints: ")
+            # print(placing_configPoses_constraints)
+            self.planner_p.addInvalidArrStates_mix(placing_configPoses_constraints, obj_idx)
+            ##################################################################################
+        # print("invalid_arr_states_per_obj: ")
+        # print(self.planner_p.invalid_arr_states_per_obj)
+        # input("Check invalid arr states per object, to get an overall idea why this instance is non-monotone...")
+        ### prepare the response
+        detect_invalid_arr_states_mix_response = DetectInvalidArrStatesMixResponse()
+        for obj_idx, obj_arr_states in self.planner_p.invalid_arr_states_per_obj.items():
+            obj_arr_states_msg = ObjArrStates()
+            #################################################
+            obj_arr_states_msg.obj_idx = obj_idx
+            for arr_state in obj_arr_states:
+                ### each arr_state is a dict, construct it as ArrState msg
+                arr_state_msg = ArrState()
+                for obj, isAtTarget in arr_state.items():
+                    arr_state_msg.obj_indices.append(obj)
+                    arr_state_msg.isAtTarget.append(isAtTarget)
+                obj_arr_states_msg.invalid_arr_states.append(arr_state_msg)
+            #################################################
+            detect_invalid_arr_states_mix_response.all_obj_invalid_arr_states.append(obj_arr_states_msg)
+        # print("check ros messages")
+        # for obj_arr_states_msg in detect_invalid_arr_states_mix_response.all_obj_invalid_arr_states:
+        #     print("obj_idx: " + str(obj_arr_states_msg.obj_idx))
+        #     for arr_state_msg in obj_arr_states_msg.invalid_arr_states:
+        #         print("obj_indices: ")
+        #         print(arr_state_msg.obj_indices)
+        #         print("isAtTarget: ")
+        #         print(arr_state_msg.isAtTarget)
+        #     print("========================")
+        return detect_invalid_arr_states_mix_response
+
 
     def detect_invalid_arr_states_callback(self, req):
         rospy.logwarn("DETECT INVALID ARR STATES")
@@ -443,7 +524,7 @@ class PybulletPlanScene(object):
         transit_traj = []
         transfer_traj = []
         finish_traj = []
-        blockPrint()
+        # blockPrint()
 
         curr_object_configPoses = self.planner_p.obtainCurrObjectConfigPoses(self.workspace_p, req.object_idx)
 
@@ -460,10 +541,18 @@ class PybulletPlanScene(object):
                 print("This picking pose is not even valid.")
                 print("FLAG: {}, objectCollided: {}".format(FLAG, objectCollided))
                 print("Move on to next candidate.")
+                #####********************#####
+                if req.object_idx == 3:
+                    input("wait here to check")
+                #####********************#####
                 continue
             else:
                 ### check the connection with neighbors in the roadmap
                 print("The picking pose works. Check its neighboring connections.")
+                #####********************#####
+                if req.object_idx == 3:
+                    input("wait here to check")
+                #####********************#####
                 ### when to check the connection of the picking pose, you have to attach the object
                 temp_object_curr_pos = self.workspace_p.object_geometries[req.object_idx].curr_pos
                 self.planner_p.attachObject(req.object_idx, self.workspace_p, self.robot_p, req.armType)
@@ -480,9 +569,17 @@ class PybulletPlanScene(object):
                 if not connectSuccess:
                     print("This picking pose is not valid, due to no neighboring connections.")
                     print("Move on to next candidate.")
+                    #####********************#####
+                    if req.object_idx == 3:
+                        input("wait here to check")
+                    #####********************#####
                     continue
                 else:
                     print("The picking pose is valid, generate pre-picking")
+                    #####********************#####
+                    if req.object_idx == 3:
+                        input("wait here to check")
+                    #####********************#####
                     configToPrePickingPose = curr_object_configPoses.approaching_configs[config_id]
                     ############## check the collision of the selected configToPrePickingPose ##############
                     self.planner_p.setRobotToConfig(configToPrePickingPose, self.robot_p, req.armType)
@@ -492,16 +589,32 @@ class PybulletPlanScene(object):
                         print("This pre-picking pose is not even valid. ")
                         print("FLAG: {}, objectCollided: {}".format(FLAG, objectCollided))
                         print("Move on to next candidate.")
+                        #####********************#####
+                        if req.object_idx == 3:
+                            input("wait here to check")
+                        #####********************#####
                         continue
                     else:
                         ### check the connection with neighbors in the roadmap
                         print("The pre-picking pose works. Check its neighboring connections.")
+                        #####********************#####
+                        if req.object_idx == 3:
+                            input("wait here to check")
+                        #####********************#####
                         connectSuccess, prePickingPose_neighbors_idx, prePickingPose_neighbors_cost = self.planner_p.connectToNeighbors(
                                     configToPrePickingPose, self.robot_p, self.workspace_p, req.armType)
                         if not connectSuccess:
                             print("This pre-picking pose is not valid, due to no neighboring connections.")
                             print("Move on to next candidate.")
+                            #####********************#####
+                            if req.object_idx == 3:
+                                input("wait here to check")
+                            #####********************#####
                             continue
+                        #####********************#####
+                        if req.object_idx == 3:
+                            input("wait here to check")
+                        #####********************#####
                         print("Both picking pose and pre-picking pose are legitimate. Proceed to planning for pre-picking.")
             ###########################################################################################
 
@@ -623,7 +736,7 @@ class PybulletPlanScene(object):
         object_path.finish_trajectory = self.generateArmTrajectory(
                                             finish_traj, req.armType, self.robot_p.motomanRJointNames)
         object_path.object_idx = req.object_idx
-        enablePrint()
+        # enablePrint()
         return True, object_path
         ########################################################################################################
 

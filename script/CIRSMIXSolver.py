@@ -14,7 +14,8 @@ import rospkg
 from MonotoneLocalSolver import MonotoneLocalSolver
 from MonotoneLocalSolver import ArrNode
 
-from confined_space_rearrangement.srv import DetectInvalidArrStates, DetectInvalidArrStatesRequest
+from confined_space_rearrangement.srv import DetectInvalidArrStatesMix, DetectInvalidArrStatesMixRequest
+from confined_space_rearrangement.srv import DetectInitialConstraints, DetectInitialConstraintsRequest
 
 
 # Disable
@@ -26,28 +27,37 @@ def enablePrint():
     sys.stdout = sys.__stdout__
 
 
-class CIRSSolver(MonotoneLocalSolver):
+class CIRSMIXSolver(MonotoneLocalSolver):
     def __init__(self, startArrNode, target_arrangement, time_allowed, isLabeledRoadmapUsed=True):
         MonotoneLocalSolver.__init__(
             self, startArrNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)
-        rospy.logwarn("a CIRSSolver starts to work")
+        rospy.logwarn("a CIRSMIXSolver starts to work")
         self.explored = [] ### a list of arrangements which have been explored
 
-    def cirs_solve(self):
+    def cirsmix_solve(self):
         ### before the search, given start_arrangement and target_arrangement
-        ### detect all invalid arrangement at which each object to be manipulated
-        self.detectInvalidArrStates()
+        ### (1) detect constraints arising from initial positions
+        self.detectInitialConstraints()
+        ### (2) detect all invalid arrangement at which each object to be manipulated
+        self.detectInvalidArrStates_mix()
         LOCAL_TASK_SUCCESS = self.CIDFS_DP()
         return LOCAL_TASK_SUCCESS, self.tree
 
-    def detectInvalidArrStates(self):
+    def detectInitialConstraints(self):
+        '''This function detects constraints between 
+        object initial positions ang related grasp poses in the local task'''
+        start_time = time.time()
+        self.serviceCall_detectInitialConstraints()
+        print("total time cost: " + str(time.time() - start_time))
+
+    def detectInvalidArrStates_mix(self):
         '''This function detects all invalid states of arrangement
         at which each object is manipulated in the local task'''
         # start_time = time.time()
         ### self.invalid_arr_states_per_obj has the following format
         ### {obj_idx: [{invalid_arr1}, {invalid_arr2}, {invalid_arr3}], ...}
         self.invalid_arr_states_per_obj = {}
-        all_obj_invalid_states = self.serviceCall_detectInvalidArrStates()
+        all_obj_invalid_states = self.serviceCall_detectInvalidArrStatesMix()
         for obj_arr_states_msg in all_obj_invalid_states:
             self.invalid_arr_states_per_obj[obj_arr_states_msg.obj_idx] = []
             for invalid_arr_state_msg in obj_arr_states_msg.invalid_arr_states:
@@ -154,15 +164,28 @@ class CIRSSolver(MonotoneLocalSolver):
         return False
 
 
-    def serviceCall_detectInvalidArrStates(self):
-        rospy.wait_for_service("detect_invalid_arr_states")
-        request = DetectInvalidArrStatesRequest()
+    def serviceCall_detectInvalidArrStatesMix(self):
+        rospy.wait_for_service("detect_invalid_arr_states_mix")
+        request = DetectInvalidArrStatesMixRequest()
         request.start_arrangement = self.start_arrangement
         request.target_arrangement = self.target_arrangement
         try:
-            detectInvalidArrStates_proxy = rospy.ServiceProxy(
-                "detect_invalid_arr_states", DetectInvalidArrStates)
-            detect_invalid_arr_states_response = detectInvalidArrStates_proxy(request)
-            return detect_invalid_arr_states_response.all_obj_invalid_arr_states
+            detectInvalidArrStatesMix_proxy = rospy.ServiceProxy(
+                "detect_invalid_arr_states_mix", DetectInvalidArrStatesMix)
+            detect_invalid_arr_states_mix_response = detectInvalidArrStatesMix_proxy(request)
+            return detect_invalid_arr_states_mix_response.all_obj_invalid_arr_states
         except rospy.ServiceException as e:
-            print("detect_invalid_arr_states service call failed: %s" % e)
+            print("detect_invalid_arr_states_mix service call failed: %s" % e)
+
+    def serviceCall_detectInitialConstraints(self):
+        rospy.wait_for_service("detect_initial_constraints")
+        request = DetectInitialConstraintsRequest()
+        request.start_arrangement = self.start_arrangement
+        request.target_arrangement = self.target_arrangement
+        try:
+            detectInitialConstraints_proxy = rospy.ServiceProxy(
+                "detect_initial_constraints", DetectInitialConstraints)
+            detect_initial_constraints_response = detectInitialConstraints_proxy(request)
+            return detect_initial_constraints_response.success
+        except rospy.ServiceException as e:
+            print("detect_initial_constraints service call failed: %s" % e)

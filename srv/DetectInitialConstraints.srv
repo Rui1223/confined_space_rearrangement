@@ -1,0 +1,8 @@
+# This srv file defines the service
+# to detect initial constraints for the specified local task
+# given the start and the final arrangement
+
+int32[] start_arrangement
+int32[] target_arrangement
+---
+bool success

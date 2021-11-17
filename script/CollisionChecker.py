@@ -221,11 +221,11 @@ class CollisionChecker(object):
                     ### reach here since none of the tolerance case above meets
                     isCollision = True
                     objectCollided.append(obj_idx)
-                    # print("******robot collides with object " + str(obj_idx) + "******")
-                    # print("body-to-body collision: ")
-                    # print(str(contact[1]) + ": " + str(contact[2]))
-                    # print("link-to-link collision: ")
-                    # print(str(contact[3]) + ": " + str(contact[4]))
+                    print("******robot collides with object " + str(obj_idx) + "******")
+                    print("body-to-body collision: ")
+                    print(str(contact[1]) + ": " + str(contact[2]))
+                    print("link-to-link collision: ")
+                    print(str(contact[3]) + ": " + str(contact[4]))
                     # print("contact position on robotGEO")
                     # print(str(contact[5]))
                     # print("contact position on objectGEO")

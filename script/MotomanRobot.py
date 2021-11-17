@@ -117,6 +117,8 @@ class MotomanRobot(object):
         p.resetJointState(self.motomanGEO, joint_idx, self.rightHandCurrConfiguration[4], physicsClientId=self.server)
         joint_idx = 30 ### left_inner_knuckle_joint
         p.resetJointState(self.motomanGEO, joint_idx, self.rightHandCurrConfiguration[5], physicsClientId=self.server)
+        # print("rightHandHomeConfiguration: " + str(self.rightHandHomeConfiguration))
+        # print("rightHandCurrConfiguration: " + str(self.rightHandCurrConfiguration))
 
     def resetRightHandConfig(self, resetHandConfig):
         joint_idx = 21 ### left_out_knuckle_joint (finger_joint)

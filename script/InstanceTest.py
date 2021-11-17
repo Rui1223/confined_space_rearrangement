@@ -14,6 +14,7 @@ import rospkg
 from UnidirMRSPlanner import UnidirMRSPlanner
 from UnidirDFSDPPlanner import UnidirDFSDPPlanner
 from UnidirCIRSPlanner import UnidirCIRSPlanner
+from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
 
 ############################### description #########################################
 ### This class defines a InstanceTester class which
@@ -68,7 +69,7 @@ def main(args):
         all_methods_nActions = []
 
         ###### now using different methods to solve the instance ######
-        ### (i) CIRS
+        ### (1) CIRS
         start_time = time.time()
         unidir_cirs_planner = UnidirCIRSPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
@@ -86,41 +87,59 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        ### (ii) DFSDP
+        ### (2) CIRSMIX
         start_time = time.time()
-        unidir_dfsdp_planner = UnidirDFSDPPlanner(
+        unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
-        DFSDP_planning_time = time.time() - start_time
-        DFSDP_isSolved = unidir_dfsdp_planner.isSolved
-        DFSDP_nActions = unidir_dfsdp_planner.best_solution_cost
-        if DFSDP_nActions == np.inf:
-            DFSDP_nActions = 5000
-        DFSDP_object_ordering = unidir_dfsdp_planner.object_ordering
-        all_methods_time.append(DFSDP_planning_time)
-        all_methods_success.append(float(DFSDP_isSolved))
-        all_methods_nActions.append(DFSDP_nActions)
+        cirsmix_planning_time = time.time() - start_time
+        cirsmix_isSolved = unidir_cirsmix_planner.isSolved
+        cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
+        if cirsmix_nActions == np.inf:
+            cirsmix_nActions = 5000
+        cirsmix_object_ordering = unidir_cirsmix_planner.object_ordering
+        all_methods_time.append(cirsmix_planning_time)
+        all_methods_success.append(float(cirsmix_isSolved))
+        all_methods_nActions.append(cirsmix_nActions)
 
         #####################################################################
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        ### (iv) mRS
-        start_time = time.time()
-        unidir_mrs_planner = UnidirMRSPlanner(
-            initial_arrangement, final_arrangement, instance_tester.time_allowed)
-        mRS_planning_time = time.time() - start_time
-        mRS_isSolved = unidir_mrs_planner.isSolved
-        mRS_nActions = unidir_mrs_planner.best_solution_cost
-        if mRS_nActions == np.inf:
-            mRS_nActions = 5000
-        mRS_object_ordering = unidir_mrs_planner.object_ordering
-        all_methods_time.append(mRS_planning_time)
-        all_methods_success.append(float(mRS_isSolved))
-        all_methods_nActions.append(mRS_nActions)
+        # ### (3) DFSDP
+        # start_time = time.time()
+        # unidir_dfsdp_planner = UnidirDFSDPPlanner(
+        #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        # DFSDP_planning_time = time.time() - start_time
+        # DFSDP_isSolved = unidir_dfsdp_planner.isSolved
+        # DFSDP_nActions = unidir_dfsdp_planner.best_solution_cost
+        # if DFSDP_nActions == np.inf:
+        #     DFSDP_nActions = 5000
+        # DFSDP_object_ordering = unidir_dfsdp_planner.object_ordering
+        # all_methods_time.append(DFSDP_planning_time)
+        # all_methods_success.append(float(DFSDP_isSolved))
+        # all_methods_nActions.append(DFSDP_nActions)
 
-        #####################################################################
-        reset_instance_success = utils2.resetInstance("Right_torso")
-        #####################################################################
+        # #####################################################################
+        # reset_instance_success = utils2.resetInstance("Right_torso")
+        # #####################################################################
+
+        # ### (4) mRS
+        # start_time = time.time()
+        # unidir_mrs_planner = UnidirMRSPlanner(
+        #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        # mRS_planning_time = time.time() - start_time
+        # mRS_isSolved = unidir_mrs_planner.isSolved
+        # mRS_nActions = unidir_mrs_planner.best_solution_cost
+        # if mRS_nActions == np.inf:
+        #     mRS_nActions = 5000
+        # mRS_object_ordering = unidir_mrs_planner.object_ordering
+        # all_methods_time.append(mRS_planning_time)
+        # all_methods_success.append(float(mRS_isSolved))
+        # all_methods_nActions.append(mRS_nActions)
+
+        # #####################################################################
+        # reset_instance_success = utils2.resetInstance("Right_torso")
+        # #####################################################################
 
 
         print("\n")
@@ -129,16 +148,21 @@ def main(args):
         print("Number of actions for CIRS planning: {}".format(cirs_nActions))
         print("Object ordering for CIRS planning is: {}".format(cirs_object_ordering))
         print("\n")
-        print("Time for DFSDP planning is: {}".format(DFSDP_planning_time))
-        print("Success for DFSDP planning is: {}".format(DFSDP_isSolved))
-        print("Number of actions for DFSDP planning is: {}".format(DFSDP_nActions))
-        print("Object ordering for DFSDP planning is: {}".format(DFSDP_object_ordering))
+        print("Time for CIRSMIX planning is: {}".format(cirsmix_planning_time))
+        print("Success for CIRSMIX planning is: {}".format(cirsmix_isSolved))
+        print("Number of actions for CIRSMIX planning: {}".format(cirsmix_nActions))
+        print("Object ordering for CIRSMIX planning is: {}".format(cirsmix_object_ordering))
         print("\n")
-        print("Time for mRS planning is: {}".format(mRS_planning_time))
-        print("Success for mRS planning is: {}".format(mRS_isSolved))
-        print("Number of actions for mRS planning is: {}".format(mRS_nActions))
-        print("Object ordering for mRS planning is: {}".format(mRS_object_ordering))
-        print("\n")
+        # print("Time for DFSDP planning is: {}".format(DFSDP_planning_time))
+        # print("Success for DFSDP planning is: {}".format(DFSDP_isSolved))
+        # print("Number of actions for DFSDP planning is: {}".format(DFSDP_nActions))
+        # print("Object ordering for DFSDP planning is: {}".format(DFSDP_object_ordering))
+        # print("\n")
+        # print("Time for mRS planning is: {}".format(mRS_planning_time))
+        # print("Success for mRS planning is: {}".format(mRS_isSolved))
+        # print("Number of actions for mRS planning is: {}".format(mRS_nActions))
+        # print("Object ordering for mRS planning is: {}".format(mRS_object_ordering))
+        # print("\n")
 
         if instance_tester.isNewInstance:
             ### only keep the option to save instance when it is a new instance

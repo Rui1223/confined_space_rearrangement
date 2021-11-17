@@ -71,7 +71,9 @@ add_service_files(
   ClearPlanningInstance.srv
   CylinderPoseEstimate.srv
   CylinderPositionEstimate.srv
+  DetectInitialConstraints.srv
   DetectInvalidArrStates.srv
+  DetectInvalidArrStatesMix.srv
   ExecuteTrajectory.srv
   GenerateConfigsForStartPositions.srv
   GenerateInstanceCylinder.srv

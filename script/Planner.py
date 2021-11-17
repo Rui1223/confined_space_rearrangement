@@ -5,6 +5,7 @@ import pybullet as p
 import pybullet_data
 
 import os
+import sys
 import random
 import shutil
 import math
@@ -26,6 +27,16 @@ from rospkg import RosPack
 from confined_space_rearrangement.srv import AstarPathFindingNonLabeled, AstarPathFindingNonLabeledRequest
 from confined_space_rearrangement.srv import AstarPathFindingLabeled, AstarPathFindingLabeledRequest
 from confined_space_rearrangement.msg import Edge
+
+
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+# Restore
+def enablePrint():
+    sys.stdout = sys.__stdout__
+
 
 class Planner(object):
     def __init__(self, rosPackagePath, server,
@@ -360,6 +371,127 @@ class Planner(object):
         #     rp.append(joint_value)
         # return rp
 
+    def detectInitialConstraintsWithConfigs(self, start_arrangement, target_arrangement, robot, workspace, armType):
+        ### This function updates positionCandidateConfigs in terms of
+        ### approaching_labels_all, grasping_labels_all, as well as total_labels_all
+        ### related to the local task (start & target arrangement) 
+        ### record the current configuration
+        curr_robot_config = robot.getRobotCurrConfig()
+        all_objects = [i for i in range(len(start_arrangement)) \
+            if start_arrangement[i] != target_arrangement[i]]
+        ### for each object
+        for obj_idx in all_objects:
+            #####********************#####
+            if (obj_idx != 3):
+                blockPrint()
+            else:
+                enablePrint()
+            #####********************#####
+            print("obj_idx: " + str(obj_idx))
+            ### get obj_start_position_idx and obj_target_position_idx
+            obj_start_position_idx = start_arrangement[obj_idx]
+            obj_target_position_idx = target_arrangement[obj_idx]
+            print("obj_start_position_idx: " + str(obj_start_position_idx))
+            print("obj_target_position_idx: " + str(obj_target_position_idx))
+            ### get obj_start_configPoses and obj_target_configPoses
+            if obj_start_position_idx >= workspace.num_candidates:
+                ### the object is at the initial position
+                obj_start_configPoses = self.object_initial_configPoses[obj_idx]
+            else:
+                ### the object is at certain position candidate
+                obj_start_configPoses = self.position_candidates_configPoses[obj_start_position_idx]
+            if obj_target_position_idx >= workspace.num_candidates:
+                ### the object's goal position is an initial position (it should not happen)
+                obj_target_configPoses = self.object_initial_configPoses[obj_idx]
+            else:
+                ### the object's goal position is at certain position candidate (definitely)
+                obj_target_configPoses = self.position_candidates_configPoses[obj_target_position_idx]
+            ### reset to each related approaching and grasping config
+            if obj_start_configPoses.total_labels_all == []:
+                for k in range(len(obj_start_configPoses.grasping_configs)):
+                    print("check the kth pose, k is: " + str(k))
+                    obj_start_approaching_config = obj_start_configPoses.approaching_configs[k]
+                    obj_start_grasping_config = obj_start_configPoses.grasping_configs[k]
+                    ### reset to approaching config first
+                    self.setRobotToConfig(obj_start_approaching_config, robot, armType)
+                    ### check initial labels
+                    isConfigValid, FLAG, positionCollided_approaching = \
+                        self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
+                    print("FLAG: " + str(FLAG))
+                    print("positionCollided_approaching: " + str(positionCollided_approaching))
+                    #####********************#####
+                    if (obj_idx == 3):
+                        input("check the labels for initial positions (approaching): " + str(positionCollided_approaching))
+                    #####********************#####
+                    ### update the labels_all
+                    obj_start_configPoses.approaching_labels_all.append(
+                        set(list(obj_start_configPoses.approaching_labels[k]) + positionCollided_approaching))
+                    print("approaching_labels: " + str(obj_start_configPoses.approaching_labels[k]))
+                    print("approaching_labels_all: " + str(obj_start_configPoses.approaching_labels_all[k]))
+                    # input("press enter to continue")
+                    ### rest to grasping config then
+                    self.setRobotToConfig(obj_start_grasping_config, robot, armType)
+                    ### check initial labels
+                    isConfigValid, FLAG, positionCollided_grasping = \
+                        self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
+                    print("FLAG: " + str(FLAG))
+                    print("positionCollided_grasping: " + str(positionCollided_grasping))
+                    #####********************#####
+                    if (obj_idx == 3):
+                        input("check the labels for initial positions (grasping): " + str(positionCollided_grasping))
+                    #####********************#####
+                    ### update the labels_all
+                    obj_start_configPoses.grasping_labels_all.append(
+                        set(list(obj_start_configPoses.grasping_labels[k]) + positionCollided_grasping))
+                    print("grasping_labels: " + str(obj_start_configPoses.grasping_labels[k]))
+                    print("grasping_labels_all: " + str(obj_start_configPoses.grasping_labels_all[k]))
+                    # input("press enter to continue")
+                    ###### finally update total_labels_all
+                    obj_start_configPoses.total_labels_all.append(
+                        set(list(obj_start_configPoses.approaching_labels_all[k]) + list(obj_start_configPoses.grasping_labels_all[k])))
+                    print("*********start total_labels_all:" + str(obj_start_configPoses.total_labels_all))
+                    # input("press enter to continue")
+            # input("-------------------now check all targets-------------------")
+            if obj_target_configPoses.total_labels_all == []:
+                for k in range(len(obj_target_configPoses.grasping_configs)):
+                    print("check the kth pose, k is: " + str(k))
+                    obj_target_approaching_config = obj_target_configPoses.approaching_configs[k]
+                    obj_target_grasping_config = obj_target_configPoses.grasping_configs[k]
+                    ### reset to approaching config first
+                    self.setRobotToConfig(obj_target_approaching_config, robot, armType)
+                    ### check initial labels
+                    isConfigValid, FLAG, positionCollided_approaching = \
+                        self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
+                    print("positionCollided_approaching: " + str(positionCollided_approaching))
+                    ### update the labels_all
+                    obj_target_configPoses.approaching_labels_all.append(
+                        set(list(obj_target_configPoses.approaching_labels[k]) + positionCollided_approaching))
+                    print("approaching_labels: " + str(obj_target_configPoses.approaching_labels[k]))
+                    print("approaching_labels_all: " + str(obj_target_configPoses.approaching_labels_all[k]))
+                    # input("press enter to continue")
+                    ### rest to grasping config then
+                    self.setRobotToConfig(obj_target_grasping_config, robot, armType)
+                    ### check initial labels
+                    isConfigValid, FLAG, positionCollided_grasping = \
+                        self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
+                    print("positionCollided_grasping: " + str(positionCollided_grasping))
+                    ### update the labels_all
+                    obj_target_configPoses.grasping_labels_all.append(
+                        set(list(obj_target_configPoses.grasping_labels[k]) + positionCollided_grasping))
+                    print("grasping_labels: " + str(obj_target_configPoses.grasping_labels[k]))
+                    print("grasping_labels_all: " + str(obj_target_configPoses.grasping_labels_all[k]))
+                    # input("press enter to continue")
+                    ###### finally update total_labels_all
+                    obj_target_configPoses.total_labels_all.append(
+                        set(list(obj_target_configPoses.approaching_labels_all[k]) + list(obj_target_configPoses.grasping_labels_all[k])))
+                    print("*********target total_labels_all:" + str(obj_target_configPoses.total_labels_all))
+                    # input("press enter to continue")
+        enablePrint()
+        ### move the robot back
+        robot.resetArmConfig_torso(curr_robot_config[1:15], curr_robot_config[0])
+        robot.resetRightHandConfig(curr_robot_config[15:21])
+
+
     def obtainCurrObjectConfigPoses(self, workspace, object_idx):
         ### This function feteches the current object's configPoses specified by object_idx
         curr_obj_position_idx = workspace.object_geometries[object_idx].curr_position_idx
@@ -370,6 +502,38 @@ class Planner(object):
             ### the object is at certain position candidate
             curr_object_configPoses = self.position_candidates_configPoses[curr_obj_position_idx]
         return curr_object_configPoses
+
+    def getConstraintsFromLabels_mix(self, configPoses, obj_idx, start_arrangement, target_arrangement, manipulation_mode):
+        '''This function gets all objects start/target constraints from labels
+        stored in the configPoses'''
+        ### configPoses: a PositionCandidateConfigs object
+        ### start_arrangement: a list/tuple of object_indices
+        ### target_arrangement: a list/tuple of object_indices
+        ### manipulation_mode: "picking" or "placing"
+        start_arrangement = list(start_arrangement)
+        target_arrangement = list(target_arrangement)
+        configPoses_constraints = []
+        if manipulation_mode == "picking":
+            all_pose_labels = configPoses.total_labels_all
+        if manipulation_mode == "placing":
+            all_pose_labels = configPoses.grasping_labels_all
+        # print("all_pose_labels: " + str(all_pose_labels))
+        for pose_i in range(len(all_pose_labels)):
+            pose_labels = all_pose_labels[pose_i]
+            configPoses_constraints.append([])
+            for label in pose_labels:
+                if (label in target_arrangement) and (target_arrangement.index(label) != obj_idx):
+                    ### get the object_idx of the object that occupied that label at target arrangement
+                    configPoses_constraints[pose_i].append( (target_arrangement.index(label), True) )
+                elif (label in start_arrangement) and (start_arrangement.index(label) != obj_idx):
+                    ### get the object_idx of the object that occupied that label at start arrangement
+                    configPoses_constraints[pose_i].append( (start_arrangement.index(label), False) )
+        #     print("constraint for pose " + str(pose_i) + ": " + str(configPoses_constraints[pose_i]))
+        #     input("wait")
+        # print("==========")
+        # print(configPoses_constraints)
+        # print("\n")
+        return configPoses_constraints
     
     def getConstraintsFromLabels(self, configPoses, obj_idx, target_arrangement, manipulation_mode):
         '''This function gets all objects target constraints from labels
@@ -389,23 +553,71 @@ class Planner(object):
             for label in pose_labels:
                 if (label in target_arrangement) and (target_arrangement.index(label) != obj_idx):
                     ### get the object_idx of the object that occupied that label at target arrangement
-                    configPoses_constraints[pose_i].append(target_arrangement.index(label))
+                    configPoses_constraints[pose_i].append( (target_arrangement.index(label), True) )
         return configPoses_constraints
+
+    def addInvalidArrStates_mix(self, configPoses_constraints, object_idx):
+        '''This functions add invalid arrangement states given
+        configPoses_constraints [ [(obj_idx, True), ..., (obj_idx, False)], ..., []]'''
+        ### first get failure reasons
+        # start_time = time.time()
+        failure_reasons = []
+        if [] in configPoses_constraints: return
+        utils.generateCombination(configPoses_constraints, 0, [], failure_reasons)
+        # print("time for generate combinations: " + str(time.time() - start_time))
+        ### once we get the failure reasons, construct and add invalid states
+        ### (1) for reasons where all constraints are related to goal constraints, go with forward checking
+        ### (2) for reasons where there is at least one start constraint, go with instant checking
+        # print("\n-------object_idx: " + str(object_idx) + "--------")
+        for failure_reason in failure_reasons:
+            # print("current failure reason: " + str(failure_reason))
+            goal_counts = sum([failure_reason[mm][1] for mm in range(len(failure_reason))])
+            # print("goal_counts: " + str(goal_counts))
+            if goal_counts == len(failure_reason):
+                # print("all-goal-related constraints")
+                ### all constraints are goal constraints, go with forward checking
+                for (cstr_obj_idx, isGoal) in failure_reason:
+                    invalid_state = {} ### do not make it OrderedDict()
+                    invalid_state[object_idx] = False
+                    for (obj_idx, isGoal) in failure_reason:
+                        if obj_idx == cstr_obj_idx: continue
+                        invalid_state[obj_idx] = True
+                    self.invalid_arr_states_per_obj[cstr_obj_idx].append(invalid_state)
+                    # print(str(cstr_obj_idx) + ": " + str(invalid_state))
+            else:
+                # print("not all-goal-related constraints")
+                ### at least one constraint is start constraint, go with instant checking (single)
+                temp_success = True
+                invalid_state = {}
+                for (obj_idx, isGoal) in failure_reason:
+                    if obj_idx in invalid_state.keys():
+                        ### you are adding conflicting events which will not concur
+                        temp_success = False
+                        break
+                    else:
+                        invalid_state[obj_idx] = isGoal
+                if temp_success:
+                    self.invalid_arr_states_per_obj[object_idx].append(invalid_state)
+                    # print(str(object_idx) + ": " + str(invalid_state))
+
+            # input("wait to continue")
+            # print("\n")
+
 
     def addInvalidArrStates(self, configPoses_constraints, object_idx):
         '''This functions add invalid arrangement states given
-        constraints and the object to be manipulated (object_idx)'''
-        ### configPoses_constraints: [[obj_indices], [obj_indices], [obj_indices]]
+        configPoses_constraints [ [(obj_idx, True), ..., (obj_idx, False)], ..., []]'''
+        ### configPoses_constraints: [[obj_indices], [obj_indices], [obj_indices]] (old)
         ### first get failure reasons
         failure_reasons = []
         if [] in configPoses_constraints: return
         utils.generateCombination(configPoses_constraints, 0, [], failure_reasons)
         ### once we get the failure reasons, construct and add invalid states
         for failure_reason in failure_reasons:
-            for cstr_obj_idx in failure_reason:
+            for (cstr_obj_idx, isGoal) in failure_reason:
                 invalid_state = {} ### do not make it OrderedDict()
                 invalid_state[object_idx] = False
-                for obj_idx in failure_reason:
+                for (obj_idx, isGoal) in failure_reason:
                     if obj_idx == cstr_obj_idx: continue
                     invalid_state[obj_idx] = True
                 self.invalid_arr_states_per_obj[cstr_obj_idx].append(invalid_state)
@@ -1193,6 +1405,8 @@ class Planner(object):
                 neighbors_idx.append(neighborIndex[j])
                 neighbors_cost.append(neighborDist[j])
                 neighbors_connected += 1
+            else:
+                print("Neighbor connection not success, raise FLAG: " + str(FLAG))
         
         ### check if the number of neighboring connections is zero
         print("Number of neighbors for current node: " + str(neighbors_connected))
@@ -2147,7 +2361,12 @@ class Planner(object):
     def deserializeCandidatesConfigPoses(self):
         f_candidate_geometries = open(self.roadmapFolder+"/CandidatesConfigPoses.obj", 'rb')
         self.position_candidates_configPoses = pickle.load(f_candidate_geometries)
+        for position, position_candidate_config in self.position_candidates_configPoses.items():
+            position_candidate_config.approaching_labels_all = []
+            position_candidate_config.grasping_labels_all = []
+            position_candidate_config.total_labels_all = []
 
+    
     #########################################################################################
     ### ATTENTION: THE FUNCTION BELOW IS NOT USED AND THUS NOT BEING MAINTAINED AT THIS POINT
     def calculateReachabilityMap(self, robot, workspace, orientation, placeholder_shape="cylinder"):
@@ -2227,3 +2446,6 @@ class PositionCandidateConfigs(object):
         self.grasping_labels = [] ### a list of grasping labels(set) with different orientations
         self.total_labels = [] ### a list of total labels(set) with different orientations
     ### More functions to be added later (if necessary) ###
+        self.approaching_labels_all = [] ### a list of approaching labels(set) with different orientations (including start labels)
+        self.grasping_labels_all = [] ### a list of grasping labels(set) with different orientations (including start labels)
+        self.total_labels_all = [] ### a list of total labels(set) with different orientations (including start labels)

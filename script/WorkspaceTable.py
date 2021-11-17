@@ -42,16 +42,16 @@ class WorkspaceTable(object):
         ### MINT, LAVENDER
         ### (21 colors up to 21 objects)
 
-        # self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
-        #                 [0.96, 0.51, 0.19], [0.604, 0.388, 0.141], [0, 0, 0], [0.66, 0.66, 0.66],
-        #                 [0.259, 0.831, 0.957], [0.567, 0.118, 0.706], [0.749, 0.937, 0.271],
-        #                 [0.502, 0, 0], [0.502, 0.502, 0], [0.275, 0.6, 0.565], [0, 0, 0.459],
-        #                 [0.98, 0.745, 0.831], [1.0, 0.847, 0.694], [1.0, 0.98, 0.784],
-        #                 [0.667, 1.0, 0.765], [0.863, 0.745, 1.0]]
+        self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                        [0.96, 0.51, 0.19], [0.604, 0.388, 0.141], [0, 0, 0], [0.66, 0.66, 0.66],
+                        [0.259, 0.831, 0.957], [0.567, 0.118, 0.706], [0.749, 0.937, 0.271],
+                        [0.502, 0, 0], [0.502, 0.502, 0], [0.275, 0.6, 0.565], [0, 0, 0.459],
+                        [0.98, 0.745, 0.831], [1.0, 0.847, 0.694], [1.0, 0.98, 0.784],
+                        [0.667, 1.0, 0.765], [0.863, 0.745, 1.0]]
 
-        self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
-                            [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
-                            [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19]]
+        # self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
+        #                     [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
+        #                     [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19]]
 
     def createRobotStandingBase(self, robotBasePosition, standingBase_dim, isPhysicsTurnOn):
         ################ create the known geometries - standingBase  ####################
@@ -239,6 +239,7 @@ class WorkspaceTable(object):
         self.num_objects = len(cylinder_objects)
         ### first assign goal positions
         self.object_geometries = OrderedDict()
+        self.initial_object_position_meshes = OrderedDict() ### key: position_idx, value: mesh id
         self.assignGoalPositions()
         self.object_initial_infos = OrderedDict()
         self.goal_visualization_mesh = OrderedDict() ### obj_idx (key): mesh (value)
@@ -258,6 +259,16 @@ class WorkspaceTable(object):
                 radius=cylinder_radius, length=cylinder_height, rgbaColor=cylinder_rgbacolor_start, physicsClientId=self.server)
             cylinder_objectM = p.createMultiBody(baseCollisionShapeIndex=cylinder_c, baseVisualShapeIndex=cylinder_v,
                 basePosition=cylinder_curr_position, physicsClientId=self.server)
+            ####### create a copy of collision meshes for the start positions #######
+            cylinder_c_copy = p.createCollisionShape(shapeType=p.GEOM_CYLINDER,
+                radius=cylinder_radius, height=cylinder_height, physicsClientId=self.server)
+            cylinder_rgbacolor_start_copy = self.color_pools[obj_idx] + [0.0] ### transparent color
+            cylinder_v_copy = p.createVisualShape(shapeType=p.GEOM_CYLINDER,
+                radius=cylinder_radius, length=cylinder_height, rgbaColor=cylinder_rgbacolor_start_copy, physicsClientId=self.server)
+            cylinder_objectM_copy = p.createMultiBody(baseCollisionShapeIndex=cylinder_c_copy, baseVisualShapeIndex=cylinder_v_copy,
+                basePosition=cylinder_curr_position, physicsClientId=self.server)
+            self.initial_object_position_meshes[self.num_candidates+counter] = cylinder_objectM_copy
+            #########################################################################
             self.object_geometries[obj_idx] = CylinderObject(
                                     obj_idx, cylinder_curr_position, cylinder_objectM, cylinder_radius, cylinder_height)
             collision_position_idx = self.assignToNearestCandiate(cylinder_curr_position)
@@ -511,6 +522,9 @@ class WorkspaceTable(object):
         ### (2) delete visualization meshes in the workspace
         for obj_idx, object_mesh in self.goal_visualization_mesh.items():
             p.removeBody(object_mesh)
+        ### (3) delete initial_object_position_meshes in the workspace
+        for position_idx, position_mesh in self.initial_object_position_meshes.items():
+            p.removeBody(position_mesh)
 
     def clear_execution_instance(self):
         ### this function clears the execution instance
