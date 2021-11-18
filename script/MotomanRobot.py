@@ -134,7 +134,7 @@ class MotomanRobot(object):
         joint_idx = 30 ### left_inner_knuckle_joint
         p.resetJointState(self.motomanGEO, joint_idx, resetHandConfig[5], physicsClientId=self.server)
 
-        p.stepSimulation(physicsClientId=self.server)
+        # p.stepSimulation(physicsClientId=self.server)
         self.updateRightHandConfig(resetHandConfig)
 
 
@@ -148,7 +148,7 @@ class MotomanRobot(object):
         ### keep the right hand/gripper and torso unchanged
         self.keepCurrRightHandConfig()
         self.keepTorsoConfig()
-        p.stepSimulation(physicsClientId=self.server)
+        # p.stepSimulation(physicsClientId=self.server)
         left_ee_pos_quat = p.getLinkState(self.motomanGEO, self.left_ee_idx, physicsClientId=self.server)
         self.left_ee_pose = [list(left_ee_pos_quat[0]), list(left_ee_pos_quat[1])]
         right_ee_pos_quat = p.getLinkState(self.motomanGEO, self.right_ee_idx, physicsClientId=self.server)
@@ -167,7 +167,7 @@ class MotomanRobot(object):
         self.updateSingleArmConfig(resetArmConfiguration[7:14], "Right")
         ### keep the right hand unchanged
         self.keepCurrRightHandConfig()
-        p.stepSimulation(physicsClientId=self.server)
+        # p.stepSimulation(physicsClientId=self.server)
         left_ee_pos_quat = p.getLinkState(self.motomanGEO, self.left_ee_idx, physicsClientId=self.server)
         self.left_ee_pose = [list(left_ee_pos_quat[0]), list(left_ee_pos_quat[1])]
         right_ee_pos_quat = p.getLinkState(self.motomanGEO, self.right_ee_idx, physicsClientId=self.server)
@@ -192,7 +192,7 @@ class MotomanRobot(object):
         ### keep the right hand/gripper and torso unchanged
         self.keepCurrRightHandConfig()
         self.keepTorsoConfig()
-        p.stepSimulation(physicsClientId=self.server)
+        # p.stepSimulation(physicsClientId=self.server)
         left_ee_pos_quat = p.getLinkState(self.motomanGEO, self.left_ee_idx, physicsClientId=self.server)
         self.left_ee_pose = [list(left_ee_pos_quat[0]), list(left_ee_pos_quat[1])]
         right_ee_pos_quat = p.getLinkState(self.motomanGEO, self.right_ee_idx, physicsClientId=self.server)
@@ -222,7 +222,7 @@ class MotomanRobot(object):
             self.updateSingleArmConfig(singleArmConfig, "Right")
         ### keep the right hand/gripper unchanged
         self.keepCurrRightHandConfig()
-        p.stepSimulation(physicsClientId=self.server)
+        # p.stepSimulation(physicsClientId=self.server)
         left_ee_pos_quat = p.getLinkState(self.motomanGEO, self.left_ee_idx, physicsClientId=self.server)
         self.left_ee_pose = [list(left_ee_pos_quat[0]), list(left_ee_pos_quat[1])]
         right_ee_pos_quat = p.getLinkState(self.motomanGEO, self.right_ee_idx, physicsClientId=self.server)

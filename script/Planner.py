@@ -379,14 +379,9 @@ class Planner(object):
         curr_robot_config = robot.getRobotCurrConfig()
         all_objects = [i for i in range(len(start_arrangement)) \
             if start_arrangement[i] != target_arrangement[i]]
+        blockPrint()
         ### for each object
         for obj_idx in all_objects:
-            #####********************#####
-            if (obj_idx != 3):
-                blockPrint()
-            else:
-                enablePrint()
-            #####********************#####
             print("obj_idx: " + str(obj_idx))
             ### get obj_start_position_idx and obj_target_position_idx
             obj_start_position_idx = start_arrangement[obj_idx]
@@ -419,10 +414,6 @@ class Planner(object):
                         self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
                     print("FLAG: " + str(FLAG))
                     print("positionCollided_approaching: " + str(positionCollided_approaching))
-                    #####********************#####
-                    if (obj_idx == 3):
-                        input("check the labels for initial positions (approaching): " + str(positionCollided_approaching))
-                    #####********************#####
                     ### update the labels_all
                     obj_start_configPoses.approaching_labels_all.append(
                         set(list(obj_start_configPoses.approaching_labels[k]) + positionCollided_approaching))
@@ -436,10 +427,6 @@ class Planner(object):
                         self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, workspace.initial_object_position_meshes)
                     print("FLAG: " + str(FLAG))
                     print("positionCollided_grasping: " + str(positionCollided_grasping))
-                    #####********************#####
-                    if (obj_idx == 3):
-                        input("check the labels for initial positions (grasping): " + str(positionCollided_grasping))
-                    #####********************#####
                     ### update the labels_all
                     obj_start_configPoses.grasping_labels_all.append(
                         set(list(obj_start_configPoses.grasping_labels[k]) + positionCollided_grasping))
@@ -1406,7 +1393,8 @@ class Planner(object):
                 neighbors_cost.append(neighborDist[j])
                 neighbors_connected += 1
             else:
-                print("Neighbor connection not success, raise FLAG: " + str(FLAG))
+                pass
+                # print("Neighbor connection not success, raise FLAG: " + str(FLAG))
         
         ### check if the number of neighboring connections is zero
         print("Number of neighbors for current node: " + str(neighbors_connected))

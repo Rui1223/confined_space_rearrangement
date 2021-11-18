@@ -56,10 +56,10 @@ class CIRSSolver(MonotoneLocalSolver):
                     arr_state[obj_idx] = isAtTarget
                 self.invalid_arr_states_per_obj[obj_arr_states_msg.obj_idx].append(arr_state)
 
-        print("invalid_arr_states_per_obj: ")
-        for obj_idx, arr_states in self.invalid_arr_states_per_obj.items():
-            print(obj_idx)
-            print(arr_states)
+        # print("invalid_arr_states_per_obj: ")
+        # for obj_idx, arr_states in self.invalid_arr_states_per_obj.items():
+        #     print(obj_idx)
+        #     print(arr_states)
         # input("Press to continue...")
 
     def CIDFS_DP(self):
@@ -103,10 +103,10 @@ class CIRSSolver(MonotoneLocalSolver):
             obj_target_position_idx = self.target_arrangement[obj_idx]
             rearrange_success, transition_path = self.serviceCall_rearrangeCylinderObject(
                 obj_idx, obj_target_position_idx, "Right_torso", isLabeledRoadmapUsed=self.isLabeledRoadmapUsed)
-            print("\n====================")
-            print("rearranging_success: ", rearrange_success)
+            # print("\n====================")
+            # print("rearranging_success: ", rearrange_success)
             # input("enter to continue")
-            print("====================\n")
+            # print("====================\n")
             if rearrange_success:
                 self.generateLocalNode(current_node_id, obj_idx, transition_path)
                 ### recursive call
@@ -129,7 +129,7 @@ class CIRSSolver(MonotoneLocalSolver):
         ### the current arrangement is not the right parent
         ### from which a solution can be found, mark it as exlored
         self.explored.append(current_arrangement)
-        print("backtrack")
+        # print("backtrack")
         return FLAG
 
     def checkInvalidArrStates(self, current_arrangement, obj_idx):

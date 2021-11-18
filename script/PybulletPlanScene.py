@@ -524,7 +524,7 @@ class PybulletPlanScene(object):
         transit_traj = []
         transfer_traj = []
         finish_traj = []
-        # blockPrint()
+        blockPrint()
 
         curr_object_configPoses = self.planner_p.obtainCurrObjectConfigPoses(self.workspace_p, req.object_idx)
 
@@ -541,18 +541,10 @@ class PybulletPlanScene(object):
                 print("This picking pose is not even valid.")
                 print("FLAG: {}, objectCollided: {}".format(FLAG, objectCollided))
                 print("Move on to next candidate.")
-                #####********************#####
-                if req.object_idx == 3:
-                    input("wait here to check")
-                #####********************#####
                 continue
             else:
                 ### check the connection with neighbors in the roadmap
                 print("The picking pose works. Check its neighboring connections.")
-                #####********************#####
-                if req.object_idx == 3:
-                    input("wait here to check")
-                #####********************#####
                 ### when to check the connection of the picking pose, you have to attach the object
                 temp_object_curr_pos = self.workspace_p.object_geometries[req.object_idx].curr_pos
                 self.planner_p.attachObject(req.object_idx, self.workspace_p, self.robot_p, req.armType)
@@ -569,17 +561,9 @@ class PybulletPlanScene(object):
                 if not connectSuccess:
                     print("This picking pose is not valid, due to no neighboring connections.")
                     print("Move on to next candidate.")
-                    #####********************#####
-                    if req.object_idx == 3:
-                        input("wait here to check")
-                    #####********************#####
                     continue
                 else:
                     print("The picking pose is valid, generate pre-picking")
-                    #####********************#####
-                    if req.object_idx == 3:
-                        input("wait here to check")
-                    #####********************#####
                     configToPrePickingPose = curr_object_configPoses.approaching_configs[config_id]
                     ############## check the collision of the selected configToPrePickingPose ##############
                     self.planner_p.setRobotToConfig(configToPrePickingPose, self.robot_p, req.armType)
@@ -589,32 +573,16 @@ class PybulletPlanScene(object):
                         print("This pre-picking pose is not even valid. ")
                         print("FLAG: {}, objectCollided: {}".format(FLAG, objectCollided))
                         print("Move on to next candidate.")
-                        #####********************#####
-                        if req.object_idx == 3:
-                            input("wait here to check")
-                        #####********************#####
                         continue
                     else:
                         ### check the connection with neighbors in the roadmap
                         print("The pre-picking pose works. Check its neighboring connections.")
-                        #####********************#####
-                        if req.object_idx == 3:
-                            input("wait here to check")
-                        #####********************#####
                         connectSuccess, prePickingPose_neighbors_idx, prePickingPose_neighbors_cost = self.planner_p.connectToNeighbors(
                                     configToPrePickingPose, self.robot_p, self.workspace_p, req.armType)
                         if not connectSuccess:
                             print("This pre-picking pose is not valid, due to no neighboring connections.")
                             print("Move on to next candidate.")
-                            #####********************#####
-                            if req.object_idx == 3:
-                                input("wait here to check")
-                            #####********************#####
                             continue
-                        #####********************#####
-                        if req.object_idx == 3:
-                            input("wait here to check")
-                        #####********************#####
                         print("Both picking pose and pre-picking pose are legitimate. Proceed to planning for pre-picking.")
             ###########################################################################################
 
@@ -736,7 +704,7 @@ class PybulletPlanScene(object):
         object_path.finish_trajectory = self.generateArmTrajectory(
                                             finish_traj, req.armType, self.robot_p.motomanRJointNames)
         object_path.object_idx = req.object_idx
-        # enablePrint()
+        enablePrint()
         return True, object_path
         ########################################################################################################
 
