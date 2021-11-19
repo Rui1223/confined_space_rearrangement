@@ -15,6 +15,7 @@ from UnidirMRSPlanner import UnidirMRSPlanner
 from UnidirDFSDPPlanner import UnidirDFSDPPlanner
 from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
+from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
 
 ############################### description #########################################
 ### This class defines a InstanceTester class which
@@ -68,8 +69,35 @@ def main(args):
         all_methods_success = [] ### 0: fail, 1: success
         all_methods_nActions = []
 
-        ###### now using different methods to solve the instance ######
-        ### (1) CIRS
+        ###### now using different methods to solve the instance ######        
+
+        ### (1) Lazy CIRSMIX
+        start_time = time.time()
+        unidir_lazy_cirsmix_planner = UnidirLazyCIRSMIXPlanner(
+            initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        lazy_cirsmix_planning_time = time.time() - start_time
+        lazy_cirsmix_isSolved = unidir_lazy_cirsmix_planner.isSolved
+        lazy_cirsmix_nActions = unidir_lazy_cirsmix_planner.best_solution_cost
+        if lazy_cirsmix_nActions == np.inf:
+            lazy_cirsmix_nActions = 5000
+        lazy_cirsmix_object_ordering = unidir_lazy_cirsmix_planner.object_ordering
+        all_methods_time.append(lazy_cirsmix_planning_time)
+        all_methods_success.append(float(lazy_cirsmix_isSolved))
+        all_methods_nActions.append(lazy_cirsmix_nActions)
+
+        ##### ***************************** #####
+        print("Time for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_planning_time))
+        print("Success for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_isSolved))
+        print("Number of actions for lazy CIRSMIX planning: {}".format(lazy_cirsmix_nActions))
+        print("Object ordering for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_object_ordering))
+        input("check to see if this is a monotone problem")
+        ##### ***************************** #####
+
+        #####################################################################
+        reset_instance_success = utils2.resetInstance("Right_torso")
+        #####################################################################
+
+        ### (2) CIRS
         start_time = time.time()
         unidir_cirs_planner = UnidirCIRSPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
@@ -87,7 +115,7 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        ### (2) CIRSMIX
+        ### (3) CIRSMIX
         start_time = time.time()
         unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
@@ -105,7 +133,7 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        # ### (3) DFSDP
+        # ### (4) DFSDP
         # start_time = time.time()
         # unidir_dfsdp_planner = UnidirDFSDPPlanner(
         #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
@@ -123,7 +151,7 @@ def main(args):
         # reset_instance_success = utils2.resetInstance("Right_torso")
         # #####################################################################
 
-        # ### (4) mRS
+        # ### (5) mRS
         # start_time = time.time()
         # unidir_mrs_planner = UnidirMRSPlanner(
         #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
@@ -140,8 +168,12 @@ def main(args):
         # #####################################################################
         # reset_instance_success = utils2.resetInstance("Right_torso")
         # #####################################################################
-
-
+        
+        print("\n")
+        print("Time for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_planning_time))
+        print("Success for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_isSolved))
+        print("Number of actions for lazy CIRSMIX planning: {}".format(lazy_cirsmix_nActions))
+        print("Object ordering for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_object_ordering))
         print("\n")
         print("Time for CIRS planning is: {}".format(cirs_planning_time))
         print("Success for CIRS planning is: {}".format(cirs_isSolved))

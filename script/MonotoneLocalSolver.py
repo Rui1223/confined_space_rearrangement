@@ -214,3 +214,25 @@ class ArrNode(object):
             ### move to a position before the transition
             parent_arr[self.objectTransferred_idx] = self.obj_transfer_position_indices[0]
             return parent_arr
+
+
+class VirtualTreeNode(object):
+    def __init__(self, arrangement, node_id, objectTransferred_idx, 
+        cost_to_come, parent_id):
+        self.arrangement = arrangement
+        self.node_id = node_id
+        self.objectTransferred_idx = objectTransferred_idx
+        self.cost_to_come = cost_to_come
+        self.parent_id = parent_id
+
+    def updateNodeID(self, node_id):
+        self.node_id = node_id
+
+    def updateObjectTransferredIdx(self, objectTransferred_idx):
+        self.objectTransferred_idx = objectTransferred_idx
+
+    def updateCostToCome(self, cost_to_come):
+        self.cost_to_come = cost_to_come
+
+    def updateParent(self, parent_id):
+        self.parent_id = parent_id

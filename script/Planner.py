@@ -2354,6 +2354,16 @@ class Planner(object):
             position_candidate_config.grasping_labels_all = []
             position_candidate_config.total_labels_all = []
 
+    def reset_CandidatesConfigPoses(self):
+        for position, position_candidate_config in self.position_candidates_configPoses.items():
+            position_candidate_config.approaching_labels_all = []
+            position_candidate_config.grasping_labels_all = []
+            position_candidate_config.total_labels_all = []
+        for obj_idx, object_initial_config in self.object_initial_configPoses.items():
+            object_initial_config.approaching_labels_all = []
+            object_initial_config.grasping_labels_all = []
+            object_initial_config.total_labels_all = []
+
     
     #########################################################################################
     ### ATTENTION: THE FUNCTION BELOW IS NOT USED AND THUS NOT BEING MAINTAINED AT THIS POINT

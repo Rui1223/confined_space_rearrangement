@@ -15,6 +15,7 @@ from UnidirMRSPlanner import UnidirMRSPlanner
 from UnidirDFSDPPlanner import UnidirDFSDPPlanner
 from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
+from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
 
 ############################### description #########################################
 ### This class defines a ExampleRunner class which
@@ -66,6 +67,17 @@ def main(args):
         ik_generate_success = utils2.serviceCall_generateConfigsForStartPositions("Right_torso")
 
         ###### run an example given the method specified ######
+        ### (0) Lazy CIRSMIX
+        if example_runner.method_name == "LazyCIRSMIX":
+            start_time = time.time()
+            the_chosen_planner = UnidirLazyCIRSMIXPlanner(
+                initial_arrangement, final_arrangement, example_runner.time_allowed)
+        if example_runner.method_name == "LazyCIRSMIX_nonlabeled":
+            start_time = time.time()
+            the_chosen_planner = UnidirLazyCIRSMIXPlanner(
+                initial_arrangement, final_arrangement, example_runner.time_allowed, \
+                isLabeledRoadmapUsed=False)
+
         ### (i) CIRSMIX
         if example_runner.method_name == "CIRSMIX":
             start_time = time.time()
@@ -76,6 +88,7 @@ def main(args):
             the_chosen_planner = UnidirCIRSMIXPlanner(
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
+        
         ### (ii) CIRS
         if example_runner.method_name == "CIRS":
             start_time = time.time()
@@ -86,6 +99,7 @@ def main(args):
             the_chosen_planner = UnidirCIRSPlanner(
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
+        
         ### (iii) DFS_DP
         if example_runner.method_name == "DFSDP":
             start_time = time.time()
@@ -96,6 +110,7 @@ def main(args):
             the_chosen_planner = UnidirDFSDPPlanner(
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
+        
         ### (iv) mRS
         if example_runner.method_name == "mRS":
             start_time = time.time()
@@ -112,7 +127,7 @@ def main(args):
         nActions = the_chosen_planner.best_solution_cost
         if nActions == np.inf: nActions = 5000
         object_ordering = the_chosen_planner.object_ordering
-        object_paths = the_chosen_planner.object_paths        
+        object_paths = the_chosen_planner.object_paths
 
         print("\n")
         print("Time for {} planning is: {}".format(example_runner.method_name, planning_time))

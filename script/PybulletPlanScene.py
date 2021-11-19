@@ -462,6 +462,8 @@ class PybulletPlanScene(object):
         self.planner_p.resetPlannerParams()
         ### (iii) reset the robot back to the home configuration
         self.robot_p.resetRobotToHomeConfiguration()
+        ### (iv) clear the information related to initial labels
+        self.planner_p.reset_CandidatesConfigPoses()
         return ResetPlanningInstanceResponse(True)
 
     def clear_planning_instance_callback(self, req):
