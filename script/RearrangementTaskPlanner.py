@@ -72,6 +72,7 @@ class RearrangementTaskPlanner(object):
         self.best_solution_cost = self.totalActions
         self.object_ordering = [] ### a list of obj_idx (ordered)
         self.object_paths = [] ### a list of ObjectRearrangePath paths
+        self.motion_planning_time = 0 ### record the (motion planning + collision checking) time
 
 
     def harvestSolution(self):

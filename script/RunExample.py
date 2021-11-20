@@ -136,10 +136,12 @@ def main(args):
 
         ### move the robot back to home configuration (optional)
         if (example_runner.method_name == "CIRS") or (example_runner.method_name == "DFSDP") \
-            or (example_runner.method_name == "mRS") or (example_runner.method_name == "CIRSMIX"):
+            or (example_runner.method_name == "mRS") or (example_runner.method_name == "CIRSMIX") \
+            or (example_runner.method_name == "LazyCIRSMIX"):
             resetHome_success, resetHome_trajectory = utils2.serviceCall_reset_robot_home("Right_torso")
         if (example_runner.method_name == "CIRS_nonlabeled") or (example_runner.method_name == "DFSDP_nonlabeled") \
-            or (example_runner.method_name == "mRS_nonlabeled") or (example_runner.method_name == "CIRSMIX_nonlabeled"):
+            or (example_runner.method_name == "mRS_nonlabeled") or (example_runner.method_name == "CIRSMIX_nonlabeled") \
+            or (example_runner.method_name == "LazyCIRSMIX_nonlabeled"):
             resetHome_success, resetHome_trajectory = utils2.serviceCall_reset_robot_home("Right_torso", False)
 
         if example_runner.isNewInstance:

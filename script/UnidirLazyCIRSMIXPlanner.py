@@ -33,34 +33,13 @@ class UnidirLazyCIRSMIXPlanner(RearrangementTaskPlanner):
         self.heuristic_level = 0
 
         remaining_time_allowed = self.time_threshold - (time.time() - self.planning_startTime)
-        #### ****************************************************** ####
-        # self.growSubTree(self.treeL["L0"], self.final_arrangement, remaining_time_allowed, self.isLabeledRoadmapUsed)
-        local_task_success, subTree, finalNodeID = self.growSubTree(
-            self.treeL["L0"], self.final_arrangement, remaining_time_allowed, self.isLabeledRoadmapUsed)
-        #### ****************************************************** ####
+        self.growSubTree(self.treeL["L0"], self.final_arrangement, remaining_time_allowed, self.isLabeledRoadmapUsed)
 
         #### **** let's first deal with only monotone instance **** ####
-        # if self.isSolved:
-        #     self.harvestSolution()
-        if local_task_success:
-            self.isSolved = True
-            self.finalNodeID = finalNodeID
         if self.isSolved:
-            self.temp_harvestSolution(subTree)
+            self.harvestSolution()
         #### ****************************************************** ####
 
-    #### ****************************************************** ####
-    def temp_harvestSolution(self, subTree):
-        nodeID = self.finalNodeID
-        ### back track to get the object_ordering and object_path
-        while (subTree[nodeID].parent_id != None): 
-            self.object_ordering.append(subTree[nodeID].objectTransferred_idx)
-            nodeID = subTree[nodeID].parent_id
-        ### reverse the object_ordering and object_paths
-        self.object_ordering.reverse()
-        self.totalActions = len(self.object_ordering)
-        self.best_solution_cost = self.totalActions
-    #### ****************************************************** ####
 
     def growSubTree(self, rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed):
         rospy.logwarn("grow a subTree at root arrangement: %s" % str(rootNode.arrangement))
@@ -70,15 +49,10 @@ class UnidirLazyCIRSMIXPlanner(RearrangementTaskPlanner):
         ### (ii) generate the subTree
         lazy_cirsmix_solver = LazyCIRSMIXSolver(
             rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)
-        ########### ******************************** ###########
-        # local_task_success, subTree = lazy_cirsmix_solver.lazy_cirsmix_solve()
-        local_task_success, subTree, finalNodeID = lazy_cirsmix_solver.lazy_cirsmix_solve()
+        local_task_success, subTree, local_motion_planning_time = lazy_cirsmix_solver.lazy_cirsmix_solve()
+        self.motion_planning_time += local_motion_planning_time
         ### (iii) engraft the subTree to the global search tree
-        
-        # self.engraftingLeftTree(rootNode, subTree)
-        return local_task_success, subTree, finalNodeID
-        ########### ******************************** ###########
-        
+        self.engraftingLeftTree(rootNode, subTree)
 
     def engraftingLeftTree(self, rootNode, subTree):
         if len(subTree) == 1:

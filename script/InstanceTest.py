@@ -69,13 +69,15 @@ def main(args):
         all_methods_success = [] ### 0: fail, 1: success
         all_methods_nActions = []
 
-        ###### now using different methods to solve the instance ######        
+        ###### now using different methods to solve the instance ######
 
         ### (1) Lazy CIRSMIX
         start_time = time.time()
         unidir_lazy_cirsmix_planner = UnidirLazyCIRSMIXPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
         lazy_cirsmix_planning_time = time.time() - start_time
+        lazy_cirsmix_motion_planning_time = unidir_lazy_cirsmix_planner.motion_planning_time
+        lazy_cirsmix_task_planning_time = lazy_cirsmix_planning_time - lazy_cirsmix_motion_planning_time
         lazy_cirsmix_isSolved = unidir_lazy_cirsmix_planner.isSolved
         lazy_cirsmix_nActions = unidir_lazy_cirsmix_planner.best_solution_cost
         if lazy_cirsmix_nActions == np.inf:
@@ -102,6 +104,8 @@ def main(args):
         unidir_cirs_planner = UnidirCIRSPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
         cirs_planning_time = time.time() - start_time
+        cirs_motion_planning_time = unidir_cirs_planner.motion_planning_time
+        cirs_task_planning_time = cirs_planning_time - cirs_motion_planning_time
         cirs_isSolved = unidir_cirs_planner.isSolved
         cirs_nActions = unidir_cirs_planner.best_solution_cost
         if cirs_nActions == np.inf:
@@ -120,6 +124,8 @@ def main(args):
         unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
             initial_arrangement, final_arrangement, instance_tester.time_allowed)
         cirsmix_planning_time = time.time() - start_time
+        cirsmix_motion_planning_time = unidir_cirsmix_planner.motion_planning_time
+        cirsmix_task_planning_time = cirsmix_planning_time - cirsmix_motion_planning_time
         cirsmix_isSolved = unidir_cirsmix_planner.isSolved
         cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
         if cirsmix_nActions == np.inf:
@@ -171,16 +177,22 @@ def main(args):
         
         print("\n")
         print("Time for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_planning_time))
+        print("Motion planning time for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_motion_planning_time))
+        print("Task planning time for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_task_planning_time))
         print("Success for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_isSolved))
         print("Number of actions for lazy CIRSMIX planning: {}".format(lazy_cirsmix_nActions))
         print("Object ordering for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_object_ordering))
         print("\n")
         print("Time for CIRS planning is: {}".format(cirs_planning_time))
+        print("Motion planning time for CIRS planning is: {}".format(cirs_motion_planning_time))
+        print("Task planning time for CIRS planning is: {}".format(cirs_task_planning_time))
         print("Success for CIRS planning is: {}".format(cirs_isSolved))
         print("Number of actions for CIRS planning: {}".format(cirs_nActions))
         print("Object ordering for CIRS planning is: {}".format(cirs_object_ordering))
         print("\n")
         print("Time for CIRSMIX planning is: {}".format(cirsmix_planning_time))
+        print("Motion planning time for CIRSMIX planning is: {}".format(cirsmix_motion_planning_time))
+        print("Task planning time for CIRSMIX planning is: {}".format(cirsmix_task_planning_time))
         print("Success for CIRSMIX planning is: {}".format(cirsmix_isSolved))
         print("Number of actions for CIRSMIX planning: {}".format(cirsmix_nActions))
         print("Object ordering for CIRSMIX planning is: {}".format(cirsmix_object_ordering))

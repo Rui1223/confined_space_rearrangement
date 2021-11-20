@@ -38,27 +38,29 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         self.virtual_node_idx = 0 ### start from root node (idx: 0)
         self.virtual_tree[0] = VirtualTreeNode(
             startArrNode.arrangement, 0, None, 0, None)
+        ### this container includes all the nodes which are already in the actual tree,
+        ### which are reachable from the local root
+        self.reachable = [0]
+        ### you will have two modes in the DFS_DP tree search
+        ### (1) back-tracking (self.backTracking = True)
+        ### (2) back-jumping (self.backTracking = False)
+        self.backTracking = True ### initially it is back-tracking stage
 
     def lazy_cirsmix_solve(self):
         ### before the search, given start_arrangement and target_arrangement
         ### (1) detect constraints arising from initial positions
+        start_time = time.time()
         self.detectInitialConstraints()
+        self.motion_planning_time += (time.time() - start_time)
         ### (2) detect all invalid arrangement at which each object to be manipulated
         self.detectInvalidArrStates_mix()
         LOCAL_TASK_SUCCESS = self.LAZY_CIDFS_DP()
-        ########### ******************************** ###########
-        # return LOCAL_TASK_SUCCESS, self.tree
-        if not LOCAL_TASK_SUCCESS:
-            self.finalNodeID = 0
-        return LOCAL_TASK_SUCCESS, self.virtual_tree, self.finalNodeID
-        ########### ******************************** ###########
+        return LOCAL_TASK_SUCCESS, self.tree, self.motion_planning_time
 
     def detectInitialConstraints(self):
         '''This function detects constraints between 
         object initial positions ang related grasp poses in the local task'''
-        start_time = time.time()
         self.serviceCall_detectInitialConstraints()
-        print("total time cost: " + str(time.time() - start_time))
 
     def detectInvalidArrStates_mix(self):
         '''This function detects all invalid states of arrangement
@@ -92,12 +94,16 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
 
         ### first check if we touch the base case: we are at the target_arrangement
         if (current_arrangement == self.target_arrangement):
-            ### the problem is solved
-            ########### ******************************** ###########
-            self.finalNodeID = current_node_id
-            ########### ******************************** ###########
-            return True
-        ### otherwise it's not solved yet. Check if time exceeds
+            ### at least the virtual tree is connected from the local root to the target arrangement
+            isSolutionValid, self.lastNodeValid_idx = self.verifySolutionBranch(current_node_id)
+            if isSolutionValid:
+                return True
+            else:
+                ### Now you should enter into back-jumping mode
+                ### jump to the last valid, reachable node (lastNodeValid_idx)
+                self.backTracking = False
+                return False
+        ### otherwise the virtual tree is yet connected to the target arrangement. Check if time exceeds
         if time.time() - self.local_planning_startTime >= self.time_threshold:
             return False
 
@@ -133,14 +139,27 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
                 ### first check if FLAG == False is due to timeout, if it is, just return
                 if time.time() - self.local_planning_startTime >= self.time_threshold:
                     return FLAG
+                ### Now we need to see if this is a backtracking or a backjumping condition
+                if self.backTracking == True:
+                    pass ### keep searching for other child nodes
+                else:
+                    ### the search is in the backjumping mode
+                    ### check if the current node is the last valid, reachable node (self.lastNodeValid_idx)
+                    if (current_node_id == self.lastNodeValid_idx):
+                        ### back-tracking start from here
+                        self.backTracking = True
+                        pass
+                    else:
+                        ### this node is not the last valid, reachable node (self.lastNodeValid_idx)
+                        print("back-jumping")
+                        return FLAG
+
         
         ### the problem is not solved but there is no option
         ### the current arrangement is not the right parent
         ### from which a solution can be found, mark it as explored
         self.explored.append(current_arrangement)
-        ########### ******************************** ###########
         print("backtrack")
-        ########### ******************************** ###########
         return FLAG
 
     def checkInvalidArrStates(self, current_arrangement, obj_idx):
@@ -203,9 +222,82 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         self.virtual_tree[self.virtual_node_idx] = VirtualTreeNode(
             resulting_arrangement, self.virtual_node_idx, obj_idx,
             resulting_cost_to_come, current_node_id)
-        ########### ******************************** ###########
+
         print("object to move: " + str(obj_idx))
         print("parent node id: " + str(current_node_id))
         print("new node id: " + str(self.virtual_node_idx))
         print("\n")
-        ########### ******************************** ###########
+
+    def verifySolutionBranch(self, current_node_id):
+        '''this function verifies if the solution branch on the virtual tree
+           is valid or not in terms of motion planning + collision checking'''
+        
+        ### (1) get the branch from nearest-reachable-node to current_node_id on the virtual tree (backtrack)
+        branch_to_check = []
+        nodeID = current_node_id ### this should be the id for the target arrangement node
+        branch_to_check.append(nodeID)
+        ### back track to get the branch
+        while (nodeID not in self.reachable):
+            ### find its parent
+            nodeID = self.virtual_tree[nodeID].parent_id
+            ### add the parent in the branch_to_check
+            branch_to_check.append(nodeID)
+        branch_to_check.reverse()
+        
+        # print("branch_to_check: " + str(branch_to_check))
+        # input("checking time. wait here")
+
+        ### (2) verify each edge (rearranging an object) on the branch_to_check
+        ### (2.1) first set the scene to the nearest-reachable node
+        reachable_node = self.tree[branch_to_check[0]] ### actual tree node (ArrNode)
+        set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(
+                    reachable_node.arrangement, reachable_node.robotConfig, "Right_torso")
+        ### (2.2) check each edge, up to the final node
+        for edge_i in range(1, len(branch_to_check)):
+            parent_node_id = branch_to_check[edge_i-1]
+            curr_node_id = branch_to_check[edge_i]
+            curr_node = self.virtual_tree[curr_node_id] ### VirtualTreeNode
+            obj_idx = curr_node.objectTransferred_idx
+            obj_target_position_idx = self.target_arrangement[obj_idx]
+            start_time = time.time()
+            rearrange_success, transition_path = self.serviceCall_rearrangeCylinderObject(
+                obj_idx, obj_target_position_idx, "Right_torso", isLabeledRoadmapUsed=self.isLabeledRoadmapUsed)
+            self.motion_planning_time += (time.time() - start_time)
+            if rearrange_success:
+                self.convertVirtualToActualNode(parent_node_id, curr_node_id, obj_idx, transition_path)
+            else:
+                ### the current branch failed at the edge (parent_node_id --> curr_node_id)
+                print("fail to rearrange object " + str(obj_idx))
+                return False, parent_node_id
+        ### reach here as all edges lead to rearrange success
+        return True, None
+
+
+    def convertVirtualToActualNode(self, parent_node_id, curr_node_id, obj_idx, transition_path):
+        '''This function convert a virtual tree node (curr_node_id) with parent (parent_node_id)
+           into an actual tree node'''
+        resulting_arrangement = self.virtual_tree[curr_node_id].arrangement
+        resulting_robot_config = self.serviceCall_getCurrRobotConfig()
+        if self.tree[parent_node_id].objectTransferred_idx == None:
+            ### parent node is the root node, no transit info can be obtained in this case
+            resulting_transit_from_info = None
+        else:
+            resulting_transit_from_info = [
+                self.tree[parent_node_id].objectTransferred_idx, \
+                self.tree[parent_node_id].obj_transfer_position_indices[1]]
+        resulting_obj_transfer_position_indices = [self.tree[parent_node_id].arrangement[obj_idx], self.target_arrangement[obj_idx]]
+        resulting_cost_to_come = self.tree[parent_node_id].cost_to_come + 1
+        resulting_object_ordering = self.tree[parent_node_id].object_ordering + [obj_idx]
+        ### convert this virtual tree node into the actual tree node
+        self.tree[curr_node_id] = ArrNode(
+            resulting_arrangement, resulting_robot_config, curr_node_id,
+            resulting_transit_from_info, resulting_obj_transfer_position_indices, obj_idx,
+            transition_path, resulting_cost_to_come, parent_node_id, resulting_object_ordering)
+        self.reachable.append(curr_node_id)
+
+
+
+
+
+
+

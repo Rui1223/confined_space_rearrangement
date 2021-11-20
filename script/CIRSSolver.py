@@ -38,7 +38,7 @@ class CIRSSolver(MonotoneLocalSolver):
         ### detect all invalid arrangement at which each object to be manipulated
         self.detectInvalidArrStates()
         LOCAL_TASK_SUCCESS = self.CIDFS_DP()
-        return LOCAL_TASK_SUCCESS, self.tree
+        return LOCAL_TASK_SUCCESS, self.tree, self.motion_planning_time
 
     def detectInvalidArrStates(self):
         '''This function detects all invalid states of arrangement
@@ -101,8 +101,10 @@ class CIRSSolver(MonotoneLocalSolver):
             ### otherwise, let's check this object by rearranging it
             obj_curr_position_idx = current_arrangement[obj_idx]
             obj_target_position_idx = self.target_arrangement[obj_idx]
+            start_time = time.time()
             rearrange_success, transition_path = self.serviceCall_rearrangeCylinderObject(
                 obj_idx, obj_target_position_idx, "Right_torso", isLabeledRoadmapUsed=self.isLabeledRoadmapUsed)
+            self.motion_planning_time += (time.time() - start_time)
             # print("\n====================")
             # print("rearranging_success: ", rearrange_success)
             # input("enter to continue")

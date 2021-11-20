@@ -60,8 +60,10 @@ class UnidirCIRSMIXPlanner(RearrangementTaskPlanner):
         ### (ii) randomly select an object and then buffer
         objects_yet_to_move = [
             i for i in range(len(self.final_arrangement)) if temp_node.arrangement[i] != self.final_arrangement[i]]
+        start_time = time.time()
         success, object_idx, buffer_idx, object_path = self.serviceCall_selectObjectAndBuffer(
                             objects_yet_to_move, self.final_arrangement, "Right_torso", self.heuristic_level, self.isLabeledRoadmapUsed)
+        self.motion_planning_time += (time.time() - start_time)
         if success == False:
             ### the perturbation process fails either due to failure to select an object or the failure to select a buffer
             return False, None
@@ -108,7 +110,8 @@ class UnidirCIRSMIXPlanner(RearrangementTaskPlanner):
         ### (ii) generate the subTree
         cirsmix_solver = CIRSMIXSolver(
             rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)
-        local_task_success, subTree = cirsmix_solver.cirsmix_solve()
+        local_task_success, subTree, local_motion_planning_time = cirsmix_solver.cirsmix_solve()
+        self.motion_planning_time += local_motion_planning_time
         ### (iii) engraft the subTree to the global search tree
         self.engraftingLeftTree(rootNode, subTree)
 

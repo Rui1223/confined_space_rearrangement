@@ -18,6 +18,7 @@ from confined_space_rearrangement.srv import GetCurrRobotConfig, GetCurrRobotCon
 from confined_space_rearrangement.srv import UpdateCertainObjectPose, UpdateCertainObjectPoseRequest
 from confined_space_rearrangement.srv import ResetRobotCurrConfig, ResetRobotCurrConfigRequest
 from confined_space_rearrangement.srv import UpdateManipulationStatus, UpdateManipulationStatusRequest
+from confined_space_rearrangement.srv import SetSceneBasedOnArrangement, SetSceneBasedOnArrangementRequest
 
 
 # Disable
@@ -50,32 +51,33 @@ class MonotoneLocalSolver(object):
         self.time_threshold = time_allowed
         self.local_planning_startTime = time.time()
 
+        ### record the (motion planning + collision checking) time
+        self.motion_planning_time = 0
 
-    def generateLocalNode(self, current_node_id, obj_idx, transition_path):
-        '''generate a local node which has parent node id == current_node_id,
-           given the obj_idx and the transition_path'''
-        current_arrangement = self.tree[current_node_id].arrangement
-        current_ordering = self.tree[current_node_id].object_ordering
 
+    def generateLocalNode(self, parent_node_id, obj_idx, transition_path):
+        '''generate a local node which has parent_node_id, given the obj_idx and the transition_path'''
+        current_arrangement = self.tree[parent_node_id].arrangement
         resulting_arrangement = copy.deepcopy(current_arrangement)
         resulting_arrangement[obj_idx] = self.target_arrangement[obj_idx]
+        current_ordering = self.tree[parent_node_id].object_ordering
         resulting_robot_config = self.serviceCall_getCurrRobotConfig()
-        if self.tree[current_node_id].objectTransferred_idx == None:
-            ### current_node is the root node, no transit info can be obtained in this case
+        if self.tree[parent_node_id].objectTransferred_idx == None:
+            ### parent node is the root node, no transit info can be obtained in this case
             resulting_transit_from_info = None
         else:
             resulting_transit_from_info = [
-                self.tree[current_node_id].objectTransferred_idx, \
-                self.tree[current_node_id].obj_transfer_position_indices[1]]
+                self.tree[parent_node_id].objectTransferred_idx, \
+                self.tree[parent_node_id].obj_transfer_position_indices[1]]
         resulting_obj_transfer_position_indices = [current_arrangement[obj_idx], self.target_arrangement[obj_idx]]
-        resulting_cost_to_come = self.tree[current_node_id].cost_to_come + 1
+        resulting_cost_to_come = self.tree[parent_node_id].cost_to_come + 1
         resulting_object_ordering = current_ordering + [obj_idx]
         ### add this newly-generated node
         self.node_idx += 1
         self.tree[self.node_idx] = ArrNode(
             resulting_arrangement, resulting_robot_config, self.node_idx, 
             resulting_transit_from_info, resulting_obj_transfer_position_indices, obj_idx, 
-            transition_path, resulting_cost_to_come, current_node_id, resulting_object_ordering
+            transition_path, resulting_cost_to_come, parent_node_id, resulting_object_ordering
         )
 
     def revertBackToParentNode(self, parent_node_id, obj_idx, obj_parent_position_idx, armType):
@@ -157,6 +159,21 @@ class MonotoneLocalSolver(object):
             return updateManipulationStatus_response.success
         except rospy.ServiceException as e:
             print("update_manipulation_status service call failed: %s" % e)
+
+    def serviceCall_setSceneBasedOnArrangementNode(self, arrangement, robotConfig, armType):
+        '''call the SetSceneBasedOnArrangement service to
+           set scene based on arrangement node'''
+        rospy.wait_for_service("set_scene_based_on_arrangement")
+        request = SetSceneBasedOnArrangementRequest()
+        request.arrangement = arrangement
+        request.robot_config.position = robotConfig
+        request.armType = armType
+        try:
+            setSceneBasedOnArrangement_proxy = rospy.ServiceProxy("set_scene_based_on_arrangement", SetSceneBasedOnArrangement)
+            setSceneBasedOnArrangement_response = setSceneBasedOnArrangement_proxy(request)
+            return setSceneBasedOnArrangement_response.success
+        except rospy.ServiceException as e:
+            print("set_scene_based_on_arrangement service call failed: %s" % e)
 
 
 
