@@ -250,8 +250,10 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         ### (2) verify each edge (rearranging an object) on the branch_to_check
         ### (2.1) first set the scene to the nearest-reachable node
         reachable_node = self.tree[branch_to_check[0]] ### actual tree node (ArrNode)
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(
                     reachable_node.arrangement, reachable_node.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (2.2) check each edge, up to the final node
         for edge_i in range(1, len(branch_to_check)):
             parent_node_id = branch_to_check[edge_i-1]

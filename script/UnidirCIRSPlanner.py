@@ -58,7 +58,9 @@ class UnidirCIRSPlanner(RearrangementTaskPlanner):
         ### (i) first randomly select a node
         temp_node_id = random.choice(self.idLeftRegistr)
         temp_node = self.treeL[temp_node_id]
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(temp_node.arrangement, temp_node.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (ii) randomly select an object and then buffer
         objects_yet_to_move = [
             i for i in range(len(self.final_arrangement)) if temp_node.arrangement[i] != self.final_arrangement[i]]
@@ -108,7 +110,9 @@ class UnidirCIRSPlanner(RearrangementTaskPlanner):
         rospy.logwarn("grow a subTree at root arrangement: %s" % str(rootNode.arrangement))
         rospy.logwarn("toward to target arrangement: %s" % str(target_arrangement))
         ### (i) set the scene to the rootNode arrangement
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(rootNode.arrangement, rootNode.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (ii) generate the subTree
         cirs_solver = CIRSSolver(
             rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)

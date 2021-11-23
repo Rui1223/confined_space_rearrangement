@@ -67,7 +67,7 @@ def main(args):
         ik_generate_success = utils2.serviceCall_generateConfigsForStartPositions("Right_torso")
 
         ###### run an example given the method specified ######
-        ### (0) Lazy CIRSMIX
+        ### (i) Lazy CIRSMIX
         if example_runner.method_name == "LazyCIRSMIX":
             start_time = time.time()
             the_chosen_planner = UnidirLazyCIRSMIXPlanner(
@@ -78,7 +78,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
 
-        ### (i) CIRSMIX
+        ### (ii) CIRSMIX
         if example_runner.method_name == "CIRSMIX":
             start_time = time.time()
             the_chosen_planner = UnidirCIRSMIXPlanner(
@@ -89,7 +89,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (ii) CIRS
+        ### (iii) CIRS
         if example_runner.method_name == "CIRS":
             start_time = time.time()
             the_chosen_planner = UnidirCIRSPlanner(
@@ -100,7 +100,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (iii) DFS_DP
+        ### (iv) DFS_DP
         if example_runner.method_name == "DFSDP":
             start_time = time.time()
             the_chosen_planner = UnidirDFSDPPlanner(
@@ -111,7 +111,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (iv) mRS
+        ### (v) mRS
         if example_runner.method_name == "mRS":
             start_time = time.time()
             the_chosen_planner = UnidirMRSPlanner(
@@ -123,6 +123,8 @@ def main(args):
                 isLabeledRoadmapUsed=False)
 
         planning_time = time.time() - start_time
+        motion_planning_time = the_chosen_planner.motion_planning_time
+        task_planning_time = planning_time - motion_planning_time
         isSolved = the_chosen_planner.isSolved
         nActions = the_chosen_planner.best_solution_cost
         if nActions == np.inf: nActions = 5000
@@ -131,6 +133,8 @@ def main(args):
 
         print("\n")
         print("Time for {} planning is: {}".format(example_runner.method_name, planning_time))
+        print("Time for {} motion planning is: {}".format(example_runner.method_name, motion_planning_time))
+        print("Time for {} task planning is: {}".format(example_runner.method_name, task_planning_time))
         print("Number of actions for {} planning is: {}".format(example_runner.method_name, nActions))
         print("Object ordering for {} planning is: {}".format(example_runner.method_name, object_ordering))
 

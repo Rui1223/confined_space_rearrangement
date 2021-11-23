@@ -270,6 +270,34 @@ def saveSolution(all_methods_time, all_methods_success, all_method_nActions, ins
         f_actions.write(str(method_nActions) + "\n")
     f_actions.close()
 
+def saveSolution2(all_methods_time, all_methods_motion_planning_time, all_methods_task_planning_time, \
+        all_methods_success, all_method_nActions, instanceFolder):
+    timeFile = instanceFolder + "/time.txt"
+    f_time = open(timeFile, "w")
+    for method_time in all_methods_time:
+        f_time.write(str(method_time) + "\n")
+    f_time.close()
+    motionTimeFile = instanceFolder + "/motion_planning_time.txt"
+    f_motionTime = open(motionTimeFile, "w")
+    for method_motion_planning_time in all_methods_motion_planning_time:
+        f_motionTime.write(str(method_motion_planning_time) + "\n")
+    f_motionTime.close()
+    taskTimeFile = instanceFolder + "/task_planning_time.txt"
+    f_taskTime = open(taskTimeFile, "w")
+    for method_task_planning_time in all_methods_task_planning_time:
+        f_taskTime.write(str(method_task_planning_time) + "\n")
+    f_taskTime.close()
+    successFile = instanceFolder + "/success.txt"
+    f_success = open(successFile, "w")
+    for method_success in all_methods_success:
+        f_success.write(str(method_success) + "\n")
+    f_success.close()
+    nActionsFile = instanceFolder + "/actions.txt"
+    f_actions = open(nActionsFile, "w")
+    for method_nActions in all_method_nActions:
+        f_actions.write(str(method_nActions) + "\n")
+    f_actions.close()
+
 def saveOrderingInfo(object_ordering, instanceFolder):
     orderingFile = instanceFolder + "/ordering.txt"
     f_ordering = open(orderingFile, "w")

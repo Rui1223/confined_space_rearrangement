@@ -131,11 +131,15 @@ class CIRSMIXSolver(MonotoneLocalSolver):
                         return FLAG
                     ### put the object and robot back to the configuration they belong to
                     ### at the beginning of the function call
+                    start_time = time.time()
                     self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                    self.motion_planning_time += (time.time() - start_time)
             else:
                 ### put the object and robot back to the configuration they belong to
                 ### at the beginning of the function call
+                start_time = time.time()
                 self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                self.motion_planning_time += (time.time() - start_time)
 
         ### the problem is not solved but there is no option
         ### the current arrangement is not the right parent

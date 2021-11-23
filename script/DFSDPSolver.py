@@ -33,7 +33,7 @@ class DFSDPSolver(MonotoneLocalSolver):
 
     def dfsdp_solve(self):
         LOCAL_TASK_SUCCESS = self.DFS_DP()
-        return LOCAL_TASK_SUCCESS, self.tree
+        return LOCAL_TASK_SUCCESS, self.tree, self.motion_planning_time
 
     def DFS_DP(self):
         '''search towards final arrangement based on current arrangement'''
@@ -66,8 +66,10 @@ class DFSDPSolver(MonotoneLocalSolver):
             ### let's check this object by rearranging it 
             obj_curr_position_idx = current_arrangement[obj_idx]
             obj_target_position_idx = self.target_arrangement[obj_idx]
+            start_time = time.time()
             rearrange_success, transition_path = self.serviceCall_rearrangeCylinderObject(
                 obj_idx, obj_target_position_idx, "Right_torso", isLabeledRoadmapUsed=self.isLabeledRoadmapUsed)
+            self.motion_planning_time += (time.time() - start_time)
             if rearrange_success:
                 self.generateLocalNode(current_node_id, obj_idx, transition_path)
                 ### recursive call
@@ -80,11 +82,15 @@ class DFSDPSolver(MonotoneLocalSolver):
                         return FLAG
                     ### put the object and robot back to the configuration they belong to
                     ### at the beginning of the function call
+                    start_time = time.time()
                     self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                    self.motion_planning_time += (time.time() - start_time)
             else:
                 ### put the object and robot back to the configuration they belong to
                 ### at the beginning of the function call
+                start_time = time.time()
                 self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                self.motion_planning_time += (time.time() - start_time)
         
         ### the problem is not solved but there is no option
         ### the current arrangement is not the right parent

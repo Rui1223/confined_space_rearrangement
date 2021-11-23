@@ -34,18 +34,83 @@ class UnidirLazyCIRSMIXPlanner(RearrangementTaskPlanner):
 
         remaining_time_allowed = self.time_threshold - (time.time() - self.planning_startTime)
         self.growSubTree(self.treeL["L0"], self.final_arrangement, remaining_time_allowed, self.isLabeledRoadmapUsed)
+        while (self.isSolved == False):
+            remaining_time_allowed = self.time_threshold - (time.time() - self.planning_startTime)
+            if (remaining_time_allowed > 0):
+                ### do a perturbation
+                perturb_success, perturb_node = self.perturbNode()
+                if not perturb_success: continue
+                else:
+                    remaining_time_allowed = self.time_threshold - (time.time() - self.planning_startTime)
+                    self.growSubTree(perturb_node, self.final_arrangement, remaining_time_allowed, self.isLabeledRoadmapUsed)
+            else:
+                break
 
-        #### **** let's first deal with only monotone instance **** ####
         if self.isSolved:
             self.harvestSolution()
-        #### ****************************************************** ####
+
+
+    def perturbNode(self):
+        '''this function selects a node to perturb by
+           choosing an object to put on a buffer'''
+        ### (i) first randomly select a node
+        temp_node_id = random.choice(self.idLeftRegistr)
+        temp_node = self.treeL[temp_node_id]
+        start_time = time.time()
+        set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(temp_node.arrangement, temp_node.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
+        ### (ii) randomly select an object and then buffer
+        objects_yet_to_move = [
+            i for i in range(len(self.final_arrangement)) if temp_node.arrangement[i] != self.final_arrangement[i]]
+        start_time = time.time()
+        success, object_idx, buffer_idx, object_path = self.serviceCall_selectObjectAndBuffer(
+                            objects_yet_to_move, self.final_arrangement, "Right_torso", self.heuristic_level, self.isLabeledRoadmapUsed)
+        self.motion_planning_time += (time.time() - start_time)
+        if success == False:
+            ### the perturbation process fails either due to failure to select an object or the failure to select a buffer
+            return False, None
+        else:
+            ### the perturbation is a success, generate a tree node for this perturbation
+            perturbed_arrangement = copy.deepcopy(temp_node.arrangement)
+            perturbed_arrangement[object_idx] = buffer_idx
+            robot_config = self.serviceCall_getCurrRobotConfig()
+            node_id = 0 ### temporarily set to 0
+            if temp_node.objectTransferred_idx == None:
+                ### in case perturbation happens from the very initial node
+                transit_from_info = None
+            else:
+                transit_from_info = [temp_node.objectTransferred_idx, temp_node.obj_transfer_position_indices[1]]
+            obj_transfer_position_indices = [temp_node.arrangement[object_idx], buffer_idx]
+            objectTransferred_idx = object_idx
+            transition_path = object_path
+            cost_to_come = temp_node.cost_to_come + 1
+            parent_id = temp_node.node_id
+            perturbed_object_ordering = copy.deepcopy(temp_node.object_ordering)
+            perturbed_object_ordering = perturbed_object_ordering + [object_idx]
+            perturbation_node = ArrNode(
+                perturbed_arrangement, robot_config, node_id, transit_from_info, 
+                obj_transfer_position_indices, objectTransferred_idx, transition_path,
+                cost_to_come, parent_id, perturbed_object_ordering
+            )
+            ### before add this node to the tree, check it this resulting node is already in the tree
+            isSameNodeInTheTree, same_nodeID = self.checkSameArrangementNodeInTheLeftTree(perturbation_node)
+            if not isSameNodeInTheTree:
+                ### then add this node in the tree
+                self.left_idx += 1
+                perturbation_node.updateNodeID("L"+str(self.left_idx))
+                self.treeL["L"+str(self.left_idx)] = perturbation_node
+                return True, perturbation_node
+            else:
+                return False, None
 
 
     def growSubTree(self, rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed):
         rospy.logwarn("grow a subTree at root arrangement: %s" % str(rootNode.arrangement))
         rospy.logwarn("toward to target arrangement: %s" % str(target_arrangement))
         ### (i) set the scene to the rootNode arrangement
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(rootNode.arrangement, rootNode.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (ii) generate the subTree
         lazy_cirsmix_solver = LazyCIRSMIXSolver(
             rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)

@@ -58,12 +58,16 @@ class UnidirDFSDPPlanner(RearrangementTaskPlanner):
         ### (i) first randomly select a node
         temp_node_id = random.choice(self.idLeftRegistr)
         temp_node = self.treeL[temp_node_id]
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(temp_node.arrangement, temp_node.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (ii) randomly select an object and then buffer
         objects_yet_to_move = [
             i for i in range(len(self.final_arrangement)) if temp_node.arrangement[i] != self.final_arrangement[i]]
+        start_time = time.time()
         success, object_idx, buffer_idx, object_path = self.serviceCall_selectObjectAndBuffer(
                             objects_yet_to_move, self.final_arrangement, "Right_torso", self.heuristic_level, self.isLabeledRoadmapUsed)
+        self.motion_planning_time += (time.time() - start_time)
         if success == False:
             ### the perturbation process fails either due to failure to select an object or the failure to select a buffer
             return False, None
@@ -106,11 +110,14 @@ class UnidirDFSDPPlanner(RearrangementTaskPlanner):
         rospy.logwarn("grow a subTree at root arrangement: %s" % str(rootNode.arrangement))
         rospy.logwarn("toward to target arrangement: %s" % str(target_arrangement))
         ### (i) set the scene to the rootNode arrangement
+        start_time = time.time()
         set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(rootNode.arrangement, rootNode.robotConfig, "Right_torso")
+        self.motion_planning_time += (time.time() - start_time)
         ### (ii) generate the subTree
         dfsdp_solver = DFSDPSolver(
             rootNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)
-        local_task_success, subTree = dfsdp_solver.dfsdp_solve()
+        local_task_success, subTree, local_motion_planning_time = dfsdp_solver.dfsdp_solve()
+        self.motion_planning_time += local_motion_planning_time
         ### (iii) engraft the subTree to the global search tree
         self.engraftingLeftTree(rootNode, subTree)
 

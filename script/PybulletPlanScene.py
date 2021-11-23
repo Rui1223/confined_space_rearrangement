@@ -82,8 +82,8 @@ class PybulletPlanScene(object):
         self.rosPackagePath = rospack.get_path("confined_space_rearrangement")
 	
         ### set the server for the pybullet plan scene
-        # self.planningClientID = p.connect(p.DIRECT)
-        self.planningClientID = p.connect(p.GUI)
+        self.planningClientID = p.connect(p.DIRECT)
+        # self.planningClientID = p.connect(p.GUI)
         # p.setAdditionalSearchPath(pybullet_data.getDataPath())
         # self.egl_plugin = p.loadPlugin(egl.get_filename(), "_eglRendererPlugin")
         # print("plugin=", self.egl_plugin)
