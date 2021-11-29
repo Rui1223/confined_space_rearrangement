@@ -241,6 +241,8 @@ class VirtualTreeNode(object):
         self.objectTransferred_idx = objectTransferred_idx
         self.cost_to_come = cost_to_come
         self.parent_id = parent_id
+        self.child_ids = set() ### now store child_ids
+        self.reachable = False ### by default, a virtual node is not reachable
 
     def updateNodeID(self, node_id):
         self.node_id = node_id
@@ -253,3 +255,12 @@ class VirtualTreeNode(object):
 
     def updateParent(self, parent_id):
         self.parent_id = parent_id
+
+    def addChild(self, child_id):
+        self.child_ids.add(child_id)
+
+    def removeChild(self, child_id):
+        self.child_ids.remove(child_id)
+
+    def updateReachableStatus(self, isReachable):
+        self.reachable = isReachable

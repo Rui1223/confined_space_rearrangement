@@ -28,16 +28,17 @@ def enablePrint():
     sys.stdout = sys.__stdout__
 
 
-class LazyCIRSMIXSolver(MonotoneLocalSolver):
+class LazyCIRSMIX2Solver(MonotoneLocalSolver):
     def __init__(self, startArrNode, target_arrangement, time_allowed, isLabeledRoadmapUsed=True):
         MonotoneLocalSolver.__init__(
             self, startArrNode, target_arrangement, time_allowed, isLabeledRoadmapUsed)
-        rospy.logwarn("a lazy CIRSMIXSolver starts to work")
+        rospy.logwarn("a lazy CIRSMIXSolver version 2 starts to work")
         self.explored = [] ### a list of arrangements which have been explored
         self.virtual_tree = OrderedDict() ### key: (scalar 0,1,etc..) value: VirtualNode
         self.virtual_node_idx = 0 ### start from root node (idx: 0)
         self.virtual_tree[0] = VirtualTreeNode(
             startArrNode.arrangement, 0, None, 0, None)
+        self.virtual_tree[0].updateReachableStatus(True) ### mark the root as reachable (always)
         ### this container includes all the nodes which are already in the actual tree,
         ### which are reachable from the local root
         self.reachable = [0]
@@ -46,7 +47,7 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         ### (2) back-jumping (self.backTracking = False)
         self.backTracking = True ### initially it is back-tracking stage
 
-    def lazy_cirsmix_solve(self):
+    def lazy_cirsmix2_solve(self):
         ### before the search, given start_arrangement and target_arrangement
         ### (1) detect constraints arising from initial positions
         start_time = time.time()
@@ -54,7 +55,13 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         self.motion_planning_time += (time.time() - start_time)
         ### (2) detect all invalid arrangement at which each object to be manipulated
         self.detectInvalidArrStates_mix()
-        LOCAL_TASK_SUCCESS = self.LAZY_CIDFS_DP()
+        LOCAL_TASK_SUCCESS = self.LAZY_CIDFS_DP2()
+        ### ************************* ###
+        if not LOCAL_TASK_SUCCESS:
+            ### the local solution is not found
+            ### we need to get the actual tree
+            restoreTree(0)
+        ### ************************* ###
         return LOCAL_TASK_SUCCESS, self.tree, self.motion_planning_time
 
     def detectInitialConstraints(self):
@@ -84,7 +91,7 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         #     print(arr_states)
         # input("Press to continue...")
 
-    def LAZY_CIDFS_DP(self):
+    def LAZY_CIDFS_DP2(self):
         '''search towards final arrangement based on current arrangement'''
         '''generate a virtual tree'''
         ###### return FLAG==true if the final arrangement can be reached by the virtual tree ######
@@ -132,7 +139,7 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
             ### generate a virtual node for the resulting arrangement
             self.generateVirtualNode(current_node_id, obj_idx)
             ### recursive call
-            FLAG = self.LAZY_CIDFS_DP()
+            FLAG = self.LAZY_CIDFS_DP2()
             if FLAG:
                 return FLAG
             else:
@@ -222,6 +229,8 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
         self.virtual_tree[self.virtual_node_idx] = VirtualTreeNode(
             resulting_arrangement, self.virtual_node_idx, obj_idx,
             resulting_cost_to_come, current_node_id)
+        ### mark this new node as a child node (self.virtual_node_idx) of the parent node (current_node_id)
+        self.virtual_tree[current_node_id].addChild(self.virtual_node_idx)
 
         # print("object to move: " + str(obj_idx))
         # print("parent node id: " + str(current_node_id))
@@ -270,13 +279,15 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
             else:
                 ### the current branch failed at the edge (parent_node_id --> curr_node_id)
                 print("fail to rearrange object " + str(obj_idx))
+                ### remove the child node (curr_node_id) out of the parent node (parent_node_id)
+                self.virtual_tree[parent_node_id].removeChild(curr_node_id)
                 return False, parent_node_id
         ### reach here as all edges lead to rearrange success
         return True, None
 
 
     def convertVirtualToActualNode(self, parent_node_id, curr_node_id, obj_idx, transition_path):
-        '''This function convert a virtual tree node (curr_node_id) with parent (parent_node_id)
+        '''This function converts a virtual tree node (curr_node_id) with parent (parent_node_id)
            into an actual tree node'''
         resulting_arrangement = self.virtual_tree[curr_node_id].arrangement
         resulting_robot_config = self.serviceCall_getCurrRobotConfig()
@@ -296,10 +307,23 @@ class LazyCIRSMIXSolver(MonotoneLocalSolver):
             resulting_transit_from_info, resulting_obj_transfer_position_indices, obj_idx,
             transition_path, resulting_cost_to_come, parent_node_id, resulting_object_ordering)
         self.reachable.append(curr_node_id)
+        self.virtual_tree[curr_node_id].updateReachableStatus(True)
 
 
+    def restoreTree(self, root_id):
+        '''This function restore the self.tree given the virtual tree info,
+           starting at root node (root_id)'''
+        if len(self.virtual_tree) == 1:
+            ### the virtual tree only contains the root node
+            ### basically indicates the tree is not really growing
+            ### then there is nothing to restore
+            return
 
-
-
-
-
+        ### use BFS to restore the tree based on the virtual tree information
+        queue = [0]
+        while (len(queue) != 0):
+            parent_id = queue.pop()
+            ### get all the children of this parent node
+            for child_id in self.virtual_tree[parent_id].child_ids:
+                
+        
