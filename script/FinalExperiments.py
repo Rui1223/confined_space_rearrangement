@@ -16,6 +16,7 @@ from UnidirDFSDPPlanner import UnidirDFSDPPlanner
 from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
 from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
+from UnidirLazyCIRSMIX2Planner import UnidirLazyCIRSMIX2Planner
 
 ############################### description ###########################################
 ### This class defines a FinalExperimenter class which
@@ -37,7 +38,7 @@ class FinalExperimenter(object):
         self.ExperimentsFolder = os.path.join(self.rosPackagePath, "final_experiments")
         if not os.path.exists(self.ExperimentsFolder):
             os.makedirs(self.ExperimentsFolder)
-        self.numObjects_options = [7,8,9,10,11,12,13,14]
+        self.numObjects_options = [11,12,13]
         self.numExperiments_perObject = int(args[1])
         self.maxInstancesNeed_perObject = int(args[2])
         self.time_allowed_monotone = 120
@@ -61,56 +62,74 @@ class FinalExperimenter(object):
     def initializeObjLevelStat(self):
         ### initialize obj-level statistics variable
         self.Lazy_CIRSMIX_time_obj_m = []
-        self.CIRSMIX_time_obj_m = []
+        # self.CIRSMIX_time_obj_m = []
         self.CIRS_time_obj_m = []
-        self.DFSDP_time_obj_m = []
-        self.mRS_time_obj_m = []
+        self.Lazy_CIRSMIX2_time_obj_m = []
+        # self.DFSDP_time_obj_m = []
+        # self.mRS_time_obj_m = []
+
         self.Lazy_CIRSMIX_motionTime_obj_m = []
-        self.CIRSMIX_motionTime_obj_m = []
+        # self.CIRSMIX_motionTime_obj_m = []
         self.CIRS_motionTime_obj_m = []
-        self.DFSDP_motionTime_obj_m = []
-        self.mRS_motionTime_obj_m = []
+        self.Lazy_CIRSMIX2_motionTime_obj_m = []
+        # self.DFSDP_motionTime_obj_m = []
+        # self.mRS_motionTime_obj_m = []
+
         self.Lazy_CIRSMIX_taskTime_obj_m = []
-        self.CIRSMIX_taskTime_obj_m = []
+        # self.CIRSMIX_taskTime_obj_m = []
         self.CIRS_taskTime_obj_m = []
-        self.DFSDP_taskTime_obj_m = []
-        self.mRS_taskTime_obj_m = []
+        self.Lazy_CIRSMIX2_taskTime_obj_m = []
+        # self.DFSDP_taskTime_obj_m = []
+        # self.mRS_taskTime_obj_m = []
+
         self.Lazy_CIRSMIX_success_obj_m = []
-        self.CIRSMIX_success_obj_m = []
+        # self.CIRSMIX_success_obj_m = []
         self.CIRS_success_obj_m = []
-        self.DFSDP_success_obj_m = []
-        self.mRS_success_obj_m = []
+        self.Lazy_CIRSMIX2_success_obj_m = []
+        # self.DFSDP_success_obj_m = []
+        # self.mRS_success_obj_m = []
+
         self.Lazy_CIRSMIX_nActions_obj_m = []
-        self.CIRSMIX_nActions_obj_m = []
+        # self.CIRSMIX_nActions_obj_m = []
         self.CIRS_nActions_obj_m = []
-        self.DFSDP_nActions_obj_m = []
-        self.mRS_nActions_obj_m = []
+        self.Lazy_CIRSMIX2_nActions_obj_m = []
+        # self.DFSDP_nActions_obj_m = []
+        # self.mRS_nActions_obj_m = []
 
         self.Lazy_CIRSMIX_time_obj_nm = []
-        self.CIRSMIX_time_obj_nm = []
+        # self.CIRSMIX_time_obj_nm = []
         self.CIRS_time_obj_nm = []
-        self.DFSDP_time_obj_nm = []
-        self.mRS_time_obj_nm = []
+        self.Lazy_CIRSMIX2_time_obj_nm = []
+        # self.DFSDP_time_obj_nm = []
+        # self.mRS_time_obj_nm = []
+
         self.Lazy_CIRSMIX_motionTime_obj_nm = []
-        self.CIRSMIX_motionTime_obj_nm = []
+        # self.CIRSMIX_motionTime_obj_nm = []
         self.CIRS_motionTime_obj_nm = []
-        self.DFSDP_motionTime_obj_nm = []
-        self.mRS_motionTime_obj_nm = []
+        self.Lazy_CIRSMIX2_motionTime_obj_nm = []
+        # self.DFSDP_motionTime_obj_nm = []
+        # self.mRS_motionTime_obj_nm = []
+
         self.Lazy_CIRSMIX_taskTime_obj_nm = []
-        self.CIRSMIX_taskTime_obj_nm = []
+        # self.CIRSMIX_taskTime_obj_nm = []
         self.CIRS_taskTime_obj_nm = []
-        self.DFSDP_taskTime_obj_nm = []
-        self.mRS_taskTime_obj_nm = []
+        self.Lazy_CIRSMIX2_taskTime_obj_nm = []
+        # self.DFSDP_taskTime_obj_nm = []
+        # self.mRS_taskTime_obj_nm = []
+
         self.Lazy_CIRSMIX_success_obj_nm = []
-        self.CIRSMIX_success_obj_nm = []
+        # self.CIRSMIX_success_obj_nm = []
         self.CIRS_success_obj_nm = []
-        self.DFSDP_success_obj_nm = []
-        self.mRS_success_obj_nm = []
+        self.Lazy_CIRSMIX2_success_obj_nm = []
+        # self.DFSDP_success_obj_nm = []
+        # self.mRS_success_obj_nm = []
+
         self.Lazy_CIRSMIX_nActions_obj_nm = []
-        self.CIRSMIX_nActions_obj_nm = []
+        # self.CIRSMIX_nActions_obj_nm = []
         self.CIRS_nActions_obj_nm = []
-        self.DFSDP_nActions_obj_nm = []
-        self.mRS_nActions_obj_nm = []
+        self.Lazy_CIRSMIX2_nActions_obj_nm = []
+        # self.DFSDP_nActions_obj_nm = []
+        # self.mRS_nActions_obj_nm = []
 
     def saveAverageSolutionPerNumObject(self):
         ######################################## monotone ########################################
@@ -123,11 +142,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_time_obj_m = 10000
         all_methods_average_time_obj_m.append(average_lazy_cirsmix_time_obj_m)
 
-        if len(self.CIRSMIX_time_obj_m) != 0:
-            average_cirsmix_time_obj_m = sum(self.CIRSMIX_time_obj_m) / len(self.CIRSMIX_time_obj_m)
-        else:
-            average_cirsmix_time_obj_m = 10000
-        all_methods_average_time_obj_m.append(average_cirsmix_time_obj_m)
+        # if len(self.CIRSMIX_time_obj_m) != 0:
+        #     average_cirsmix_time_obj_m = sum(self.CIRSMIX_time_obj_m) / len(self.CIRSMIX_time_obj_m)
+        # else:
+        #     average_cirsmix_time_obj_m = 10000
+        # all_methods_average_time_obj_m.append(average_cirsmix_time_obj_m)
 
         if len(self.CIRS_time_obj_m) != 0:
             average_cirs_time_obj_m = sum(self.CIRS_time_obj_m) / len(self.CIRS_time_obj_m)
@@ -135,17 +154,23 @@ class FinalExperimenter(object):
             average_cirs_time_obj_m = 10000
         all_methods_average_time_obj_m.append(average_cirs_time_obj_m)
 
-        if len(self.DFSDP_time_obj_m) != 0:
-            average_DFSDP_time_obj_m = sum(self.DFSDP_time_obj_m) / len(self.DFSDP_time_obj_m)
+        if len(self.Lazy_CIRSMIX2_time_obj_m) != 0:
+            average_lazy_cirsmix2_time_obj_m = sum(self.Lazy_CIRSMIX2_time_obj_m) / len(self.Lazy_CIRSMIX2_time_obj_m)
         else:
-            average_DFSDP_time_obj_m = 10000
-        all_methods_average_time_obj_m.append(average_DFSDP_time_obj_m)
+            average_lazy_cirsmix2_time_obj_m = 10000
+        all_methods_average_time_obj_m.append(average_lazy_cirsmix2_time_obj_m)
 
-        if len(self.mRS_time_obj_m) != 0:
-            average_mRS_time_obj_m = sum(self.mRS_time_obj_m) / len(self.mRS_time_obj_m)
-        else:
-            average_mRS_time_obj_m = 10000
-        all_methods_average_time_obj_m.append(average_mRS_time_obj_m)
+        # if len(self.DFSDP_time_obj_m) != 0:
+        #     average_DFSDP_time_obj_m = sum(self.DFSDP_time_obj_m) / len(self.DFSDP_time_obj_m)
+        # else:
+        #     average_DFSDP_time_obj_m = 10000
+        # all_methods_average_time_obj_m.append(average_DFSDP_time_obj_m)
+
+        # if len(self.mRS_time_obj_m) != 0:
+        #     average_mRS_time_obj_m = sum(self.mRS_time_obj_m) / len(self.mRS_time_obj_m)
+        # else:
+        #     average_mRS_time_obj_m = 10000
+        # all_methods_average_time_obj_m.append(average_mRS_time_obj_m)
 
         ################### average motion planning time ###################
         all_methods_average_motionTime_obj_m = []
@@ -156,11 +181,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_motionTime_obj_m = 10000
         all_methods_average_motionTime_obj_m.append(average_lazy_cirsmix_motionTime_obj_m)
 
-        if len(self.CIRSMIX_motionTime_obj_m) != 0:
-            average_cirsmix_motionTime_obj_m = sum(self.CIRSMIX_motionTime_obj_m) / len(self.CIRSMIX_motionTime_obj_m)
-        else:
-            average_cirsmix_motionTime_obj_m = 10000
-        all_methods_average_motionTime_obj_m.append(average_cirsmix_motionTime_obj_m)
+        # if len(self.CIRSMIX_motionTime_obj_m) != 0:
+        #     average_cirsmix_motionTime_obj_m = sum(self.CIRSMIX_motionTime_obj_m) / len(self.CIRSMIX_motionTime_obj_m)
+        # else:
+        #     average_cirsmix_motionTime_obj_m = 10000
+        # all_methods_average_motionTime_obj_m.append(average_cirsmix_motionTime_obj_m)
 
         if len(self.CIRS_motionTime_obj_m) != 0:
             average_cirs_motionTime_obj_m = sum(self.CIRS_motionTime_obj_m) / len(self.CIRS_motionTime_obj_m)
@@ -168,17 +193,23 @@ class FinalExperimenter(object):
             average_cirs_motionTime_obj_m = 10000
         all_methods_average_motionTime_obj_m.append(average_cirs_motionTime_obj_m)
 
-        if len(self.DFSDP_motionTime_obj_m) != 0:
-            average_DFSDP_motionTime_obj_m = sum(self.DFSDP_motionTime_obj_m) / len(self.DFSDP_motionTime_obj_m)
+        if len(self.Lazy_CIRSMIX2_motionTime_obj_m) != 0:
+            average_lazy_cirsmix2_motionTime_obj_m = sum(self.Lazy_CIRSMIX2_motionTime_obj_m) / len(self.Lazy_CIRSMIX2_motionTime_obj_m)
         else:
-            average_DFSDP_motionTime_obj_m = 10000
-        all_methods_average_motionTime_obj_m.append(average_DFSDP_motionTime_obj_m)
+            average_lazy_cirsmix2_motionTime_obj_m = 10000
+        all_methods_average_motionTime_obj_m.append(average_lazy_cirsmix2_motionTime_obj_m)
 
-        if len(self.mRS_motionTime_obj_m) != 0:
-            average_mRS_motionTime_obj_m = sum(self.mRS_motionTime_obj_m) / len(self.mRS_motionTime_obj_m)
-        else:
-            average_mRS_motionTime_obj_m = 10000
-        all_methods_average_motionTime_obj_m.append(average_mRS_motionTime_obj_m)
+        # if len(self.DFSDP_motionTime_obj_m) != 0:
+        #     average_DFSDP_motionTime_obj_m = sum(self.DFSDP_motionTime_obj_m) / len(self.DFSDP_motionTime_obj_m)
+        # else:
+        #     average_DFSDP_motionTime_obj_m = 10000
+        # all_methods_average_motionTime_obj_m.append(average_DFSDP_motionTime_obj_m)
+
+        # if len(self.mRS_motionTime_obj_m) != 0:
+        #     average_mRS_motionTime_obj_m = sum(self.mRS_motionTime_obj_m) / len(self.mRS_motionTime_obj_m)
+        # else:
+        #     average_mRS_motionTime_obj_m = 10000
+        # all_methods_average_motionTime_obj_m.append(average_mRS_motionTime_obj_m)
 
         ################### average task planning time ###################
         all_methods_average_taskTime_obj_m = []
@@ -189,11 +220,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_taskTime_obj_m = 10000
         all_methods_average_taskTime_obj_m.append(average_lazy_cirsmix_taskTime_obj_m)
 
-        if len(self.CIRSMIX_taskTime_obj_m) != 0:
-            average_cirsmix_taskTime_obj_m = sum(self.CIRSMIX_taskTime_obj_m) / len(self.CIRSMIX_taskTime_obj_m)
-        else:
-            average_cirsmix_taskTime_obj_m = 10000
-        all_methods_average_taskTime_obj_m.append(average_cirsmix_taskTime_obj_m)
+        # if len(self.CIRSMIX_taskTime_obj_m) != 0:
+        #     average_cirsmix_taskTime_obj_m = sum(self.CIRSMIX_taskTime_obj_m) / len(self.CIRSMIX_taskTime_obj_m)
+        # else:
+        #     average_cirsmix_taskTime_obj_m = 10000
+        # all_methods_average_taskTime_obj_m.append(average_cirsmix_taskTime_obj_m)
 
         if len(self.CIRS_taskTime_obj_m) != 0:
             average_cirs_taskTime_obj_m = sum(self.CIRS_taskTime_obj_m) / len(self.CIRS_taskTime_obj_m)
@@ -201,17 +232,23 @@ class FinalExperimenter(object):
             average_cirs_taskTime_obj_m = 10000
         all_methods_average_taskTime_obj_m.append(average_cirs_taskTime_obj_m)
 
-        if len(self.DFSDP_taskTime_obj_m) != 0:
-            average_DFSDP_taskTime_obj_m = sum(self.DFSDP_taskTime_obj_m) / len(self.DFSDP_taskTime_obj_m)
+        if len(self.Lazy_CIRSMIX2_taskTime_obj_m) != 0:
+            average_lazy_cirsmix2_taskTime_obj_m = sum(self.Lazy_CIRSMIX2_taskTime_obj_m) / len(self.Lazy_CIRSMIX2_taskTime_obj_m)
         else:
-            average_DFSDP_taskTime_obj_m = 10000
-        all_methods_average_taskTime_obj_m.append(average_DFSDP_taskTime_obj_m)
+            average_lazy_cirsmix2_taskTime_obj_m = 10000
+        all_methods_average_taskTime_obj_m.append(average_lazy_cirsmix2_taskTime_obj_m)
 
-        if len(self.mRS_taskTime_obj_m) != 0:
-            average_mRS_taskTime_obj_m = sum(self.mRS_taskTime_obj_m) / len(self.mRS_taskTime_obj_m)
-        else:
-            average_mRS_taskTime_obj_m = 10000
-        all_methods_average_taskTime_obj_m.append(average_mRS_taskTime_obj_m)
+        # if len(self.DFSDP_taskTime_obj_m) != 0:
+        #     average_DFSDP_taskTime_obj_m = sum(self.DFSDP_taskTime_obj_m) / len(self.DFSDP_taskTime_obj_m)
+        # else:
+        #     average_DFSDP_taskTime_obj_m = 10000
+        # all_methods_average_taskTime_obj_m.append(average_DFSDP_taskTime_obj_m)
+
+        # if len(self.mRS_taskTime_obj_m) != 0:
+        #     average_mRS_taskTime_obj_m = sum(self.mRS_taskTime_obj_m) / len(self.mRS_taskTime_obj_m)
+        # else:
+        #     average_mRS_taskTime_obj_m = 10000
+        # all_methods_average_taskTime_obj_m.append(average_mRS_taskTime_obj_m)
 
         ################### average success ###################
         all_methods_average_success_obj_m = []
@@ -222,11 +259,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_success_obj_m = 10000
         all_methods_average_success_obj_m.append(average_lazy_cirsmix_success_obj_m)
 
-        if len(self.CIRSMIX_success_obj_m) != 0:
-            average_cirsmix_success_obj_m = sum(self.CIRSMIX_success_obj_m) / len(self.CIRSMIX_success_obj_m)
-        else:
-            average_cirsmix_success_obj_m = 10000
-        all_methods_average_success_obj_m.append(average_cirsmix_success_obj_m)
+        # if len(self.CIRSMIX_success_obj_m) != 0:
+        #     average_cirsmix_success_obj_m = sum(self.CIRSMIX_success_obj_m) / len(self.CIRSMIX_success_obj_m)
+        # else:
+        #     average_cirsmix_success_obj_m = 10000
+        # all_methods_average_success_obj_m.append(average_cirsmix_success_obj_m)
 
         if len(self.CIRS_success_obj_m) != 0:
             average_cirs_success_obj_m = sum(self.CIRS_success_obj_m) / len(self.CIRS_success_obj_m)
@@ -234,17 +271,23 @@ class FinalExperimenter(object):
             average_cirs_success_obj_m = 0.0
         all_methods_average_success_obj_m.append(average_cirs_success_obj_m)
 
-        if len(self.DFSDP_success_obj_m) != 0:
-            average_DFSDP_success_obj_m = sum(self.DFSDP_success_obj_m) / len(self.DFSDP_success_obj_m)
+        if len(self.Lazy_CIRSMIX2_success_obj_m) != 0:
+            average_lazy_cirsmix2_success_obj_m = sum(self.Lazy_CIRSMIX2_success_obj_m) / len(self.Lazy_CIRSMIX2_success_obj_m)
         else:
-            average_DFSDP_success_obj_m = 0.0
-        all_methods_average_success_obj_m.append(average_DFSDP_success_obj_m)
+            average_lazy_cirsmix2_success_obj_m = 10000
+        all_methods_average_success_obj_m.append(average_lazy_cirsmix2_success_obj_m)
 
-        if len(self.mRS_success_obj_m) != 0:
-            average_mRS_success_obj_m = sum(self.mRS_success_obj_m) / len(self.mRS_success_obj_m)
-        else:
-            average_mRS_success_obj_m = 0.0
-        all_methods_average_success_obj_m.append(average_mRS_success_obj_m)
+        # if len(self.DFSDP_success_obj_m) != 0:
+        #     average_DFSDP_success_obj_m = sum(self.DFSDP_success_obj_m) / len(self.DFSDP_success_obj_m)
+        # else:
+        #     average_DFSDP_success_obj_m = 0.0
+        # all_methods_average_success_obj_m.append(average_DFSDP_success_obj_m)
+
+        # if len(self.mRS_success_obj_m) != 0:
+        #     average_mRS_success_obj_m = sum(self.mRS_success_obj_m) / len(self.mRS_success_obj_m)
+        # else:
+        #     average_mRS_success_obj_m = 0.0
+        # all_methods_average_success_obj_m.append(average_mRS_success_obj_m)
 
         ################### average nActions ###################
         all_methods_average_nActions_obj_m = []
@@ -255,11 +298,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_nActions_obj_m = 10000
         all_methods_average_nActions_obj_m.append(average_lazy_cirsmix_nActions_obj_m)
 
-        if len(self.CIRSMIX_nActions_obj_m) != 0:
-            average_cirsmix_nActions_obj_m = sum(self.CIRSMIX_nActions_obj_m) / len(self.CIRSMIX_nActions_obj_m)
-        else:
-            average_cirsmix_nActions_obj_m = 10000
-        all_methods_average_nActions_obj_m.append(average_cirsmix_nActions_obj_m)
+        # if len(self.CIRSMIX_nActions_obj_m) != 0:
+        #     average_cirsmix_nActions_obj_m = sum(self.CIRSMIX_nActions_obj_m) / len(self.CIRSMIX_nActions_obj_m)
+        # else:
+        #     average_cirsmix_nActions_obj_m = 10000
+        # all_methods_average_nActions_obj_m.append(average_cirsmix_nActions_obj_m)
 
         if len(self.CIRS_nActions_obj_m) != 0:
             average_cirs_nActions_obj_m = sum(self.CIRS_nActions_obj_m) / len(self.CIRS_nActions_obj_m)
@@ -267,17 +310,23 @@ class FinalExperimenter(object):
             average_cirs_nActions_obj_m = 0.0
         all_methods_average_nActions_obj_m.append(average_cirs_nActions_obj_m)
 
-        if len(self.DFSDP_nActions_obj_m) != 0:
-            average_DFSDP_nActions_obj_m = sum(self.DFSDP_nActions_obj_m) / len(self.DFSDP_nActions_obj_m)
+        if len(self.Lazy_CIRSMIX2_nActions_obj_m) != 0:
+            average_lazy_cirsmix2_nActions_obj_m = sum(self.Lazy_CIRSMIX2_nActions_obj_m) / len(self.Lazy_CIRSMIX2_nActions_obj_m)
         else:
-            average_DFSDP_nActions_obj_m = 0.0
-        all_methods_average_nActions_obj_m.append(average_DFSDP_nActions_obj_m)
+            average_lazy_cirsmix2_nActions_obj_m = 10000
+        all_methods_average_nActions_obj_m.append(average_lazy_cirsmix2_nActions_obj_m)
 
-        if len(self.mRS_nActions_obj_m) != 0:
-            average_mRS_nActions_obj_m = sum(self.mRS_nActions_obj_m) / len(self.mRS_nActions_obj_m)
-        else:
-            average_mRS_nActions_obj_m = 0.0
-        all_methods_average_nActions_obj_m.append(average_mRS_nActions_obj_m)
+        # if len(self.DFSDP_nActions_obj_m) != 0:
+        #     average_DFSDP_nActions_obj_m = sum(self.DFSDP_nActions_obj_m) / len(self.DFSDP_nActions_obj_m)
+        # else:
+        #     average_DFSDP_nActions_obj_m = 0.0
+        # all_methods_average_nActions_obj_m.append(average_DFSDP_nActions_obj_m)
+
+        # if len(self.mRS_nActions_obj_m) != 0:
+        #     average_mRS_nActions_obj_m = sum(self.mRS_nActions_obj_m) / len(self.mRS_nActions_obj_m)
+        # else:
+        #     average_mRS_nActions_obj_m = 0.0
+        # all_methods_average_nActions_obj_m.append(average_mRS_nActions_obj_m)
 
         ### save average results
         utils2.saveSolution2(
@@ -295,11 +344,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_time_obj_nm = 10000
         all_methods_average_time_obj_nm.append(average_lazy_cirsmix_time_obj_nm)
 
-        if len(self.CIRSMIX_time_obj_nm) != 0:
-            average_cirsmix_time_obj_nm = sum(self.CIRSMIX_time_obj_nm) / len(self.CIRSMIX_time_obj_nm)
-        else:
-            average_cirsmix_time_obj_nm = 10000
-        all_methods_average_time_obj_nm.append(average_cirsmix_time_obj_nm)
+        # if len(self.CIRSMIX_time_obj_nm) != 0:
+        #     average_cirsmix_time_obj_nm = sum(self.CIRSMIX_time_obj_nm) / len(self.CIRSMIX_time_obj_nm)
+        # else:
+        #     average_cirsmix_time_obj_nm = 10000
+        # all_methods_average_time_obj_nm.append(average_cirsmix_time_obj_nm)
 
         if len(self.CIRS_time_obj_nm) != 0:
             average_cirs_time_obj_nm = sum(self.CIRS_time_obj_nm) / len(self.CIRS_time_obj_nm)
@@ -307,17 +356,23 @@ class FinalExperimenter(object):
             average_cirs_time_obj_nm = 10000
         all_methods_average_time_obj_nm.append(average_cirs_time_obj_nm)
 
-        if len(self.DFSDP_time_obj_nm) != 0:
-            average_DFSDP_time_obj_nm = sum(self.DFSDP_time_obj_nm) / len(self.DFSDP_time_obj_nm)
+        if len(self.Lazy_CIRSMIX2_time_obj_nm) != 0:
+            average_lazy_cirsmix2_time_obj_nm = sum(self.Lazy_CIRSMIX2_time_obj_nm) / len(self.Lazy_CIRSMIX2_time_obj_nm)
         else:
-            average_DFSDP_time_obj_nm = 10000
-        all_methods_average_time_obj_nm.append(average_DFSDP_time_obj_nm)
+            average_lazy_cirsmix2_time_obj_nm = 10000
+        all_methods_average_time_obj_nm.append(average_lazy_cirsmix2_time_obj_nm)
 
-        if len(self.mRS_time_obj_nm) != 0:
-            average_mRS_time_obj_nm = sum(self.mRS_time_obj_nm) / len(self.mRS_time_obj_nm)
-        else:
-            average_mRS_time_obj_nm = 10000
-        all_methods_average_time_obj_nm.append(average_mRS_time_obj_nm)
+        # if len(self.DFSDP_time_obj_nm) != 0:
+        #     average_DFSDP_time_obj_nm = sum(self.DFSDP_time_obj_nm) / len(self.DFSDP_time_obj_nm)
+        # else:
+        #     average_DFSDP_time_obj_nm = 10000
+        # all_methods_average_time_obj_nm.append(average_DFSDP_time_obj_nm)
+
+        # if len(self.mRS_time_obj_nm) != 0:
+        #     average_mRS_time_obj_nm = sum(self.mRS_time_obj_nm) / len(self.mRS_time_obj_nm)
+        # else:
+        #     average_mRS_time_obj_nm = 10000
+        # all_methods_average_time_obj_nm.append(average_mRS_time_obj_nm)
 
         ################### average motion planning time ###################
         all_methods_average_motionTime_obj_nm = []
@@ -328,11 +383,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_motionTime_obj_nm = 10000
         all_methods_average_motionTime_obj_nm.append(average_lazy_cirsmix_motionTime_obj_nm)
 
-        if len(self.CIRSMIX_motionTime_obj_nm) != 0:
-            average_cirsmix_motionTime_obj_nm = sum(self.CIRSMIX_motionTime_obj_nm) / len(self.CIRSMIX_motionTime_obj_nm)
-        else:
-            average_cirsmix_motionTime_obj_nm = 10000
-        all_methods_average_motionTime_obj_nm.append(average_cirsmix_motionTime_obj_nm)
+        # if len(self.CIRSMIX_motionTime_obj_nm) != 0:
+        #     average_cirsmix_motionTime_obj_nm = sum(self.CIRSMIX_motionTime_obj_nm) / len(self.CIRSMIX_motionTime_obj_nm)
+        # else:
+        #     average_cirsmix_motionTime_obj_nm = 10000
+        # all_methods_average_motionTime_obj_nm.append(average_cirsmix_motionTime_obj_nm)
 
         if len(self.CIRS_motionTime_obj_nm) != 0:
             average_cirs_motionTime_obj_nm = sum(self.CIRS_motionTime_obj_nm) / len(self.CIRS_motionTime_obj_nm)
@@ -340,17 +395,23 @@ class FinalExperimenter(object):
             average_cirs_motionTime_obj_nm = 10000
         all_methods_average_motionTime_obj_nm.append(average_cirs_motionTime_obj_nm)
 
-        if len(self.DFSDP_motionTime_obj_nm) != 0:
-            average_DFSDP_motionTime_obj_nm = sum(self.DFSDP_motionTime_obj_nm) / len(self.DFSDP_motionTime_obj_nm)
+        if len(self.Lazy_CIRSMIX2_motionTime_obj_nm) != 0:
+            average_lazy_cirsmix2_motionTime_obj_nm = sum(self.Lazy_CIRSMIX2_motionTime_obj_nm) / len(self.Lazy_CIRSMIX2_motionTime_obj_nm)
         else:
-            average_DFSDP_motionTime_obj_nm = 10000
-        all_methods_average_motionTime_obj_nm.append(average_DFSDP_motionTime_obj_nm)
+            average_lazy_cirsmix2_motionTime_obj_nm = 10000
+        all_methods_average_motionTime_obj_nm.append(average_lazy_cirsmix2_motionTime_obj_nm)
 
-        if len(self.mRS_motionTime_obj_nm) != 0:
-            average_mRS_motionTime_obj_nm = sum(self.mRS_motionTime_obj_nm) / len(self.mRS_motionTime_obj_nm)
-        else:
-            average_mRS_motionTime_obj_nm = 10000
-        all_methods_average_motionTime_obj_nm.append(average_mRS_motionTime_obj_nm)
+        # if len(self.DFSDP_motionTime_obj_nm) != 0:
+        #     average_DFSDP_motionTime_obj_nm = sum(self.DFSDP_motionTime_obj_nm) / len(self.DFSDP_motionTime_obj_nm)
+        # else:
+        #     average_DFSDP_motionTime_obj_nm = 10000
+        # all_methods_average_motionTime_obj_nm.append(average_DFSDP_motionTime_obj_nm)
+
+        # if len(self.mRS_motionTime_obj_nm) != 0:
+        #     average_mRS_motionTime_obj_nm = sum(self.mRS_motionTime_obj_nm) / len(self.mRS_motionTime_obj_nm)
+        # else:
+        #     average_mRS_motionTime_obj_nm = 10000
+        # all_methods_average_motionTime_obj_nm.append(average_mRS_motionTime_obj_nm)
 
         ################### average task planning time ###################
         all_methods_average_taskTime_obj_nm = []
@@ -361,11 +422,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_taskTime_obj_nm = 10000
         all_methods_average_taskTime_obj_nm.append(average_lazy_cirsmix_taskTime_obj_nm)
 
-        if len(self.CIRSMIX_taskTime_obj_nm) != 0:
-            average_cirsmix_taskTime_obj_nm = sum(self.CIRSMIX_taskTime_obj_nm) / len(self.CIRSMIX_taskTime_obj_nm)
-        else:
-            average_cirsmix_taskTime_obj_nm = 10000
-        all_methods_average_taskTime_obj_nm.append(average_cirsmix_taskTime_obj_nm)
+        # if len(self.CIRSMIX_taskTime_obj_nm) != 0:
+        #     average_cirsmix_taskTime_obj_nm = sum(self.CIRSMIX_taskTime_obj_nm) / len(self.CIRSMIX_taskTime_obj_nm)
+        # else:
+        #     average_cirsmix_taskTime_obj_nm = 10000
+        # all_methods_average_taskTime_obj_nm.append(average_cirsmix_taskTime_obj_nm)
 
         if len(self.CIRS_taskTime_obj_nm) != 0:
             average_cirs_taskTime_obj_nm = sum(self.CIRS_taskTime_obj_nm) / len(self.CIRS_taskTime_obj_nm)
@@ -373,17 +434,23 @@ class FinalExperimenter(object):
             average_cirs_taskTime_obj_nm = 10000
         all_methods_average_taskTime_obj_nm.append(average_cirs_taskTime_obj_nm)
 
-        if len(self.DFSDP_taskTime_obj_nm) != 0:
-            average_DFSDP_taskTime_obj_nm = sum(self.DFSDP_taskTime_obj_nm) / len(self.DFSDP_taskTime_obj_nm)
+        if len(self.Lazy_CIRSMIX2_taskTime_obj_nm) != 0:
+            average_lazy_cirsmix2_taskTime_obj_nm = sum(self.Lazy_CIRSMIX2_taskTime_obj_nm) / len(self.Lazy_CIRSMIX2_taskTime_obj_nm)
         else:
-            average_DFSDP_taskTime_obj_nm = 10000
-        all_methods_average_taskTime_obj_nm.append(average_DFSDP_taskTime_obj_nm)
+            average_lazy_cirsmix2_taskTime_obj_nm = 10000
+        all_methods_average_taskTime_obj_nm.append(average_lazy_cirsmix2_taskTime_obj_nm)
 
-        if len(self.mRS_taskTime_obj_nm) != 0:
-            average_mRS_taskTime_obj_nm = sum(self.mRS_taskTime_obj_nm) / len(self.mRS_taskTime_obj_nm)
-        else:
-            average_mRS_taskTime_obj_nm = 10000
-        all_methods_average_taskTime_obj_nm.append(average_mRS_taskTime_obj_nm)
+        # if len(self.DFSDP_taskTime_obj_nm) != 0:
+        #     average_DFSDP_taskTime_obj_nm = sum(self.DFSDP_taskTime_obj_nm) / len(self.DFSDP_taskTime_obj_nm)
+        # else:
+        #     average_DFSDP_taskTime_obj_nm = 10000
+        # all_methods_average_taskTime_obj_nm.append(average_DFSDP_taskTime_obj_nm)
+
+        # if len(self.mRS_taskTime_obj_nm) != 0:
+        #     average_mRS_taskTime_obj_nm = sum(self.mRS_taskTime_obj_nm) / len(self.mRS_taskTime_obj_nm)
+        # else:
+        #     average_mRS_taskTime_obj_nm = 10000
+        # all_methods_average_taskTime_obj_nm.append(average_mRS_taskTime_obj_nm)
 
         ################### average success ###################
         all_methods_average_success_obj_nm = []
@@ -394,11 +461,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_success_obj_nm = 10000
         all_methods_average_success_obj_nm.append(average_lazy_cirsmix_success_obj_nm)
 
-        if len(self.CIRSMIX_success_obj_nm) != 0:
-            average_cirsmix_success_obj_nm = sum(self.CIRSMIX_success_obj_nm) / len(self.CIRSMIX_success_obj_nm)
-        else:
-            average_cirsmix_success_obj_nm = 10000
-        all_methods_average_success_obj_nm.append(average_cirsmix_success_obj_nm)
+        # if len(self.CIRSMIX_success_obj_nm) != 0:
+        #     average_cirsmix_success_obj_nm = sum(self.CIRSMIX_success_obj_nm) / len(self.CIRSMIX_success_obj_nm)
+        # else:
+        #     average_cirsmix_success_obj_nm = 10000
+        # all_methods_average_success_obj_nm.append(average_cirsmix_success_obj_nm)
 
         if len(self.CIRS_success_obj_nm) != 0:
             average_cirs_success_obj_nm = sum(self.CIRS_success_obj_nm) / len(self.CIRS_success_obj_nm)
@@ -406,17 +473,23 @@ class FinalExperimenter(object):
             average_cirs_success_obj_nm = 0.0
         all_methods_average_success_obj_nm.append(average_cirs_success_obj_nm)
 
-        if len(self.DFSDP_success_obj_nm) != 0:
-            average_DFSDP_success_obj_nm = sum(self.DFSDP_success_obj_nm) / len(self.DFSDP_success_obj_nm)
+        if len(self.Lazy_CIRSMIX2_success_obj_nm) != 0:
+            average_lazy_cirsmix2_success_obj_nm = sum(self.Lazy_CIRSMIX2_success_obj_nm) / len(self.Lazy_CIRSMIX2_success_obj_nm)
         else:
-            average_DFSDP_success_obj_nm = 0.0
-        all_methods_average_success_obj_nm.append(average_DFSDP_success_obj_nm)
+            average_lazy_cirsmix2_success_obj_nm = 10000
+        all_methods_average_success_obj_nm.append(average_lazy_cirsmix2_success_obj_nm)
 
-        if len(self.mRS_success_obj_nm) != 0:
-            average_mRS_success_obj_nm = sum(self.mRS_success_obj_nm) / len(self.mRS_success_obj_nm)
-        else:
-            average_mRS_success_obj_nm = 0.0
-        all_methods_average_success_obj_nm.append(average_mRS_success_obj_nm)
+        # if len(self.DFSDP_success_obj_nm) != 0:
+        #     average_DFSDP_success_obj_nm = sum(self.DFSDP_success_obj_nm) / len(self.DFSDP_success_obj_nm)
+        # else:
+        #     average_DFSDP_success_obj_nm = 0.0
+        # all_methods_average_success_obj_nm.append(average_DFSDP_success_obj_nm)
+
+        # if len(self.mRS_success_obj_nm) != 0:
+        #     average_mRS_success_obj_nm = sum(self.mRS_success_obj_nm) / len(self.mRS_success_obj_nm)
+        # else:
+        #     average_mRS_success_obj_nm = 0.0
+        # all_methods_average_success_obj_nm.append(average_mRS_success_obj_nm)
 
         ################### average nActions ###################
         all_methods_average_nActions_obj_nm = []
@@ -427,11 +500,11 @@ class FinalExperimenter(object):
             average_lazy_cirsmix_nActions_obj_nm = 10000
         all_methods_average_nActions_obj_nm.append(average_lazy_cirsmix_nActions_obj_nm)
 
-        if len(self.CIRSMIX_nActions_obj_nm) != 0:
-            average_cirsmix_nActions_obj_nm = sum(self.CIRSMIX_nActions_obj_nm) / len(self.CIRSMIX_nActions_obj_nm)
-        else:
-            average_cirsmix_nActions_obj_nm = 10000
-        all_methods_average_nActions_obj_nm.append(average_cirsmix_nActions_obj_nm)
+        # if len(self.CIRSMIX_nActions_obj_nm) != 0:
+        #     average_cirsmix_nActions_obj_nm = sum(self.CIRSMIX_nActions_obj_nm) / len(self.CIRSMIX_nActions_obj_nm)
+        # else:
+        #     average_cirsmix_nActions_obj_nm = 10000
+        # all_methods_average_nActions_obj_nm.append(average_cirsmix_nActions_obj_nm)
 
         if len(self.CIRS_nActions_obj_nm) != 0:
             average_cirs_nActions_obj_nm = sum(self.CIRS_nActions_obj_nm) / len(self.CIRS_nActions_obj_nm)
@@ -439,17 +512,23 @@ class FinalExperimenter(object):
             average_cirs_nActions_obj_nm = 0.0
         all_methods_average_nActions_obj_nm.append(average_cirs_nActions_obj_nm)
 
-        if len(self.DFSDP_nActions_obj_nm) != 0:
-            average_DFSDP_nActions_obj_nm = sum(self.DFSDP_nActions_obj_nm) / len(self.DFSDP_nActions_obj_nm)
+        if len(self.Lazy_CIRSMIX2_nActions_obj_nm) != 0:
+            average_lazy_cirsmix2_nActions_obj_nm = sum(self.Lazy_CIRSMIX2_nActions_obj_nm) / len(self.Lazy_CIRSMIX2_nActions_obj_nm)
         else:
-            average_DFSDP_nActions_obj_nm = 0.0
-        all_methods_average_nActions_obj_nm.append(average_DFSDP_nActions_obj_nm)
+            average_lazy_cirsmix2_nActions_obj_nm = 10000
+        all_methods_average_nActions_obj_nm.append(average_lazy_cirsmix2_nActions_obj_nm)
 
-        if len(self.mRS_nActions_obj_nm) != 0:
-            average_mRS_nActions_obj_nm = sum(self.mRS_nActions_obj_nm) / len(self.mRS_nActions_obj_nm)
-        else:
-            average_mRS_nActions_obj_nm = 0.0
-        all_methods_average_nActions_obj_nm.append(average_mRS_nActions_obj_nm)
+        # if len(self.DFSDP_nActions_obj_nm) != 0:
+        #     average_DFSDP_nActions_obj_nm = sum(self.DFSDP_nActions_obj_nm) / len(self.DFSDP_nActions_obj_nm)
+        # else:
+        #     average_DFSDP_nActions_obj_nm = 0.0
+        # all_methods_average_nActions_obj_nm.append(average_DFSDP_nActions_obj_nm)
+
+        # if len(self.mRS_nActions_obj_nm) != 0:
+        #     average_mRS_nActions_obj_nm = sum(self.mRS_nActions_obj_nm) / len(self.mRS_nActions_obj_nm)
+        # else:
+        #     average_mRS_nActions_obj_nm = 0.0
+        # all_methods_average_nActions_obj_nm.append(average_mRS_nActions_obj_nm)
 
         ### save average results
         utils2.saveSolution2(
@@ -502,7 +581,7 @@ def main(args):
             ### (1) monotone problems
             ### (2) non-monotone problems
 
-            ### (i) Lazy CIRSMIX
+            ### (0) Lazy CIRSMIX
             start_time = time.time()
             unidir_lazy_cirsmix_planner = UnidirLazyCIRSMIXPlanner(
                 initial_arrangement, final_arrangement, final_experimenter.time_allowed_nonMonotone)
@@ -561,45 +640,45 @@ def main(args):
             #####################################################################
 
             ###### try other methods now ######
-            ### (ii) CIRSMIX
-            start_time = time.time()
-            unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
-                initial_arrangement, final_arrangement, time_allowed_for_other_methods)
-            cirsmix_planning_time = time.time() - start_time
-            cirsmix_motion_planning_time = unidir_cirsmix_planner.motion_planning_time
-            cirsmix_task_planning_time = cirsmix_planning_time - cirsmix_motion_planning_time
-            cirsmix_isSolved = unidir_cirsmix_planner.isSolved
-            cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
-            if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
-                final_experimenter.CIRSMIX_time_obj_m.append(cirsmix_planning_time)
-                final_experimenter.CIRSMIX_motionTime_obj_m.append(cirsmix_motion_planning_time)
-                final_experimenter.CIRSMIX_taskTime_obj_m.append(cirsmix_task_planning_time)
-                final_experimenter.CIRSMIX_success_obj_m.append(cirsmix_isSolved)
-                if cirsmix_nActions != np.inf:
-                    final_experimenter.CIRSMIX_nActions_obj_m.append(cirsmix_nActions)
-                else:
-                    cirsmix_nActions = 5000
-            else:
-                ### non-monotone problem solution
-                final_experimenter.CIRSMIX_time_obj_nm.append(cirsmix_planning_time)
-                final_experimenter.CIRSMIX_motionTime_obj_nm.append(cirsmix_motion_planning_time)
-                final_experimenter.CIRSMIX_taskTime_obj_nm.append(cirsmix_task_planning_time)
-                final_experimenter.CIRSMIX_success_obj_nm.append(cirsmix_isSolved)
-                if cirsmix_nActions != np.inf:
-                    final_experimenter.CIRSMIX_nActions_obj_nm.append(cirsmix_nActions)
-                else:
-                    cirsmix_nActions = 5000
-            all_methods_time_instance.append(cirsmix_planning_time)
-            all_methods_motionTime_instance.append(cirsmix_motion_planning_time)
-            all_methods_taskTime_instance.append(cirsmix_task_planning_time)
-            all_methods_success_instance.append(float(cirsmix_isSolved))
-            all_methods_nActions_instance.append(cirsmix_nActions)
+            # ### (1) CIRSMIX
+            # start_time = time.time()
+            # unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
+            #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            # cirsmix_planning_time = time.time() - start_time
+            # cirsmix_motion_planning_time = unidir_cirsmix_planner.motion_planning_time
+            # cirsmix_task_planning_time = cirsmix_planning_time - cirsmix_motion_planning_time
+            # cirsmix_isSolved = unidir_cirsmix_planner.isSolved
+            # cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
+            # if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+            #     final_experimenter.CIRSMIX_time_obj_m.append(cirsmix_planning_time)
+            #     final_experimenter.CIRSMIX_motionTime_obj_m.append(cirsmix_motion_planning_time)
+            #     final_experimenter.CIRSMIX_taskTime_obj_m.append(cirsmix_task_planning_time)
+            #     final_experimenter.CIRSMIX_success_obj_m.append(cirsmix_isSolved)
+            #     if cirsmix_nActions != np.inf:
+            #         final_experimenter.CIRSMIX_nActions_obj_m.append(cirsmix_nActions)
+            #     else:
+            #         cirsmix_nActions = 5000
+            # else:
+            #     ### non-monotone problem solution
+            #     final_experimenter.CIRSMIX_time_obj_nm.append(cirsmix_planning_time)
+            #     final_experimenter.CIRSMIX_motionTime_obj_nm.append(cirsmix_motion_planning_time)
+            #     final_experimenter.CIRSMIX_taskTime_obj_nm.append(cirsmix_task_planning_time)
+            #     final_experimenter.CIRSMIX_success_obj_nm.append(cirsmix_isSolved)
+            #     if cirsmix_nActions != np.inf:
+            #         final_experimenter.CIRSMIX_nActions_obj_nm.append(cirsmix_nActions)
+            #     else:
+            #         cirsmix_nActions = 5000
+            # all_methods_time_instance.append(cirsmix_planning_time)
+            # all_methods_motionTime_instance.append(cirsmix_motion_planning_time)
+            # all_methods_taskTime_instance.append(cirsmix_task_planning_time)
+            # all_methods_success_instance.append(float(cirsmix_isSolved))
+            # all_methods_nActions_instance.append(cirsmix_nActions)
 
-            #####################################################################
-            reset_instance_success = utils2.resetInstance("Right_torso")
-            #####################################################################                
+            # #####################################################################
+            # reset_instance_success = utils2.resetInstance("Right_torso")
+            # #####################################################################                
 
-            ### (iii) CIRS
+            ### (2) CIRS
             start_time = time.time()
             unidir_cirs_planner = UnidirCIRSPlanner(
                 initial_arrangement, final_arrangement, time_allowed_for_other_methods)
@@ -637,81 +716,119 @@ def main(args):
             reset_instance_success = utils2.resetInstance("Right_torso")
             #####################################################################
 
-            ### (iv) DFSDP
+            ### (3) Lazy CIRSMIX2
             start_time = time.time()
-            unidir_dfsdp_planner = UnidirDFSDPPlanner(
+            unidir_lazy_cirsmix2_planner = UnidirLazyCIRSMIX2Planner(
                 initial_arrangement, final_arrangement, time_allowed_for_other_methods)
-            dfsdp_planning_time = time.time() - start_time
-            dfsdp_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
-            dfsdp_task_planning_time = dfsdp_planning_time - dfsdp_motion_planning_time
-            dfsdp_isSolved = unidir_dfsdp_planner.isSolved
-            dfsdp_nActions = unidir_dfsdp_planner.best_solution_cost
+            lazy_cirsmix2_planning_time = time.time() - start_time
+            lazy_cirsmix2_motion_planning_time = unidir_lazy_cirsmix2_planner.motion_planning_time
+            lazy_cirsmix2_task_planning_time = lazy_cirsmix2_planning_time - lazy_cirsmix2_motion_planning_time
+            lazy_cirsmix2_isSolved = unidir_lazy_cirsmix2_planner.isSolved
+            lazy_cirsmix2_nActions = unidir_lazy_cirsmix2_planner.best_solution_cost
             if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
-                final_experimenter.DFSDP_time_obj_m.append(dfsdp_planning_time)
-                final_experimenter.DFSDP_motionTime_obj_m.append(dfsdp_motion_planning_time)
-                final_experimenter.DFSDP_taskTime_obj_m.append(dfsdp_task_planning_time)
-                final_experimenter.DFSDP_success_obj_m.append(dfsdp_isSolved)
-                if dfsdp_nActions != np.inf:
-                    final_experimenter.DFSDP_nActions_obj_m.append(dfsdp_nActions)
+                final_experimenter.Lazy_CIRSMIX2_time_obj_m.append(lazy_cirsmix2_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_motionTime_obj_m.append(lazy_cirsmix2_motion_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_taskTime_obj_m.append(lazy_cirsmix2_task_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_success_obj_m.append(lazy_cirsmix2_isSolved)
+                if lazy_cirsmix2_nActions != np.inf:
+                    final_experimenter.Lazy_CIRSMIX2_nActions_obj_m.append(lazy_cirsmix2_nActions)
                 else:
-                    dfsdp_nActions = 5000
+                    lazy_cirsmix2_nActions = 5000
             else:
                 ### non-monotone problem solution
-                final_experimenter.DFSDP_time_obj_nm.append(dfsdp_planning_time)
-                final_experimenter.DFSDP_motionTime_obj_nm.append(dfsdp_motion_planning_time)
-                final_experimenter.DFSDP_taskTime_obj_nm.append(dfsdp_task_planning_time)
-                final_experimenter.DFSDP_success_obj_nm.append(dfsdp_isSolved)
-                if dfsdp_nActions != np.inf:
-                    final_experimenter.DFSDP_nActions_obj_nm.append(dfsdp_nActions)
+                final_experimenter.Lazy_CIRSMIX2_time_obj_nm.append(lazy_cirsmix2_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_motionTime_obj_nm.append(lazy_cirsmix2_motion_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_taskTime_obj_nm.append(lazy_cirsmix2_task_planning_time)
+                final_experimenter.Lazy_CIRSMIX2_success_obj_nm.append(lazy_cirsmix2_isSolved)
+                if lazy_cirsmix2_nActions != np.inf:
+                    final_experimenter.Lazy_CIRSMIX2_nActions_obj_nm.append(lazy_cirsmix2_nActions)
                 else:
-                    dfsdp_nActions = 5000
-            all_methods_time_instance.append(dfsdp_planning_time)
-            all_methods_motionTime_instance.append(dfsdp_motion_planning_time)
-            all_methods_taskTime_instance.append(dfsdp_task_planning_time)
-            all_methods_success_instance.append(float(dfsdp_isSolved))
-            all_methods_nActions_instance.append(dfsdp_nActions)
+                    lazy_cirsmix2_nActions = 5000
+            all_methods_time_instance.append(lazy_cirsmix2_planning_time)
+            all_methods_motionTime_instance.append(lazy_cirsmix2_motion_planning_time)
+            all_methods_taskTime_instance.append(lazy_cirsmix2_task_planning_time)
+            all_methods_success_instance.append(float(lazy_cirsmix2_isSolved))
+            all_methods_nActions_instance.append(lazy_cirsmix2_nActions)
 
             #####################################################################
             reset_instance_success = utils2.resetInstance("Right_torso")
             #####################################################################
 
-            ### (v) mRS
-            start_time = time.time()
-            unidir_mrs_planner = UnidirMRSPlanner(
-                initial_arrangement, final_arrangement, time_allowed_for_other_methods)
-            mrs_planning_time = time.time() - start_time
-            mrs_motion_planning_time = unidir_mrs_planner.motion_planning_time
-            mrs_task_planning_time = mrs_planning_time - mrs_motion_planning_time
-            mrs_isSolved = unidir_mrs_planner.isSolved
-            mrs_nActions = unidir_mrs_planner.best_solution_cost
-            if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
-                final_experimenter.mRS_time_obj_m.append(mrs_planning_time)
-                final_experimenter.mRS_motionTime_obj_m.append(mrs_motion_planning_time)
-                final_experimenter.mRS_taskTime_obj_m.append(mrs_task_planning_time)
-                final_experimenter.mRS_success_obj_m.append(mrs_isSolved)
-                if mrs_nActions != np.inf:
-                    final_experimenter.mRS_nActions_obj_m.append(mrs_nActions)
-                else:
-                    mrs_nActions = 5000
-            else:
-                ### non-monotone problem solution
-                final_experimenter.mRS_time_obj_nm.append(mrs_planning_time)
-                final_experimenter.mRS_motionTime_obj_nm.append(mrs_motion_planning_time)
-                final_experimenter.mRS_taskTime_obj_nm.append(mrs_task_planning_time)
-                final_experimenter.mRS_success_obj_nm.append(mrs_isSolved)
-                if mrs_nActions != np.inf:
-                    final_experimenter.mRS_nActions_obj_nm.append(mrs_nActions)
-                else:
-                    mrs_nActions = 5000
-            all_methods_time_instance.append(mrs_planning_time)
-            all_methods_motionTime_instance.append(mrs_motion_planning_time)
-            all_methods_taskTime_instance.append(mrs_task_planning_time)
-            all_methods_success_instance.append(float(mrs_isSolved))
-            all_methods_nActions_instance.append(mrs_nActions)
+            # ### (4) DFSDP
+            # start_time = time.time()
+            # unidir_dfsdp_planner = UnidirDFSDPPlanner(
+            #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            # dfsdp_planning_time = time.time() - start_time
+            # dfsdp_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
+            # dfsdp_task_planning_time = dfsdp_planning_time - dfsdp_motion_planning_time
+            # dfsdp_isSolved = unidir_dfsdp_planner.isSolved
+            # dfsdp_nActions = unidir_dfsdp_planner.best_solution_cost
+            # if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+            #     final_experimenter.DFSDP_time_obj_m.append(dfsdp_planning_time)
+            #     final_experimenter.DFSDP_motionTime_obj_m.append(dfsdp_motion_planning_time)
+            #     final_experimenter.DFSDP_taskTime_obj_m.append(dfsdp_task_planning_time)
+            #     final_experimenter.DFSDP_success_obj_m.append(dfsdp_isSolved)
+            #     if dfsdp_nActions != np.inf:
+            #         final_experimenter.DFSDP_nActions_obj_m.append(dfsdp_nActions)
+            #     else:
+            #         dfsdp_nActions = 5000
+            # else:
+            #     ### non-monotone problem solution
+            #     final_experimenter.DFSDP_time_obj_nm.append(dfsdp_planning_time)
+            #     final_experimenter.DFSDP_motionTime_obj_nm.append(dfsdp_motion_planning_time)
+            #     final_experimenter.DFSDP_taskTime_obj_nm.append(dfsdp_task_planning_time)
+            #     final_experimenter.DFSDP_success_obj_nm.append(dfsdp_isSolved)
+            #     if dfsdp_nActions != np.inf:
+            #         final_experimenter.DFSDP_nActions_obj_nm.append(dfsdp_nActions)
+            #     else:
+            #         dfsdp_nActions = 5000
+            # all_methods_time_instance.append(dfsdp_planning_time)
+            # all_methods_motionTime_instance.append(dfsdp_motion_planning_time)
+            # all_methods_taskTime_instance.append(dfsdp_task_planning_time)
+            # all_methods_success_instance.append(float(dfsdp_isSolved))
+            # all_methods_nActions_instance.append(dfsdp_nActions)
 
-            #####################################################################
-            reset_instance_success = utils2.resetInstance("Right_torso")
-            #####################################################################            
+            # #####################################################################
+            # reset_instance_success = utils2.resetInstance("Right_torso")
+            # #####################################################################
+
+            # ### (5) mRS
+            # start_time = time.time()
+            # unidir_mrs_planner = UnidirMRSPlanner(
+            #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            # mrs_planning_time = time.time() - start_time
+            # mrs_motion_planning_time = unidir_mrs_planner.motion_planning_time
+            # mrs_task_planning_time = mrs_planning_time - mrs_motion_planning_time
+            # mrs_isSolved = unidir_mrs_planner.isSolved
+            # mrs_nActions = unidir_mrs_planner.best_solution_cost
+            # if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+            #     final_experimenter.mRS_time_obj_m.append(mrs_planning_time)
+            #     final_experimenter.mRS_motionTime_obj_m.append(mrs_motion_planning_time)
+            #     final_experimenter.mRS_taskTime_obj_m.append(mrs_task_planning_time)
+            #     final_experimenter.mRS_success_obj_m.append(mrs_isSolved)
+            #     if mrs_nActions != np.inf:
+            #         final_experimenter.mRS_nActions_obj_m.append(mrs_nActions)
+            #     else:
+            #         mrs_nActions = 5000
+            # else:
+            #     ### non-monotone problem solution
+            #     final_experimenter.mRS_time_obj_nm.append(mrs_planning_time)
+            #     final_experimenter.mRS_motionTime_obj_nm.append(mrs_motion_planning_time)
+            #     final_experimenter.mRS_taskTime_obj_nm.append(mrs_task_planning_time)
+            #     final_experimenter.mRS_success_obj_nm.append(mrs_isSolved)
+            #     if mrs_nActions != np.inf:
+            #         final_experimenter.mRS_nActions_obj_nm.append(mrs_nActions)
+            #     else:
+            #         mrs_nActions = 5000
+            # all_methods_time_instance.append(mrs_planning_time)
+            # all_methods_motionTime_instance.append(mrs_motion_planning_time)
+            # all_methods_taskTime_instance.append(mrs_task_planning_time)
+            # all_methods_success_instance.append(float(mrs_isSolved))
+            # all_methods_nActions_instance.append(mrs_nActions)
+
+            # #####################################################################
+            # reset_instance_success = utils2.resetInstance("Right_torso")
+            # #####################################################################
                 
             #############################################################################################
             ### this instance has been tested on all methods

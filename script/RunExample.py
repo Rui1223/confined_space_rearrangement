@@ -16,6 +16,7 @@ from UnidirDFSDPPlanner import UnidirDFSDPPlanner
 from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
 from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
+from UnidirLazyCIRSMIX2Planner import UnidirLazyCIRSMIX2Planner
 
 ############################### description #########################################
 ### This class defines a ExampleRunner class which
@@ -67,7 +68,18 @@ def main(args):
         ik_generate_success = utils2.serviceCall_generateConfigsForStartPositions("Right_torso")
 
         ###### run an example given the method specified ######
-        ### (i) Lazy CIRSMIX
+        ### (0) Lazy CIRSMIX2
+        if example_runner.method_name == "LazyCIRSMIX2":
+            start_time = time.time()
+            the_chosen_planner = UnidirLazyCIRSMIX2Planner(
+                initial_arrangement, final_arrangement, example_runner.time_allowed)
+        if example_runner.method_name == "LazyCIRSMIX2_nonlabeled":
+            start_time = time.time()
+            the_chosen_planner = UnidirLazyCIRSMIX2Planner(
+                initial_arrangement, final_arrangement, example_runner.time_allowed, \
+                isLabeledRoadmapUsed=False)
+
+        ### (1) Lazy CIRSMIX
         if example_runner.method_name == "LazyCIRSMIX":
             start_time = time.time()
             the_chosen_planner = UnidirLazyCIRSMIXPlanner(
@@ -78,7 +90,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
 
-        ### (ii) CIRSMIX
+        ### (2) CIRSMIX
         if example_runner.method_name == "CIRSMIX":
             start_time = time.time()
             the_chosen_planner = UnidirCIRSMIXPlanner(
@@ -89,7 +101,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (iii) CIRS
+        ### (3) CIRS
         if example_runner.method_name == "CIRS":
             start_time = time.time()
             the_chosen_planner = UnidirCIRSPlanner(
@@ -100,7 +112,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (iv) DFS_DP
+        ### (4) DFS_DP
         if example_runner.method_name == "DFSDP":
             start_time = time.time()
             the_chosen_planner = UnidirDFSDPPlanner(
@@ -111,7 +123,7 @@ def main(args):
                 initial_arrangement, final_arrangement, example_runner.time_allowed, \
                 isLabeledRoadmapUsed=False)
         
-        ### (v) mRS
+        ### (5) mRS
         if example_runner.method_name == "mRS":
             start_time = time.time()
             the_chosen_planner = UnidirMRSPlanner(
@@ -141,11 +153,11 @@ def main(args):
         ### move the robot back to home configuration (optional)
         if (example_runner.method_name == "CIRS") or (example_runner.method_name == "DFSDP") \
             or (example_runner.method_name == "mRS") or (example_runner.method_name == "CIRSMIX") \
-            or (example_runner.method_name == "LazyCIRSMIX"):
+            or (example_runner.method_name == "LazyCIRSMIX") or (example_runner.method_name == "LazyCIRSMIX2"):
             resetHome_success, resetHome_trajectory = utils2.serviceCall_reset_robot_home("Right_torso")
         if (example_runner.method_name == "CIRS_nonlabeled") or (example_runner.method_name == "DFSDP_nonlabeled") \
             or (example_runner.method_name == "mRS_nonlabeled") or (example_runner.method_name == "CIRSMIX_nonlabeled") \
-            or (example_runner.method_name == "LazyCIRSMIX_nonlabeled"):
+            or (example_runner.method_name == "LazyCIRSMIX_nonlabeled") or (example_runner.method_name == "LazyCIRSMIX2_nonlabeled"):
             resetHome_success, resetHome_trajectory = utils2.serviceCall_reset_robot_home("Right_torso", False)
 
         if example_runner.isNewInstance:

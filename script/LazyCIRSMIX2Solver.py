@@ -56,12 +56,12 @@ class LazyCIRSMIX2Solver(MonotoneLocalSolver):
         ### (2) detect all invalid arrangement at which each object to be manipulated
         self.detectInvalidArrStates_mix()
         LOCAL_TASK_SUCCESS = self.LAZY_CIDFS_DP2()
-        ### ************************* ###
         if not LOCAL_TASK_SUCCESS:
             ### the local solution is not found
             ### we need to get the actual tree
-            restoreTree(0)
-        ### ************************* ###
+            ### use DFS to restore the tree based on the virtual tree information
+            self.restoreTracking = False ### by default it is sliding (i.e., jump to the root of the virtual tree)
+            self.restoreTree(0)
         return LOCAL_TASK_SUCCESS, self.tree, self.motion_planning_time
 
     def detectInitialConstraints(self):
@@ -310,20 +310,66 @@ class LazyCIRSMIX2Solver(MonotoneLocalSolver):
         self.virtual_tree[curr_node_id].updateReachableStatus(True)
 
 
-    def restoreTree(self, root_id):
+    def restoreTree(self, curr_id):
         '''This function restore the self.tree given the virtual tree info,
-           starting at root node (root_id)'''
-        if len(self.virtual_tree) == 1:
-            ### the virtual tree only contains the root node
-            ### basically indicates the tree is not really growing
-            ### then there is nothing to restore
-            return
+           starting at current node (curr_id)'''
+        ### curr_id represents an ACTUAL node in the actual tree
+        current_node_id = copy.deepcopy(curr_id)
+        currNode = self.tree[current_node_id]
+        current_arrangement = currNode.arrangement
 
-        ### use BFS to restore the tree based on the virtual tree information
-        queue = [0]
-        while (len(queue) != 0):
-            parent_id = queue.pop()
-            ### get all the children of this parent node
-            for child_id in self.virtual_tree[parent_id].child_ids:
-                
-        
+        if (self.restoreTracking == False):
+            ### if this node is reached by sliding (self.restoreTracking = False),
+            ### we need to set the scene to that arrangement state
+            set_scene_success = self.serviceCall_setSceneBasedOnArrangementNode(
+                        current_arrangement, currNode.robotConfig, "Right_torso")
+
+        for child_id in self.virtual_tree[current_node_id].child_ids:
+            ### first check if the child node is already reachable
+            childNode = self.virtual_tree[child_id]
+            if childNode.reachable:
+                ### the childNode and its affiliated edge has already been added to the actual tree
+                ### no need to restore that edge, continue...
+                self.restoreTracking = False
+                print("sliding")
+                self.restoreTree(child_id)
+            else:
+                self.restoreTracking = True ### set to true as we are now doing tracking
+                ### the childNode is not reachable, we need to check if it is reachable
+                ### basically check whether the object is rearrangable
+                obj_idx = childNode.objectTransferred_idx
+                obj_curr_position_idx = current_arrangement[obj_idx]
+                obj_target_position_idx = self.target_arrangement[obj_idx]
+                start_time = time.time()
+                rearrange_success, transition_path = self.serviceCall_rearrangeCylinderObject(
+                    obj_idx, obj_target_position_idx, "Right_torso", isLabeledRoadmapUsed=self.isLabeledRoadmapUsed)
+                self.motion_planning_time += (time.time() - start_time)
+                # print("\n====================")
+                # print("rearranging_success: ", rearrange_success)
+                # input("enter to continue")
+                # print("====================\n")
+                if rearrange_success:
+                    ### convert the virtual node (not reachable) 
+                    ### into an actual node (mark it as reachable and put it in the self.tree)
+                    self.convertVirtualToActualNode(current_node_id, child_id, obj_idx, transition_path)
+                    ### recursive call
+                    self.restoreTree(child_id)
+                    ### come back to the function, first check if timeout happens, if it is, just return
+                    if time.time() - self.local_planning_startTime >= self.time_threshold:
+                        return
+                    ### put the object and robot back to the configuration they belong to
+                    ### at the beginning of the function call
+                    start_time = time.time()
+                    self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                    self.motion_planning_time += (time.time() - start_time)
+                else:
+                    ### put the object and robot back to the configuration they belong to
+                    ### at the beginning of the function call
+                    start_time = time.time()
+                    self.revertBackToParentNode(current_node_id, obj_idx, obj_curr_position_idx, "Right_torso")
+                    self.motion_planning_time += (time.time() - start_time)
+
+
+        ### reach here as all the children has undergone the restore process or that node has no children
+        print("restore backtrack")
+        return
