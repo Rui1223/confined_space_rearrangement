@@ -38,7 +38,7 @@ class RearrangementTaskPlanner(object):
         ### understand the arrangement task
         self.initial_arrangement = initial_arrangement
         self.final_arrangement = final_arrangement
-        ### a list of obj_idx of objects to arranged
+        ### a list of obj_idx of objects to be rearranged
         self.all_objects = [i for i in range(len(self.initial_arrangement)) \
             if self.initial_arrangement[i] != self.final_arrangement[i]]
         self.num_objects = len(self.all_objects)
