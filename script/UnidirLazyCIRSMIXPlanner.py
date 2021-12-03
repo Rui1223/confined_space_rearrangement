@@ -92,7 +92,7 @@ class UnidirLazyCIRSMIXPlanner(RearrangementTaskPlanner):
                 obj_transfer_position_indices, objectTransferred_idx, transition_path,
                 cost_to_come, parent_id, perturbed_object_ordering
             )
-            ### before add this node to the tree, check it this resulting node is already in the tree
+            ### before add this node to the tree, check if this resulting node is already in the tree
             isSameNodeInTheTree, same_nodeID = self.checkSameArrangementNodeInTheLeftTree(perturbation_node)
             if not isSameNodeInTheTree:
                 ### then add this node in the tree

@@ -45,7 +45,7 @@ class MonotoneLocalSolver(object):
         ### initialize the tree structure
         self.tree = OrderedDict() ### key: (scalar 0,1,etc..) value: ArrNode
         self.node_idx = 0 ### start from root node (idx: 0)
-        self.tree[0] = startArrNode
+        self.tree[0] = copy.deepcopy(startArrNode)
 
         ### set the time limit
         self.time_threshold = time_allowed
