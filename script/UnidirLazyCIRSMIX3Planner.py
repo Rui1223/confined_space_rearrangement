@@ -152,6 +152,7 @@ class UnidirLazyCIRSMIX3Planner(object):
                 cost_to_come, parent_id, perturbed_object_ordering
             )
             perturbation_node.updateReachableStatus(True) ### marked it as a reachable node
+
             ### before add this node to the tree, check if this resulting node is already in the tree
             isSameNodeInTheTree, same_nodeID = self.checkSameArrangementNodeInTheLeftTree(perturbation_node)
             if not isSameNodeInTheTree:
@@ -277,37 +278,47 @@ class UnidirLazyCIRSMIX3Planner(object):
                     idToID[child_id] = same_nodeID ### this step is CRUCIAL
                     ### different conditions to consider
                     if (subTree[child_id].reachable == True) and (self.treeL[same_nodeID].reachable == False):
-                        ### (1) the node (child_id) is actual, and it has a same node in the global tree as virtual
+                        ##### (i) the node (child_id) is actual, and it has a same node in the global tree as virtual
+                        ### (1) first convert the virtual node into the actual node
                         self.treeL[same_nodeID].updateRobotConfig(subTree[child_id].robotConfig)
                         self.treeL[same_nodeID].updateTransitionPath(subTree[child_id].transition_path)
                         self.treeL[same_nodeID].updateReachableStatus(True)
+                        ### (2) disconnect the old parent
+                        self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                        ### (3) then point the node to the new (better) parent
                         self.treeL[same_nodeID].updateCostToCome(subTree[child_id].cost_to_come)
                         self.treeL[same_nodeID].updateParent(parent_nodeID)
                         self.treeL[same_nodeID].updateObjectOrdering(subTree[child_id].object_ordering)
-                        self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                        ### (4) add the child to the new parent
                         self.treeL[parent_nodeID].addChild(same_nodeID)
                     elif (subTree[child_id].reachable == False) and (self.treeL[same_nodeID].reachable == False):
-                        ### (2) the node (child_id) is virtual, and it has a same node in the global tree as virtual
+                        ##### (ii) the node (child_id) is virtual, and it has a same node in the global tree as virtual
                         if self.treeL[same_nodeID].cost_to_come > subTree[child_id].cost_to_come:
                             ### It indicates that the current checked parent is a better parent since it costs less
                             ### update the corresponding infos for the child node
+                            ### (1) first disconnect the old parent
+                            self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                            ### (2) then point the node to the new (better) parent
                             self.treeL[same_nodeID].updateCostToCome(subTree[child_id].cost_to_come)
                             self.treeL[same_nodeID].updateParent(parent_nodeID)
                             self.treeL[same_nodeID].updateObjectOrdering(subTree[child_id].object_ordering)
-                            self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                            ### (3) add the child to the new parent
                             self.treeL[parent_nodeID].addChild(same_nodeID)
                     elif (subTree[child_id].reachable == False) and (self.treeL[same_nodeID].reachable == True):
-                        ### (3) the node (child_id) is virtual, and it has a same node in the global tree as virtual
+                        ##### (iii) the node (child_id) is virtual, and it has a same node in the global tree as virtual
                         pass
                     else:
-                        ### (4) the node (child_id) is actual, and it has a same node in the global tree as actual
+                        ##### (iv) the node (child_id) is actual, and it has a same node in the global tree as actual
                         if self.treeL[same_nodeID].cost_to_come > subTree[child_id].cost_to_come:
                             ### It indicates that the current checked parent is a better parent since it costs less
                             ### update the corresponding infos for the child node
+                            ### (1) first disconnect the old parent
+                            self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                            ### (2) then point the node to the new (better) parent
                             self.treeL[same_nodeID].updateCostToCome(subTree[child_id].cost_to_come)
                             self.treeL[same_nodeID].updateParent(parent_nodeID)
                             self.treeL[same_nodeID].updateObjectOrdering(subTree[child_id].object_ordering)
-                            self.treeL[self.treeL[same_nodeID].parent_id].removeChild(same_nodeID)
+                            ### (3) add the child to the new parent
                             self.treeL[parent_nodeID].addChild(same_nodeID)
                 else:
                     ### this is a new node to be added to the search tree
@@ -502,6 +513,9 @@ class ArrHybridNode(object):
         ### more attributes for hybrid (actual + virtual) tree nodes
         self.child_ids = set() ### now store child_ids
         self.reachable = False
+
+    def updateRobotConfig(self, robotConfig):
+        self.robotConfig = robotConfig
     
     def updateNodeID(self, node_id):
         self.node_id = node_id

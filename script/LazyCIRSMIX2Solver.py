@@ -158,7 +158,7 @@ class LazyCIRSMIX2Solver(MonotoneLocalSolver):
                         pass
                     else:
                         ### this node is not the last valid, reachable node (self.lastNodeValid_idx)
-                        print("back-jumping")
+                        # print("back-jumping")
                         return FLAG
 
         
@@ -166,7 +166,7 @@ class LazyCIRSMIX2Solver(MonotoneLocalSolver):
         ### the current arrangement is not the right parent
         ### from which a solution can be found, mark it as explored
         self.explored.append(current_arrangement)
-        print("backtrack")
+        # print("backtrack")
         return FLAG
 
     def checkInvalidArrStates(self, current_arrangement, obj_idx):
@@ -371,5 +371,5 @@ class LazyCIRSMIX2Solver(MonotoneLocalSolver):
 
 
         ### reach here as all the children has undergone the restore process or that node has no children
-        print("restore backtrack")
+        # print("restore backtrack")
         return

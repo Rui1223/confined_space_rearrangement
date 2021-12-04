@@ -175,7 +175,7 @@ void AstarSolver_t::Astar_search_nonLabeled(Graph_t &g)
 
         if (current->m_id == m_goal) {
             // the goal is found
-            std::cout << "PATH FOUND\n";
+            // std::cout << "PATH FOUND\n";
             m_pathCost = current->m_g;
             back_track_path(); // construct your path
             // pathToTrajectory(g); // get the trajectory (a sequence of configurations)
@@ -231,7 +231,7 @@ void AstarSolver_t::Astar_search_labeled(Graph_t &g)
 
         if (current->m_id == m_goal) {
             // the goal is found
-            std::cout << "PATH FOUND\n";
+            // std::cout << "PATH FOUND\n";
             m_pathCost = current->m_g;
             back_track_path(); // construct your path
             // pathToTrajectory(g); // get the trajectory (a sequence of configurations)

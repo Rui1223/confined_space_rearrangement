@@ -17,6 +17,7 @@ from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
 from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
 from UnidirLazyCIRSMIX2Planner import UnidirLazyCIRSMIX2Planner
+from UnidirLazyCIRSMIX3Planner import UnidirLazyCIRSMIX3Planner
 
 ############################### description #########################################
 ### This class defines a InstanceTester class which
@@ -74,6 +75,31 @@ def main(args):
 
         ###### now using different methods to solve the instance ######
 
+        ### (0) Lazy CIRSMIX3
+        start_time = time.time()
+        unidir_lazy_cirsmix3_planner = UnidirLazyCIRSMIX3Planner(
+            initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        lazy_cirsmix3_planning_time = time.time() - start_time
+        lazy_cirsmix3_motion_planning_time = unidir_lazy_cirsmix3_planner.motion_planning_time
+        lazy_cirsmix3_task_planning_time = lazy_cirsmix3_planning_time - lazy_cirsmix3_motion_planning_time
+        lazy_cirsmix3_isSolved = unidir_lazy_cirsmix3_planner.isSolved
+        lazy_cirsmix3_nActions = unidir_lazy_cirsmix3_planner.best_solution_cost
+        if lazy_cirsmix3_nActions == np.inf:
+            lazy_cirsmix3_nActions = 5000
+        lazy_cirsmix3_object_ordering = unidir_lazy_cirsmix3_planner.object_ordering
+        all_methods_time.append(lazy_cirsmix3_planning_time)
+        all_methods_motion_planning_time.append(lazy_cirsmix3_motion_planning_time)
+        all_methods_task_planning_time.append(lazy_cirsmix3_task_planning_time)
+        all_methods_success.append(float(lazy_cirsmix3_isSolved))
+        all_methods_nActions.append(lazy_cirsmix3_nActions)
+
+        #####################################################################
+        reset_instance_success = utils2.resetInstance("Right_torso")
+        #####################################################################
+
+        if lazy_cirsmix3_nActions == instance_tester.num_objects:
+            input("monotone problem!!!!!!!!!!!!!")
+
         ### (1) Lazy CIRSMIX2
         start_time = time.time()
         unidir_lazy_cirsmix2_planner = UnidirLazyCIRSMIX2Planner(
@@ -95,9 +121,6 @@ def main(args):
         #####################################################################
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
-
-        if lazy_cirsmix2_nActions == instance_tester.num_objects:
-            input("monotone problem!!!!!!!!!!!!!")
 
         ### (1) Lazy CIRSMIX
         start_time = time.time()
@@ -209,6 +232,13 @@ def main(args):
         # reset_instance_success = utils2.resetInstance("Right_torso")
         # #####################################################################
 
+        print("\n")
+        print("Time for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_planning_time))
+        print("Motion planning time for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_motion_planning_time))
+        print("Task planning time for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_task_planning_time))
+        print("Success for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_isSolved))
+        print("Number of actions for lazy CIRSMIX3 planning: {}".format(lazy_cirsmix3_nActions))
+        print("Object ordering for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_object_ordering))
         print("\n")
         print("Time for lazy CIRSMIX2 planning is: {}".format(lazy_cirsmix2_planning_time))
         print("Motion planning time for lazy CIRSMIX2 planning is: {}".format(lazy_cirsmix2_motion_planning_time))

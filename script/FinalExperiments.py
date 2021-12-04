@@ -17,6 +17,7 @@ from UnidirCIRSPlanner import UnidirCIRSPlanner
 from UnidirCIRSMIXPlanner import UnidirCIRSMIXPlanner
 from UnidirLazyCIRSMIXPlanner import UnidirLazyCIRSMIXPlanner
 from UnidirLazyCIRSMIX2Planner import UnidirLazyCIRSMIX2Planner
+from UnidirLazyCIRSMIX3Planner import UnidirLazyCIRSMIX3Planner
 
 ############################### description ###########################################
 ### This class defines a FinalExperimenter class which
@@ -38,7 +39,7 @@ class FinalExperimenter(object):
         self.ExperimentsFolder = os.path.join(self.rosPackagePath, "final_experiments")
         if not os.path.exists(self.ExperimentsFolder):
             os.makedirs(self.ExperimentsFolder)
-        self.numObjects_options = [11,12,13]
+        self.numObjects_options = [5, 6]
         self.numExperiments_perObject = int(args[1])
         self.maxInstancesNeed_perObject = int(args[2])
         self.time_allowed_monotone = 120
@@ -65,6 +66,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_time_obj_m = []
         self.CIRS_time_obj_m = []
         self.Lazy_CIRSMIX2_time_obj_m = []
+        self.Lazy_CIRSMIX3_time_obj_m = []
         # self.DFSDP_time_obj_m = []
         # self.mRS_time_obj_m = []
 
@@ -72,6 +74,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_motionTime_obj_m = []
         self.CIRS_motionTime_obj_m = []
         self.Lazy_CIRSMIX2_motionTime_obj_m = []
+        self.Lazy_CIRSMIX3_motionTime_obj_m = []
         # self.DFSDP_motionTime_obj_m = []
         # self.mRS_motionTime_obj_m = []
 
@@ -79,6 +82,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_taskTime_obj_m = []
         self.CIRS_taskTime_obj_m = []
         self.Lazy_CIRSMIX2_taskTime_obj_m = []
+        self.Lazy_CIRSMIX3_taskTime_obj_m = []
         # self.DFSDP_taskTime_obj_m = []
         # self.mRS_taskTime_obj_m = []
 
@@ -86,6 +90,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_success_obj_m = []
         self.CIRS_success_obj_m = []
         self.Lazy_CIRSMIX2_success_obj_m = []
+        self.Lazy_CIRSMIX3_success_obj_m = []
         # self.DFSDP_success_obj_m = []
         # self.mRS_success_obj_m = []
 
@@ -93,6 +98,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_nActions_obj_m = []
         self.CIRS_nActions_obj_m = []
         self.Lazy_CIRSMIX2_nActions_obj_m = []
+        self.Lazy_CIRSMIX3_nActions_obj_m = []
         # self.DFSDP_nActions_obj_m = []
         # self.mRS_nActions_obj_m = []
 
@@ -100,6 +106,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_time_obj_nm = []
         self.CIRS_time_obj_nm = []
         self.Lazy_CIRSMIX2_time_obj_nm = []
+        self.Lazy_CIRSMIX3_time_obj_nm = []
         # self.DFSDP_time_obj_nm = []
         # self.mRS_time_obj_nm = []
 
@@ -107,6 +114,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_motionTime_obj_nm = []
         self.CIRS_motionTime_obj_nm = []
         self.Lazy_CIRSMIX2_motionTime_obj_nm = []
+        self.Lazy_CIRSMIX3_motionTime_obj_nm = []
         # self.DFSDP_motionTime_obj_nm = []
         # self.mRS_motionTime_obj_nm = []
 
@@ -114,6 +122,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_taskTime_obj_nm = []
         self.CIRS_taskTime_obj_nm = []
         self.Lazy_CIRSMIX2_taskTime_obj_nm = []
+        self.Lazy_CIRSMIX3_taskTime_obj_nm = []
         # self.DFSDP_taskTime_obj_nm = []
         # self.mRS_taskTime_obj_nm = []
 
@@ -121,6 +130,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_success_obj_nm = []
         self.CIRS_success_obj_nm = []
         self.Lazy_CIRSMIX2_success_obj_nm = []
+        self.Lazy_CIRSMIX3_success_obj_nm = []
         # self.DFSDP_success_obj_nm = []
         # self.mRS_success_obj_nm = []
 
@@ -128,6 +138,7 @@ class FinalExperimenter(object):
         # self.CIRSMIX_nActions_obj_nm = []
         self.CIRS_nActions_obj_nm = []
         self.Lazy_CIRSMIX2_nActions_obj_nm = []
+        self.Lazy_CIRSMIX3_nActions_obj_nm = []
         # self.DFSDP_nActions_obj_nm = []
         # self.mRS_nActions_obj_nm = []
 
@@ -159,6 +170,12 @@ class FinalExperimenter(object):
         else:
             average_lazy_cirsmix2_time_obj_m = 10000
         all_methods_average_time_obj_m.append(average_lazy_cirsmix2_time_obj_m)
+
+        if len(self.Lazy_CIRSMIX3_time_obj_m) != 0:
+            average_lazy_cirsmix3_time_obj_m = sum(self.Lazy_CIRSMIX3_time_obj_m) / len(self.Lazy_CIRSMIX3_time_obj_m)
+        else:
+            average_lazy_cirsmix3_time_obj_m = 10000
+        all_methods_average_time_obj_m.append(average_lazy_cirsmix3_time_obj_m)
 
         # if len(self.DFSDP_time_obj_m) != 0:
         #     average_DFSDP_time_obj_m = sum(self.DFSDP_time_obj_m) / len(self.DFSDP_time_obj_m)
@@ -199,6 +216,12 @@ class FinalExperimenter(object):
             average_lazy_cirsmix2_motionTime_obj_m = 10000
         all_methods_average_motionTime_obj_m.append(average_lazy_cirsmix2_motionTime_obj_m)
 
+        if len(self.Lazy_CIRSMIX3_motionTime_obj_m) != 0:
+            average_lazy_cirsmix3_motionTime_obj_m = sum(self.Lazy_CIRSMIX3_motionTime_obj_m) / len(self.Lazy_CIRSMIX3_motionTime_obj_m)
+        else:
+            average_lazy_cirsmix3_motionTime_obj_m = 10000
+        all_methods_average_motionTime_obj_m.append(average_lazy_cirsmix3_motionTime_obj_m)
+
         # if len(self.DFSDP_motionTime_obj_m) != 0:
         #     average_DFSDP_motionTime_obj_m = sum(self.DFSDP_motionTime_obj_m) / len(self.DFSDP_motionTime_obj_m)
         # else:
@@ -237,6 +260,12 @@ class FinalExperimenter(object):
         else:
             average_lazy_cirsmix2_taskTime_obj_m = 10000
         all_methods_average_taskTime_obj_m.append(average_lazy_cirsmix2_taskTime_obj_m)
+
+        if len(self.Lazy_CIRSMIX3_taskTime_obj_m) != 0:
+            average_lazy_cirsmix3_taskTime_obj_m = sum(self.Lazy_CIRSMIX3_taskTime_obj_m) / len(self.Lazy_CIRSMIX3_taskTime_obj_m)
+        else:
+            average_lazy_cirsmix3_taskTime_obj_m = 10000
+        all_methods_average_taskTime_obj_m.append(average_lazy_cirsmix3_taskTime_obj_m)
 
         # if len(self.DFSDP_taskTime_obj_m) != 0:
         #     average_DFSDP_taskTime_obj_m = sum(self.DFSDP_taskTime_obj_m) / len(self.DFSDP_taskTime_obj_m)
@@ -277,6 +306,12 @@ class FinalExperimenter(object):
             average_lazy_cirsmix2_success_obj_m = 10000
         all_methods_average_success_obj_m.append(average_lazy_cirsmix2_success_obj_m)
 
+        if len(self.Lazy_CIRSMIX3_success_obj_m) != 0:
+            average_lazy_cirsmix3_success_obj_m = sum(self.Lazy_CIRSMIX3_success_obj_m) / len(self.Lazy_CIRSMIX3_success_obj_m)
+        else:
+            average_lazy_cirsmix3_success_obj_m = 10000
+        all_methods_average_success_obj_m.append(average_lazy_cirsmix3_success_obj_m)
+
         # if len(self.DFSDP_success_obj_m) != 0:
         #     average_DFSDP_success_obj_m = sum(self.DFSDP_success_obj_m) / len(self.DFSDP_success_obj_m)
         # else:
@@ -315,6 +350,12 @@ class FinalExperimenter(object):
         else:
             average_lazy_cirsmix2_nActions_obj_m = 10000
         all_methods_average_nActions_obj_m.append(average_lazy_cirsmix2_nActions_obj_m)
+
+        if len(self.Lazy_CIRSMIX3_nActions_obj_m) != 0:
+            average_lazy_cirsmix3_nActions_obj_m = sum(self.Lazy_CIRSMIX3_nActions_obj_m) / len(self.Lazy_CIRSMIX3_nActions_obj_m)
+        else:
+            average_lazy_cirsmix3_nActions_obj_m = 10000
+        all_methods_average_nActions_obj_m.append(average_lazy_cirsmix3_nActions_obj_m)
 
         # if len(self.DFSDP_nActions_obj_m) != 0:
         #     average_DFSDP_nActions_obj_m = sum(self.DFSDP_nActions_obj_m) / len(self.DFSDP_nActions_obj_m)
@@ -362,6 +403,12 @@ class FinalExperimenter(object):
             average_lazy_cirsmix2_time_obj_nm = 10000
         all_methods_average_time_obj_nm.append(average_lazy_cirsmix2_time_obj_nm)
 
+        if len(self.Lazy_CIRSMIX3_time_obj_nm) != 0:
+            average_lazy_cirsmix3_time_obj_nm = sum(self.Lazy_CIRSMIX3_time_obj_nm) / len(self.Lazy_CIRSMIX3_time_obj_nm)
+        else:
+            average_lazy_cirsmix3_time_obj_nm = 10000
+        all_methods_average_time_obj_nm.append(average_lazy_cirsmix3_time_obj_nm)
+
         # if len(self.DFSDP_time_obj_nm) != 0:
         #     average_DFSDP_time_obj_nm = sum(self.DFSDP_time_obj_nm) / len(self.DFSDP_time_obj_nm)
         # else:
@@ -400,6 +447,12 @@ class FinalExperimenter(object):
         else:
             average_lazy_cirsmix2_motionTime_obj_nm = 10000
         all_methods_average_motionTime_obj_nm.append(average_lazy_cirsmix2_motionTime_obj_nm)
+
+        if len(self.Lazy_CIRSMIX3_motionTime_obj_nm) != 0:
+            average_lazy_cirsmix3_motionTime_obj_nm = sum(self.Lazy_CIRSMIX3_motionTime_obj_nm) / len(self.Lazy_CIRSMIX3_motionTime_obj_nm)
+        else:
+            average_lazy_cirsmix3_motionTime_obj_nm = 10000
+        all_methods_average_motionTime_obj_nm.append(average_lazy_cirsmix3_motionTime_obj_nm)
 
         # if len(self.DFSDP_motionTime_obj_nm) != 0:
         #     average_DFSDP_motionTime_obj_nm = sum(self.DFSDP_motionTime_obj_nm) / len(self.DFSDP_motionTime_obj_nm)
@@ -440,6 +493,12 @@ class FinalExperimenter(object):
             average_lazy_cirsmix2_taskTime_obj_nm = 10000
         all_methods_average_taskTime_obj_nm.append(average_lazy_cirsmix2_taskTime_obj_nm)
 
+        if len(self.Lazy_CIRSMIX3_taskTime_obj_nm) != 0:
+            average_lazy_cirsmix3_taskTime_obj_nm = sum(self.Lazy_CIRSMIX3_taskTime_obj_nm) / len(self.Lazy_CIRSMIX3_taskTime_obj_nm)
+        else:
+            average_lazy_cirsmix3_taskTime_obj_nm = 10000
+        all_methods_average_taskTime_obj_nm.append(average_lazy_cirsmix3_taskTime_obj_nm)
+
         # if len(self.DFSDP_taskTime_obj_nm) != 0:
         #     average_DFSDP_taskTime_obj_nm = sum(self.DFSDP_taskTime_obj_nm) / len(self.DFSDP_taskTime_obj_nm)
         # else:
@@ -479,6 +538,12 @@ class FinalExperimenter(object):
             average_lazy_cirsmix2_success_obj_nm = 10000
         all_methods_average_success_obj_nm.append(average_lazy_cirsmix2_success_obj_nm)
 
+        if len(self.Lazy_CIRSMIX3_success_obj_nm) != 0:
+            average_lazy_cirsmix3_success_obj_nm = sum(self.Lazy_CIRSMIX3_success_obj_nm) / len(self.Lazy_CIRSMIX3_success_obj_nm)
+        else:
+            average_lazy_cirsmix3_success_obj_nm = 10000
+        all_methods_average_success_obj_nm.append(average_lazy_cirsmix3_success_obj_nm)
+
         # if len(self.DFSDP_success_obj_nm) != 0:
         #     average_DFSDP_success_obj_nm = sum(self.DFSDP_success_obj_nm) / len(self.DFSDP_success_obj_nm)
         # else:
@@ -517,6 +582,12 @@ class FinalExperimenter(object):
         else:
             average_lazy_cirsmix2_nActions_obj_nm = 10000
         all_methods_average_nActions_obj_nm.append(average_lazy_cirsmix2_nActions_obj_nm)
+
+        if len(self.Lazy_CIRSMIX3_nActions_obj_nm) != 0:
+            average_lazy_cirsmix3_nActions_obj_nm = sum(self.Lazy_CIRSMIX3_nActions_obj_nm) / len(self.Lazy_CIRSMIX3_nActions_obj_nm)
+        else:
+            average_lazy_cirsmix3_nActions_obj_nm = 10000
+        all_methods_average_nActions_obj_nm.append(average_lazy_cirsmix3_nActions_obj_nm)
 
         # if len(self.DFSDP_nActions_obj_nm) != 0:
         #     average_DFSDP_nActions_obj_nm = sum(self.DFSDP_nActions_obj_nm) / len(self.DFSDP_nActions_obj_nm)
@@ -754,7 +825,45 @@ def main(args):
             reset_instance_success = utils2.resetInstance("Right_torso")
             #####################################################################
 
-            # ### (4) DFSDP
+            ### (4) Lazy CIRSMIX3
+            start_time = time.time()
+            unidir_lazy_cirsmix3_planner = UnidirLazyCIRSMIX3Planner(
+                initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            lazy_cirsmix3_planning_time = time.time() - start_time
+            lazy_cirsmix3_motion_planning_time = unidir_lazy_cirsmix3_planner.motion_planning_time
+            lazy_cirsmix3_task_planning_time = lazy_cirsmix3_planning_time - lazy_cirsmix3_motion_planning_time
+            lazy_cirsmix3_isSolved = unidir_lazy_cirsmix3_planner.isSolved
+            lazy_cirsmix3_nActions = unidir_lazy_cirsmix3_planner.best_solution_cost
+            if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+                final_experimenter.Lazy_CIRSMIX3_time_obj_m.append(lazy_cirsmix3_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_motionTime_obj_m.append(lazy_cirsmix3_motion_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_taskTime_obj_m.append(lazy_cirsmix3_task_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_success_obj_m.append(lazy_cirsmix3_isSolved)
+                if lazy_cirsmix3_nActions != np.inf:
+                    final_experimenter.Lazy_CIRSMIX3_nActions_obj_m.append(lazy_cirsmix3_nActions)
+                else:
+                    lazy_cirsmix3_nActions = 5000
+            else:
+                ### non-monotone problem solution
+                final_experimenter.Lazy_CIRSMIX3_time_obj_nm.append(lazy_cirsmix3_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_motionTime_obj_nm.append(lazy_cirsmix3_motion_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_taskTime_obj_nm.append(lazy_cirsmix3_task_planning_time)
+                final_experimenter.Lazy_CIRSMIX3_success_obj_nm.append(lazy_cirsmix3_isSolved)
+                if lazy_cirsmix3_nActions != np.inf:
+                    final_experimenter.Lazy_CIRSMIX3_nActions_obj_nm.append(lazy_cirsmix3_nActions)
+                else:
+                    lazy_cirsmix3_nActions = 5000
+            all_methods_time_instance.append(lazy_cirsmix3_planning_time)
+            all_methods_motionTime_instance.append(lazy_cirsmix3_motion_planning_time)
+            all_methods_taskTime_instance.append(lazy_cirsmix3_task_planning_time)
+            all_methods_success_instance.append(float(lazy_cirsmix3_isSolved))
+            all_methods_nActions_instance.append(lazy_cirsmix3_nActions)
+
+            #####################################################################
+            reset_instance_success = utils2.resetInstance("Right_torso")
+            #####################################################################
+
+            # ### (5) DFSDP
             # start_time = time.time()
             # unidir_dfsdp_planner = UnidirDFSDPPlanner(
             #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
@@ -792,7 +901,7 @@ def main(args):
             # reset_instance_success = utils2.resetInstance("Right_torso")
             # #####################################################################
 
-            # ### (5) mRS
+            # ### (6) mRS
             # start_time = time.time()
             # unidir_mrs_planner = UnidirMRSPlanner(
             #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
