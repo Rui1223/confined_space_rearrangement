@@ -97,8 +97,8 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        if lazy_cirsmix3_nActions == instance_tester.num_objects:
-            input("monotone problem!!!!!!!!!!!!!")
+        # if lazy_cirsmix3_nActions == instance_tester.num_objects:
+        #     input("monotone problem!!!!!!!!!!!!!")
 
         ### (1) Lazy CIRSMIX2
         start_time = time.time()
@@ -144,27 +144,27 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        # ### (2) CIRSMIX
-        # start_time = time.time()
-        # unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
-        #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
-        # cirsmix_planning_time = time.time() - start_time
-        # cirsmix_motion_planning_time = unidir_cirsmix_planner.motion_planning_time
-        # cirsmix_task_planning_time = cirsmix_planning_time - cirsmix_motion_planning_time
-        # cirsmix_isSolved = unidir_cirsmix_planner.isSolved
-        # cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
-        # if cirsmix_nActions == np.inf:
-        #     cirsmix_nActions = 5000
-        # cirsmix_object_ordering = unidir_cirsmix_planner.object_ordering
-        # all_methods_time.append(cirsmix_planning_time)
-        # all_methods_motion_planning_time.append(cirsmix_motion_planning_time)
-        # all_methods_task_planning_time.append(cirsmix_task_planning_time)
-        # all_methods_success.append(float(cirsmix_isSolved))
-        # all_methods_nActions.append(cirsmix_nActions)
+        ### (2) CIRSMIX
+        start_time = time.time()
+        unidir_cirsmix_planner = UnidirCIRSMIXPlanner(
+            initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        cirsmix_planning_time = time.time() - start_time
+        cirsmix_motion_planning_time = unidir_cirsmix_planner.motion_planning_time
+        cirsmix_task_planning_time = cirsmix_planning_time - cirsmix_motion_planning_time
+        cirsmix_isSolved = unidir_cirsmix_planner.isSolved
+        cirsmix_nActions = unidir_cirsmix_planner.best_solution_cost
+        if cirsmix_nActions == np.inf:
+            cirsmix_nActions = 5000
+        cirsmix_object_ordering = unidir_cirsmix_planner.object_ordering
+        all_methods_time.append(cirsmix_planning_time)
+        all_methods_motion_planning_time.append(cirsmix_motion_planning_time)
+        all_methods_task_planning_time.append(cirsmix_task_planning_time)
+        all_methods_success.append(float(cirsmix_isSolved))
+        all_methods_nActions.append(cirsmix_nActions)
 
-        # #####################################################################
-        # reset_instance_success = utils2.resetInstance("Right_torso")
-        # #####################################################################
+        #####################################################################
+        reset_instance_success = utils2.resetInstance("Right_torso")
+        #####################################################################
 
         ### (3) CIRS
         start_time = time.time()
@@ -188,49 +188,49 @@ def main(args):
         reset_instance_success = utils2.resetInstance("Right_torso")
         #####################################################################
 
-        # ### (4) DFSDP
-        # start_time = time.time()
-        # unidir_dfsdp_planner = UnidirDFSDPPlanner(
-        #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
-        # DFSDP_planning_time = time.time() - start_time
-        # DFSDP_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
-        # DFSDP_task_planning_time = DFSDP_planning_time - DFSDP_motion_planning_time
-        # DFSDP_isSolved = unidir_dfsdp_planner.isSolved
-        # DFSDP_nActions = unidir_dfsdp_planner.best_solution_cost
-        # if DFSDP_nActions == np.inf:
-        #     DFSDP_nActions = 5000
-        # DFSDP_object_ordering = unidir_dfsdp_planner.object_ordering
-        # all_methods_time.append(DFSDP_planning_time)
-        # all_methods_motion_planning_time.append(DFSDP_motion_planning_time)
-        # all_methods_task_planning_time.append(DFSDP_task_planning_time)
-        # all_methods_success.append(float(DFSDP_isSolved))
-        # all_methods_nActions.append(DFSDP_nActions)
+        ### (4) DFSDP
+        start_time = time.time()
+        unidir_dfsdp_planner = UnidirDFSDPPlanner(
+            initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        DFSDP_planning_time = time.time() - start_time
+        DFSDP_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
+        DFSDP_task_planning_time = DFSDP_planning_time - DFSDP_motion_planning_time
+        DFSDP_isSolved = unidir_dfsdp_planner.isSolved
+        DFSDP_nActions = unidir_dfsdp_planner.best_solution_cost
+        if DFSDP_nActions == np.inf:
+            DFSDP_nActions = 5000
+        DFSDP_object_ordering = unidir_dfsdp_planner.object_ordering
+        all_methods_time.append(DFSDP_planning_time)
+        all_methods_motion_planning_time.append(DFSDP_motion_planning_time)
+        all_methods_task_planning_time.append(DFSDP_task_planning_time)
+        all_methods_success.append(float(DFSDP_isSolved))
+        all_methods_nActions.append(DFSDP_nActions)
 
-        # #####################################################################
-        # reset_instance_success = utils2.resetInstance("Right_torso")
-        # #####################################################################
+        #####################################################################
+        reset_instance_success = utils2.resetInstance("Right_torso")
+        #####################################################################
 
-        # ### (5) mRS
-        # start_time = time.time()
-        # unidir_mrs_planner = UnidirMRSPlanner(
-        #     initial_arrangement, final_arrangement, instance_tester.time_allowed)
-        # mRS_planning_time = time.time() - start_time
-        # mRS_motion_planning_time = unidir_mrs_planner.motion_planning_time
-        # mRS_task_planning_time = mRS_planning_time - mRS_motion_planning_time
-        # mRS_isSolved = unidir_mrs_planner.isSolved
-        # mRS_nActions = unidir_mrs_planner.best_solution_cost
-        # if mRS_nActions == np.inf:
-        #     mRS_nActions = 5000
-        # mRS_object_ordering = unidir_mrs_planner.object_ordering
-        # all_methods_time.append(mRS_planning_time)
-        # all_methods_motion_planning_time.append(mRS_motion_planning_time)
-        # all_methods_task_planning_time.append(mRS_task_planning_time)
-        # all_methods_success.append(float(mRS_isSolved))
-        # all_methods_nActions.append(mRS_nActions)
+        ### (5) mRS
+        start_time = time.time()
+        unidir_mrs_planner = UnidirMRSPlanner(
+            initial_arrangement, final_arrangement, instance_tester.time_allowed)
+        mRS_planning_time = time.time() - start_time
+        mRS_motion_planning_time = unidir_mrs_planner.motion_planning_time
+        mRS_task_planning_time = mRS_planning_time - mRS_motion_planning_time
+        mRS_isSolved = unidir_mrs_planner.isSolved
+        mRS_nActions = unidir_mrs_planner.best_solution_cost
+        if mRS_nActions == np.inf:
+            mRS_nActions = 5000
+        mRS_object_ordering = unidir_mrs_planner.object_ordering
+        all_methods_time.append(mRS_planning_time)
+        all_methods_motion_planning_time.append(mRS_motion_planning_time)
+        all_methods_task_planning_time.append(mRS_task_planning_time)
+        all_methods_success.append(float(mRS_isSolved))
+        all_methods_nActions.append(mRS_nActions)
 
-        # #####################################################################
-        # reset_instance_success = utils2.resetInstance("Right_torso")
-        # #####################################################################
+        #####################################################################
+        reset_instance_success = utils2.resetInstance("Right_torso")
+        #####################################################################
 
         print("\n")
         print("Time for lazy CIRSMIX3 planning is: {}".format(lazy_cirsmix3_planning_time))
@@ -254,13 +254,13 @@ def main(args):
         print("Number of actions for lazy CIRSMIX planning: {}".format(lazy_cirsmix_nActions))
         print("Object ordering for lazy CIRSMIX planning is: {}".format(lazy_cirsmix_object_ordering))
         print("\n")
-        # print("Time for CIRSMIX planning is: {}".format(cirsmix_planning_time))
-        # print("Motion planning time for CIRSMIX planning is: {}".format(cirsmix_motion_planning_time))
-        # print("Task planning time for CIRSMIX planning is: {}".format(cirsmix_task_planning_time))
-        # print("Success for CIRSMIX planning is: {}".format(cirsmix_isSolved))
-        # print("Number of actions for CIRSMIX planning: {}".format(cirsmix_nActions))
-        # print("Object ordering for CIRSMIX planning is: {}".format(cirsmix_object_ordering))
-        # print("\n")
+        print("Time for CIRSMIX planning is: {}".format(cirsmix_planning_time))
+        print("Motion planning time for CIRSMIX planning is: {}".format(cirsmix_motion_planning_time))
+        print("Task planning time for CIRSMIX planning is: {}".format(cirsmix_task_planning_time))
+        print("Success for CIRSMIX planning is: {}".format(cirsmix_isSolved))
+        print("Number of actions for CIRSMIX planning: {}".format(cirsmix_nActions))
+        print("Object ordering for CIRSMIX planning is: {}".format(cirsmix_object_ordering))
+        print("\n")
         print("Time for CIRS planning is: {}".format(cirs_planning_time))
         print("Motion planning time for CIRS planning is: {}".format(cirs_motion_planning_time))
         print("Task planning time for CIRS planning is: {}".format(cirs_task_planning_time))
@@ -268,20 +268,20 @@ def main(args):
         print("Number of actions for CIRS planning: {}".format(cirs_nActions))
         print("Object ordering for CIRS planning is: {}".format(cirs_object_ordering))
         print("\n")
-        # print("Time for DFSDP planning is: {}".format(DFSDP_planning_time))
-        # print("Motion planning time for DFSDP planning is: {}".format(DFSDP_motion_planning_time))
-        # print("Task planning time for DFSDP planning is: {}".format(DFSDP_task_planning_time))
-        # print("Success for DFSDP planning is: {}".format(DFSDP_isSolved))
-        # print("Number of actions for DFSDP planning is: {}".format(DFSDP_nActions))
-        # print("Object ordering for DFSDP planning is: {}".format(DFSDP_object_ordering))
-        # print("\n")
-        # print("Time for mRS planning is: {}".format(mRS_planning_time))
-        # print("Motion planning time for mRS planning is: {}".format(mRS_motion_planning_time))
-        # print("Task planning time for mRS planning is: {}".format(mRS_task_planning_time))
-        # print("Success for mRS planning is: {}".format(mRS_isSolved))
-        # print("Number of actions for mRS planning is: {}".format(mRS_nActions))
-        # print("Object ordering for mRS planning is: {}".format(mRS_object_ordering))
-        # print("\n")
+        print("Time for DFSDP planning is: {}".format(DFSDP_planning_time))
+        print("Motion planning time for DFSDP planning is: {}".format(DFSDP_motion_planning_time))
+        print("Task planning time for DFSDP planning is: {}".format(DFSDP_task_planning_time))
+        print("Success for DFSDP planning is: {}".format(DFSDP_isSolved))
+        print("Number of actions for DFSDP planning is: {}".format(DFSDP_nActions))
+        print("Object ordering for DFSDP planning is: {}".format(DFSDP_object_ordering))
+        print("\n")
+        print("Time for mRS planning is: {}".format(mRS_planning_time))
+        print("Motion planning time for mRS planning is: {}".format(mRS_motion_planning_time))
+        print("Task planning time for mRS planning is: {}".format(mRS_task_planning_time))
+        print("Success for mRS planning is: {}".format(mRS_isSolved))
+        print("Number of actions for mRS planning is: {}".format(mRS_nActions))
+        print("Object ordering for mRS planning is: {}".format(mRS_object_ordering))
+        print("\n")
 
         if instance_tester.isNewInstance:
             ### only keep the option to save instance when it is a new instance

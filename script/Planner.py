@@ -811,6 +811,40 @@ class Planner(object):
         FLAG = 0
         return isConfigValid, FLAG
 
+    def checkConfig_reachability_automated(self, desired_ee_pose, robot, armType):
+        ######## before calling this function, don't forget to call API: setRobotToConfig ########
+        ### This function purely checks if an IK solution is reachable
+        ### small position and orientation error
+        if armType == "Left" or armType == "Left_torso":
+            actual_ee_pose = copy.deepcopy(robot.left_ee_pose)
+        if armType == "Right" or armType == "Right_torso":
+            actual_ee_pose = copy.deepcopy(robot.right_ee_pose)
+        ### if the ee_idx is within 2.0cm(0.02m) Euclidean distance from the desired one, we accept it
+        ee_dist_pos = utils.computePoseDist_pos(actual_ee_pose[0], desired_ee_pose[0])
+        # print("actual_pose: " + str(actual_ee_pose[0]))
+        # print("desired_pose: " + str(desired_ee_pose))
+        # print("position error: " + str(ee_dist_pos))
+        if ee_dist_pos > 0.012:
+            # print("IK not reachable as position error exceeds 1.2cm: " + str(ee_dist_pos))
+            ### raise the flag
+            isConfigValid = False
+            FLAG = 1
+            return isConfigValid, FLAG, ee_dist_pos
+        else:
+            ### Now check orientation error
+            ee_dist_quat = utils.computePoseDist_quat(actual_ee_pose[1], desired_ee_pose[1])
+            if ee_dist_quat > 0.8:
+                # print("IK not reachable as quaternion error exceeds 0.8: " + str(ee_dist_quat))
+                ### raise the flag
+                isConfigValid = False
+                FLAG = 1
+                return isConfigValid, FLAG, ee_dist_pos
+        ### otherwise, this config (IK) is reachable
+        isConfigValid = True
+        FLAG = 0
+        return isConfigValid, FLAG, ee_dist_pos
+
+
     
     def checkConfig_AllCollisions(self, robot, workspace, armType):
         ######## before calling this function, don't forget to call API: setRobotToConfig ########
@@ -1906,6 +1940,29 @@ class Planner(object):
         isConfigValid, FLAG = self.checkConfig_CollisionWithRobotAndKnownGEO(robot, workspace)
         return isConfigValid, FLAG
 
+    def checkSamplePoseIK_automated(self, desired_ee_pose, robot, workspace, armType):
+        ######## before calling this function, don't forget to call API: setRobotToConfig ########
+        ### This function checks if an IK solution is valid in terms of
+        ### (1) small error from the desired pose (position error + quaternion error)
+        ### (2) no collision occurred for knownGEO + robot
+
+        ### Input: desired_ee_pose: [[x,y,z], [x,y,z,w]]
+        ###        armType: "Left" or "Right"
+        ### Output: isConfigValid (bool) indicating whether the IK is valid
+        ###         FLAG (int): indicating the validity/invalidity reason
+        ###                     0: no any issues (pass all IK check)
+        #                       1: reachability
+        #                       2: robot self-collision
+        #                       3: collision between robot and static geometry
+        
+        isConfigValid, FLAG, position_offset = self.checkConfig_reachability_automated(desired_ee_pose, robot, armType)
+        if not isConfigValid: 
+            return isConfigValid, FLAG, position_offset
+        ### Congrats! The IK successfully passed reachability checker. 
+        ### Then check if there is collision (robot self-collision + robot-knownGEO)
+        isConfigValid, FLAG = self.checkConfig_CollisionWithRobotAndKnownGEO(robot, workspace)
+        return isConfigValid, FLAG, position_offset
+
     def AstarPathFinding_labeledVersion(self, initialConfig, targetConfig,
                 start_neighbors_idx, start_neighbors_cost, 
                 goal_neighbors_idx, goal_neighbors_cost,
@@ -2128,6 +2185,164 @@ class Planner(object):
                 return approaching_config_candidates[pose_id], grasping_config_candidates[pose_id], \
                     approaching_labels[pose_id], grasping_labels[pose_id], total_labels[pose_id]
     ###################################################################################################################
+
+    ###################################################################################################################
+    def generateConfigBasedOnPose_candidates_automated(self, pose, robot, workspace, armType, cylinder_positions_geometries, candidate_idx):
+        ### This function generates IK for a pose and check the IK
+        ### in term of reachablity, essential collisions, as well as labels
+        ### Input: pose: [[x,y,z],[x,y,z,w]]
+        ###        armType: "Left(torso)" or "Right(torso)"
+        ### Output: approaching_config, grasping_config, approaching_label, grasping_label, total_label
+
+        approaching_config_candidates = [] ### a list of approaching configs
+        grasping_config_candidates = [] ### a list of grasping configs
+        approaching_labels = [] ### a list of labels per approaching config
+        grasping_labels = [] ### a list of labels per grasping config
+        total_labels = [] ### a list of labels per (approaching + grasping)
+        grasping_position_offset_candidates = [] ### a list of grasping position offset candidates
+
+        if armType == "Left" or armType == "Left_torso":
+            ee_idx = robot.left_ee_idx
+            first_joint_index = 1
+        if armType == "Right" or armType == "Right_torso":
+            ee_idx = robot.right_ee_idx
+            first_joint_index = 8
+
+        num_trials = 6
+        current_trial = 1
+        while (current_trial <= num_trials):
+            ############################### check grasping pose #############################
+            rest_pose = self.randomRestPose(robot, armType)
+            ### we add rest pose in the IK solver to get as high-quality IK as possible
+            config_IK = p.calculateInverseKinematics(bodyUniqueId=robot.motomanGEO,
+                                    endEffectorLinkIndex=ee_idx,
+                                    targetPosition=pose[0],
+                                    targetOrientation=pose[1],
+                                    lowerLimits=robot.ll, upperLimits=robot.ul, 
+                                    jointRanges=robot.jr, restPoses=rest_pose,
+                                    maxNumIterations=2000, residualThreshold=0.0000001,
+                                    physicsClientId=robot.server)
+            if armType == "Left" or armType == "Right":
+                singleArmConfig_IK_grasping = list(config_IK[first_joint_index:first_joint_index+7])
+            if armType == "Left_torso" or armType == "Right_torso":
+                singleArmConfig_IK_grasping = [config_IK[0]] + list(config_IK[first_joint_index:first_joint_index+7])
+            print("grasp IK: " + str(singleArmConfig_IK_grasping))
+            ### first check if it exceeds joint limit
+            exceedJointLimit = self.checkJointLimit(singleArmConfig_IK_grasping, armType, robot)
+            if exceedJointLimit:
+                print("violate joint limit!!, try again")
+                current_trial += 1
+                continue
+            self.setRobotToConfig(singleArmConfig_IK_grasping, robot, armType)
+            isIKValid, FLAG, position_offset_grapsing = self.checkSamplePoseIK_automated(pose, robot, workspace, armType)
+            if not isIKValid:
+                current_trial += 1
+                continue
+            ### check labels
+            isConfigValid, FLAG, objectCollided_grasping = \
+                self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, cylinder_positions_geometries)
+            print("Labels for grasping pose: ", objectCollided_grasping)
+            if candidate_idx in objectCollided_grasping:
+                print("label self colliding, try again")
+                current_trial += 1
+                continue
+            print("**************grasping done, now check approaching**************\n")
+
+            ############################### check approaching pose #############################
+            temp_rot_matrix = p.getMatrixFromQuaternion(pose[1])
+            ### local z-axis of the end effector
+            temp_approaching_direction = [temp_rot_matrix[2], temp_rot_matrix[5], temp_rot_matrix[8]]
+            temp_pos = list(np.array(pose[0]) - 0.05*np.array(temp_approaching_direction))
+            new_pose = [temp_pos, pose[1]] ### the quaternion remains the same as input pose
+            q_newPoseIK = p.calculateInverseKinematics(bodyUniqueId=robot.motomanGEO, 
+                                    endEffectorLinkIndex=ee_idx, 
+                                    targetPosition=new_pose[0], 
+                                    targetOrientation=new_pose[1], 
+                                    lowerLimits=robot.ll, upperLimits=robot.ul, 
+                                    jointRanges=robot.jr, restPoses=rest_pose,
+                                    maxNumIterations=2000, residualThreshold=0.0000001,
+                                    physicsClientId=robot.server)
+            if armType == "Left" or armType == "Right":
+                singleArmConfig_IK_approaching = list(q_newPoseIK[first_joint_index:first_joint_index+7])
+            if armType == "Left_torso" or armType == "Right_torso":
+                singleArmConfig_IK_approaching = [q_newPoseIK[0]] + list(q_newPoseIK[first_joint_index:first_joint_index+7])
+            print("approach IK: " + str(singleArmConfig_IK_approaching))
+            ### first check if it exceeds joint limit
+            exceedJointLimit = self.checkJointLimit(singleArmConfig_IK_approaching, armType, robot)
+            if exceedJointLimit:
+                print("violate joint limit!!, try again")
+                current_trial += 1
+                continue
+            self.setRobotToConfig(singleArmConfig_IK_approaching, robot, armType)
+            isIKValid, FLAG, position_offset_approaching = self.checkSamplePoseIK_automated(new_pose, robot, workspace, armType)
+            if not isIKValid:
+                current_trial += 1
+                continue
+            ### check labels
+            isConfigValid, FLAG, objectCollided_approaching = \
+                self.checkConfig_CollisionBetweenRobotAndStaticObjects_labeled(robot, cylinder_positions_geometries)
+            print("Labels for approaching pose: ", objectCollided_approaching)
+            if candidate_idx in objectCollided_approaching:
+                print("label self colliding, try again")
+                current_trial += 1
+                continue
+            print("**************approaching done as well**************\n")
+
+            ############### congrats! temporarily save this pose ###############
+            # print("approaching config: ", singleArmConfig_IK_approaching)
+            # print("grasping config: ", singleArmConfig_IK_grasping)
+            # print("approaching labels: ", set(objectCollided_approaching))
+            # print("grasping labels: ", set(objectCollided_grasping))
+            # print("total labels: ", set(objectCollided_approaching + objectCollided_grasping))
+            # print("grasping position offset:", position_offset_grapsing)
+            approaching_config_candidates.append(singleArmConfig_IK_approaching)
+            grasping_config_candidates.append(singleArmConfig_IK_grasping)
+            approaching_labels.append(set(objectCollided_approaching))
+            grasping_labels.append(set(objectCollided_grasping))
+            total_labels.append(set(objectCollided_approaching + objectCollided_grasping))
+            grasping_position_offset_candidates.append(position_offset_grapsing)
+            current_trial += 1
+
+        ### out of the loop
+        print("out of the loop")
+        if total_labels == []:
+            return [], [], set(), set(), set()
+        else:
+            print("approaching_config_candidates: ", approaching_config_candidates)
+            print("grasping_config_candidates: ", grasping_config_candidates)
+            print("approaching labels: ", approaching_labels)
+            print("grasping labels: ", grasping_labels)
+            print("total labels: ", total_labels)
+            print("grasping position offset: ", grasping_position_offset_candidates)
+            ### automatically select the best one in terms of the smallest grasping position offset
+            min_value = min(grasping_position_offset_candidates)
+            min_index = grasping_position_offset_candidates.index(min_value)
+
+            print("the chosen configuration")
+            print("the chosen approaching config: ", approaching_config_candidates[min_index])
+            print("the chosen grasping config: ", grasping_config_candidates[min_index])
+            print("the chosen approaching labels: ", approaching_labels[min_index])
+            print("the chosen grasping_labels labels: ", grasping_labels[min_index])
+            print("the chosen total_labels labels: ", total_labels[min_index])
+            # input("checking if okay")
+
+            return approaching_config_candidates[min_index], grasping_config_candidates[min_index], \
+                approaching_labels[min_index], grasping_labels[min_index], total_labels[min_index]
+    ###################################################################################################################
+
+    ###################################################################################################################
+    def checkJointLimit(self, ik_config, armType, robot):
+        exceedJointLimit = True
+        if armType == "Right_torso":
+            joint_ll = robot.ll[0:8]
+            joint_ul = robot.ul[0:8]
+        for j_idx in range(len(list(ik_config))):
+            if ik_config[j_idx] <= (joint_ll[j_idx] + 0.02) or ik_config[j_idx] >= (joint_ul[j_idx] - 0.02):
+                return exceedJointLimit
+        exceedJointLimit = False
+        return exceedJointLimit
+
+    ###################################################################################################################
     
     ###################################################################################################################
     def generateConfigBasedOnPose_initialPositions(self, pose, robot, workspace, armType, cylinder_positions_geometries):
@@ -2296,8 +2511,10 @@ class Planner(object):
             graspingPose_candidates = self.generate_pose_candidates(cylinder_candidate.pos, workspace.cylinder_height)
             for pose_id, graspingPose in enumerate(graspingPose_candidates):
                 approaching_config, grasping_config, approaching_label, grasping_label, total_label = \
-                    self.generateConfigBasedOnPose_candidates(
-                        graspingPose, robot, workspace, armType, cylinder_positions_geometries)
+                    self.generateConfigBasedOnPose_candidates_automated(
+                        graspingPose, robot, workspace, armType, cylinder_positions_geometries, candidate_idx)
+                    # self.generateConfigBasedOnPose_candidates(
+                    #     graspingPose, robot, workspace, armType, cylinder_positions_geometries)
                 if approaching_config != []:
                     self.position_candidates_configPoses[candidate_idx].approaching_configs.append(approaching_config)
                     self.position_candidates_configPoses[candidate_idx].grasping_configs.append(grasping_config)
@@ -2316,7 +2533,7 @@ class Planner(object):
                 self.position_candidates_configPoses[candidate_idx].grasping_labels)
             print("candidate " + str(candidate_idx) + " total_labels: ", \
                 self.position_candidates_configPoses[candidate_idx].total_labels)
-            input("ENTER to next candidate")
+            # input("ENTER to next candidate")
         
         ### wooo!!! finished!
         ### save the whole position_candidates_configPoses

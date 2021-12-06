@@ -416,6 +416,7 @@ class WorkspaceTable(object):
         self.positionCandidate_y_limit = [self.candidate_geometries[0].pos[1], \
                                           self.candidate_geometries[self.num_candidates-1].pos[1]]
         ### printing test
+        print("total number of candidates: " + str(self.num_candidates))
         # for candidate_idx, cylinder_candidate in self.candidate_geometries.items():
         #     print(str(candidate_idx) + ": " + str(cylinder_candidate.pos))
 
