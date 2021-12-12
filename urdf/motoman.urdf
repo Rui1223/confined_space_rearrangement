@@ -438,7 +438,9 @@
   </joint>
   <joint name="arm_right_joint_tool0" type="fixed">
     <!-- the following line is modified by Rui-->
-    <origin rpy="0 0 -3.13" xyz="0 0 -0.025"/>
+    <!-- <origin rpy="0 0 -3.13" xyz="0 0 -0.025"/> -->
+    <!-- the following line is modified by Yinglong-->
+    <origin rpy="0 0 -3.13" xyz="0 0 -0.055"/>
     <!-- <origin rpy="0 0 -3.13" xyz="0 0 -0.0325"/> -->
     <!-- <origin rpy="0 0 -3.13" xyz="0 0 0.0"/> origin -->
     <parent link="arm_right_link_7_t"/>
