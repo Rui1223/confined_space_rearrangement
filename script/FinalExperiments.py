@@ -39,11 +39,11 @@ class FinalExperimenter(object):
         self.ExperimentsFolder = os.path.join(self.rosPackagePath, "final_experiments")
         if not os.path.exists(self.ExperimentsFolder):
             os.makedirs(self.ExperimentsFolder)
-        self.numObjects_options = [13]
+        self.numObjects_options = [12, 13, 14, 15, 16]
         self.numExperiments_perObject = int(args[1])
         self.maxInstancesNeed_perObject = int(args[2])
         self.time_allowed_monotone = 100 ### previous: 120
-        self.time_allowed_nonMonotone = 200 ### previous: 240
+        self.time_allowed_nonMonotone = 240 ### previous: 240
 
 
     def createNumObjectsFolder(self, num_objects):
@@ -67,80 +67,80 @@ class FinalExperimenter(object):
         self.Lazy_CIRSMIX_time_obj_m = []
         self.CIRSMIX_time_obj_m = []
         self.CIRS_time_obj_m = []
-        self.DFSDP_time_obj_m = []
-        self.mRS_time_obj_m = []
+        # self.DFSDP_time_obj_m = []
+        # self.mRS_time_obj_m = []
 
         self.Lazy_CIRSMIX3_motionTime_obj_m = []
         self.Lazy_CIRSMIX2_motionTime_obj_m = []
         self.Lazy_CIRSMIX_motionTime_obj_m = []
         self.CIRSMIX_motionTime_obj_m = []
         self.CIRS_motionTime_obj_m = []
-        self.DFSDP_motionTime_obj_m = []
-        self.mRS_motionTime_obj_m = []
+        # self.DFSDP_motionTime_obj_m = []
+        # self.mRS_motionTime_obj_m = []
 
         self.Lazy_CIRSMIX3_taskTime_obj_m = []
         self.Lazy_CIRSMIX2_taskTime_obj_m = []
         self.Lazy_CIRSMIX_taskTime_obj_m = []
         self.CIRSMIX_taskTime_obj_m = []
         self.CIRS_taskTime_obj_m = []
-        self.DFSDP_taskTime_obj_m = []
-        self.mRS_taskTime_obj_m = []
+        # self.DFSDP_taskTime_obj_m = []
+        # self.mRS_taskTime_obj_m = []
 
         self.Lazy_CIRSMIX3_success_obj_m = []
         self.Lazy_CIRSMIX2_success_obj_m = []
         self.Lazy_CIRSMIX_success_obj_m = []
         self.CIRSMIX_success_obj_m = []
         self.CIRS_success_obj_m = []
-        self.DFSDP_success_obj_m = []
-        self.mRS_success_obj_m = []
+        # self.DFSDP_success_obj_m = []
+        # self.mRS_success_obj_m = []
 
         self.Lazy_CIRSMIX3_nActions_obj_m = []
         self.Lazy_CIRSMIX2_nActions_obj_m = []
         self.Lazy_CIRSMIX_nActions_obj_m = []
         self.CIRSMIX_nActions_obj_m = []
         self.CIRS_nActions_obj_m = []
-        self.DFSDP_nActions_obj_m = []
-        self.mRS_nActions_obj_m = []
+        # self.DFSDP_nActions_obj_m = []
+        # self.mRS_nActions_obj_m = []
 
         self.Lazy_CIRSMIX3_time_obj_nm = []
         self.Lazy_CIRSMIX2_time_obj_nm = []
         self.Lazy_CIRSMIX_time_obj_nm = []
         self.CIRSMIX_time_obj_nm = []
         self.CIRS_time_obj_nm = []
-        self.DFSDP_time_obj_nm = []
-        self.mRS_time_obj_nm = []
+        # self.DFSDP_time_obj_nm = []
+        # self.mRS_time_obj_nm = []
 
         self.Lazy_CIRSMIX3_motionTime_obj_nm = []
         self.Lazy_CIRSMIX2_motionTime_obj_nm = []
         self.Lazy_CIRSMIX_motionTime_obj_nm = []
         self.CIRSMIX_motionTime_obj_nm = []
         self.CIRS_motionTime_obj_nm = []
-        self.DFSDP_motionTime_obj_nm = []
-        self.mRS_motionTime_obj_nm = []
+        # self.DFSDP_motionTime_obj_nm = []
+        # self.mRS_motionTime_obj_nm = []
 
         self.Lazy_CIRSMIX3_taskTime_obj_nm = []
         self.Lazy_CIRSMIX2_taskTime_obj_nm = []
         self.Lazy_CIRSMIX_taskTime_obj_nm = []
         self.CIRSMIX_taskTime_obj_nm = []
         self.CIRS_taskTime_obj_nm = []
-        self.DFSDP_taskTime_obj_nm = []
-        self.mRS_taskTime_obj_nm = []
+        # self.DFSDP_taskTime_obj_nm = []
+        # self.mRS_taskTime_obj_nm = []
 
         self.Lazy_CIRSMIX3_success_obj_nm = []
         self.Lazy_CIRSMIX2_success_obj_nm = []
         self.Lazy_CIRSMIX_success_obj_nm = []
         self.CIRSMIX_success_obj_nm = []
         self.CIRS_success_obj_nm = []
-        self.DFSDP_success_obj_nm = []
-        self.mRS_success_obj_nm = []
+        # self.DFSDP_success_obj_nm = []
+        # self.mRS_success_obj_nm = []
 
         self.Lazy_CIRSMIX3_nActions_obj_nm = []
         self.Lazy_CIRSMIX2_nActions_obj_nm = []
         self.Lazy_CIRSMIX_nActions_obj_nm = []
         self.CIRSMIX_nActions_obj_nm = []
         self.CIRS_nActions_obj_nm = []
-        self.DFSDP_nActions_obj_nm = []
-        self.mRS_nActions_obj_nm = []
+        # self.DFSDP_nActions_obj_nm = []
+        # self.mRS_nActions_obj_nm = []
 
     def saveAverageSolutionPerNumObject(self):
         ######################################## monotone ########################################
@@ -177,17 +177,17 @@ class FinalExperimenter(object):
             average_cirs_time_obj_m = 10000
         all_methods_average_time_obj_m.append(average_cirs_time_obj_m)
 
-        if len(self.DFSDP_time_obj_m) != 0:
-            average_DFSDP_time_obj_m = sum(self.DFSDP_time_obj_m) / len(self.DFSDP_time_obj_m)
-        else:
-            average_DFSDP_time_obj_m = 10000
-        all_methods_average_time_obj_m.append(average_DFSDP_time_obj_m)
+        # if len(self.DFSDP_time_obj_m) != 0:
+        #     average_DFSDP_time_obj_m = sum(self.DFSDP_time_obj_m) / len(self.DFSDP_time_obj_m)
+        # else:
+        #     average_DFSDP_time_obj_m = 10000
+        # all_methods_average_time_obj_m.append(average_DFSDP_time_obj_m)
 
-        if len(self.mRS_time_obj_m) != 0:
-            average_mRS_time_obj_m = sum(self.mRS_time_obj_m) / len(self.mRS_time_obj_m)
-        else:
-            average_mRS_time_obj_m = 10000
-        all_methods_average_time_obj_m.append(average_mRS_time_obj_m)
+        # if len(self.mRS_time_obj_m) != 0:
+        #     average_mRS_time_obj_m = sum(self.mRS_time_obj_m) / len(self.mRS_time_obj_m)
+        # else:
+        #     average_mRS_time_obj_m = 10000
+        # all_methods_average_time_obj_m.append(average_mRS_time_obj_m)
 
         ################### average motion planning time ###################
         all_methods_average_motionTime_obj_m = []
@@ -222,17 +222,17 @@ class FinalExperimenter(object):
             average_cirs_motionTime_obj_m = 10000
         all_methods_average_motionTime_obj_m.append(average_cirs_motionTime_obj_m)
 
-        if len(self.DFSDP_motionTime_obj_m) != 0:
-            average_DFSDP_motionTime_obj_m = sum(self.DFSDP_motionTime_obj_m) / len(self.DFSDP_motionTime_obj_m)
-        else:
-            average_DFSDP_motionTime_obj_m = 10000
-        all_methods_average_motionTime_obj_m.append(average_DFSDP_motionTime_obj_m)
+        # if len(self.DFSDP_motionTime_obj_m) != 0:
+        #     average_DFSDP_motionTime_obj_m = sum(self.DFSDP_motionTime_obj_m) / len(self.DFSDP_motionTime_obj_m)
+        # else:
+        #     average_DFSDP_motionTime_obj_m = 10000
+        # all_methods_average_motionTime_obj_m.append(average_DFSDP_motionTime_obj_m)
 
-        if len(self.mRS_motionTime_obj_m) != 0:
-            average_mRS_motionTime_obj_m = sum(self.mRS_motionTime_obj_m) / len(self.mRS_motionTime_obj_m)
-        else:
-            average_mRS_motionTime_obj_m = 10000
-        all_methods_average_motionTime_obj_m.append(average_mRS_motionTime_obj_m)
+        # if len(self.mRS_motionTime_obj_m) != 0:
+        #     average_mRS_motionTime_obj_m = sum(self.mRS_motionTime_obj_m) / len(self.mRS_motionTime_obj_m)
+        # else:
+        #     average_mRS_motionTime_obj_m = 10000
+        # all_methods_average_motionTime_obj_m.append(average_mRS_motionTime_obj_m)
 
         ################### average task planning time ###################
         all_methods_average_taskTime_obj_m = []
@@ -267,17 +267,17 @@ class FinalExperimenter(object):
             average_cirs_taskTime_obj_m = 10000
         all_methods_average_taskTime_obj_m.append(average_cirs_taskTime_obj_m)
 
-        if len(self.DFSDP_taskTime_obj_m) != 0:
-            average_DFSDP_taskTime_obj_m = sum(self.DFSDP_taskTime_obj_m) / len(self.DFSDP_taskTime_obj_m)
-        else:
-            average_DFSDP_taskTime_obj_m = 10000
-        all_methods_average_taskTime_obj_m.append(average_DFSDP_taskTime_obj_m)
+        # if len(self.DFSDP_taskTime_obj_m) != 0:
+        #     average_DFSDP_taskTime_obj_m = sum(self.DFSDP_taskTime_obj_m) / len(self.DFSDP_taskTime_obj_m)
+        # else:
+        #     average_DFSDP_taskTime_obj_m = 10000
+        # all_methods_average_taskTime_obj_m.append(average_DFSDP_taskTime_obj_m)
 
-        if len(self.mRS_taskTime_obj_m) != 0:
-            average_mRS_taskTime_obj_m = sum(self.mRS_taskTime_obj_m) / len(self.mRS_taskTime_obj_m)
-        else:
-            average_mRS_taskTime_obj_m = 10000
-        all_methods_average_taskTime_obj_m.append(average_mRS_taskTime_obj_m)
+        # if len(self.mRS_taskTime_obj_m) != 0:
+        #     average_mRS_taskTime_obj_m = sum(self.mRS_taskTime_obj_m) / len(self.mRS_taskTime_obj_m)
+        # else:
+        #     average_mRS_taskTime_obj_m = 10000
+        # all_methods_average_taskTime_obj_m.append(average_mRS_taskTime_obj_m)
 
         ################### average success ###################
         all_methods_average_success_obj_m = []
@@ -312,17 +312,17 @@ class FinalExperimenter(object):
             average_cirs_success_obj_m = 0.0
         all_methods_average_success_obj_m.append(average_cirs_success_obj_m)
 
-        if len(self.DFSDP_success_obj_m) != 0:
-            average_DFSDP_success_obj_m = sum(self.DFSDP_success_obj_m) / len(self.DFSDP_success_obj_m)
-        else:
-            average_DFSDP_success_obj_m = 0.0
-        all_methods_average_success_obj_m.append(average_DFSDP_success_obj_m)
+        # if len(self.DFSDP_success_obj_m) != 0:
+        #     average_DFSDP_success_obj_m = sum(self.DFSDP_success_obj_m) / len(self.DFSDP_success_obj_m)
+        # else:
+        #     average_DFSDP_success_obj_m = 0.0
+        # all_methods_average_success_obj_m.append(average_DFSDP_success_obj_m)
 
-        if len(self.mRS_success_obj_m) != 0:
-            average_mRS_success_obj_m = sum(self.mRS_success_obj_m) / len(self.mRS_success_obj_m)
-        else:
-            average_mRS_success_obj_m = 0.0
-        all_methods_average_success_obj_m.append(average_mRS_success_obj_m)
+        # if len(self.mRS_success_obj_m) != 0:
+        #     average_mRS_success_obj_m = sum(self.mRS_success_obj_m) / len(self.mRS_success_obj_m)
+        # else:
+        #     average_mRS_success_obj_m = 0.0
+        # all_methods_average_success_obj_m.append(average_mRS_success_obj_m)
 
         ################### average nActions ###################
         all_methods_average_nActions_obj_m = []
@@ -357,17 +357,17 @@ class FinalExperimenter(object):
             average_cirs_nActions_obj_m = 0.0
         all_methods_average_nActions_obj_m.append(average_cirs_nActions_obj_m)
 
-        if len(self.DFSDP_nActions_obj_m) != 0:
-            average_DFSDP_nActions_obj_m = sum(self.DFSDP_nActions_obj_m) / len(self.DFSDP_nActions_obj_m)
-        else:
-            average_DFSDP_nActions_obj_m = 0.0
-        all_methods_average_nActions_obj_m.append(average_DFSDP_nActions_obj_m)
+        # if len(self.DFSDP_nActions_obj_m) != 0:
+        #     average_DFSDP_nActions_obj_m = sum(self.DFSDP_nActions_obj_m) / len(self.DFSDP_nActions_obj_m)
+        # else:
+        #     average_DFSDP_nActions_obj_m = 0.0
+        # all_methods_average_nActions_obj_m.append(average_DFSDP_nActions_obj_m)
 
-        if len(self.mRS_nActions_obj_m) != 0:
-            average_mRS_nActions_obj_m = sum(self.mRS_nActions_obj_m) / len(self.mRS_nActions_obj_m)
-        else:
-            average_mRS_nActions_obj_m = 0.0
-        all_methods_average_nActions_obj_m.append(average_mRS_nActions_obj_m)
+        # if len(self.mRS_nActions_obj_m) != 0:
+        #     average_mRS_nActions_obj_m = sum(self.mRS_nActions_obj_m) / len(self.mRS_nActions_obj_m)
+        # else:
+        #     average_mRS_nActions_obj_m = 0.0
+        # all_methods_average_nActions_obj_m.append(average_mRS_nActions_obj_m)
 
         ### save average results
         utils2.saveSolution2(
@@ -409,17 +409,17 @@ class FinalExperimenter(object):
             average_cirs_time_obj_nm = 10000
         all_methods_average_time_obj_nm.append(average_cirs_time_obj_nm)
 
-        if len(self.DFSDP_time_obj_nm) != 0:
-            average_DFSDP_time_obj_nm = sum(self.DFSDP_time_obj_nm) / len(self.DFSDP_time_obj_nm)
-        else:
-            average_DFSDP_time_obj_nm = 10000
-        all_methods_average_time_obj_nm.append(average_DFSDP_time_obj_nm)
+        # if len(self.DFSDP_time_obj_nm) != 0:
+        #     average_DFSDP_time_obj_nm = sum(self.DFSDP_time_obj_nm) / len(self.DFSDP_time_obj_nm)
+        # else:
+        #     average_DFSDP_time_obj_nm = 10000
+        # all_methods_average_time_obj_nm.append(average_DFSDP_time_obj_nm)
 
-        if len(self.mRS_time_obj_nm) != 0:
-            average_mRS_time_obj_nm = sum(self.mRS_time_obj_nm) / len(self.mRS_time_obj_nm)
-        else:
-            average_mRS_time_obj_nm = 10000
-        all_methods_average_time_obj_nm.append(average_mRS_time_obj_nm)
+        # if len(self.mRS_time_obj_nm) != 0:
+        #     average_mRS_time_obj_nm = sum(self.mRS_time_obj_nm) / len(self.mRS_time_obj_nm)
+        # else:
+        #     average_mRS_time_obj_nm = 10000
+        # all_methods_average_time_obj_nm.append(average_mRS_time_obj_nm)
 
         ################### average motion planning time ###################
         all_methods_average_motionTime_obj_nm = []
@@ -454,17 +454,17 @@ class FinalExperimenter(object):
             average_cirs_motionTime_obj_nm = 10000
         all_methods_average_motionTime_obj_nm.append(average_cirs_motionTime_obj_nm)
 
-        if len(self.DFSDP_motionTime_obj_nm) != 0:
-            average_DFSDP_motionTime_obj_nm = sum(self.DFSDP_motionTime_obj_nm) / len(self.DFSDP_motionTime_obj_nm)
-        else:
-            average_DFSDP_motionTime_obj_nm = 10000
-        all_methods_average_motionTime_obj_nm.append(average_DFSDP_motionTime_obj_nm)
+        # if len(self.DFSDP_motionTime_obj_nm) != 0:
+        #     average_DFSDP_motionTime_obj_nm = sum(self.DFSDP_motionTime_obj_nm) / len(self.DFSDP_motionTime_obj_nm)
+        # else:
+        #     average_DFSDP_motionTime_obj_nm = 10000
+        # all_methods_average_motionTime_obj_nm.append(average_DFSDP_motionTime_obj_nm)
 
-        if len(self.mRS_motionTime_obj_nm) != 0:
-            average_mRS_motionTime_obj_nm = sum(self.mRS_motionTime_obj_nm) / len(self.mRS_motionTime_obj_nm)
-        else:
-            average_mRS_motionTime_obj_nm = 10000
-        all_methods_average_motionTime_obj_nm.append(average_mRS_motionTime_obj_nm)
+        # if len(self.mRS_motionTime_obj_nm) != 0:
+        #     average_mRS_motionTime_obj_nm = sum(self.mRS_motionTime_obj_nm) / len(self.mRS_motionTime_obj_nm)
+        # else:
+        #     average_mRS_motionTime_obj_nm = 10000
+        # all_methods_average_motionTime_obj_nm.append(average_mRS_motionTime_obj_nm)
 
         ################### average task planning time ###################
         all_methods_average_taskTime_obj_nm = []
@@ -499,17 +499,17 @@ class FinalExperimenter(object):
             average_cirs_taskTime_obj_nm = 10000
         all_methods_average_taskTime_obj_nm.append(average_cirs_taskTime_obj_nm)
 
-        if len(self.DFSDP_taskTime_obj_nm) != 0:
-            average_DFSDP_taskTime_obj_nm = sum(self.DFSDP_taskTime_obj_nm) / len(self.DFSDP_taskTime_obj_nm)
-        else:
-            average_DFSDP_taskTime_obj_nm = 10000
-        all_methods_average_taskTime_obj_nm.append(average_DFSDP_taskTime_obj_nm)
+        # if len(self.DFSDP_taskTime_obj_nm) != 0:
+        #     average_DFSDP_taskTime_obj_nm = sum(self.DFSDP_taskTime_obj_nm) / len(self.DFSDP_taskTime_obj_nm)
+        # else:
+        #     average_DFSDP_taskTime_obj_nm = 10000
+        # all_methods_average_taskTime_obj_nm.append(average_DFSDP_taskTime_obj_nm)
 
-        if len(self.mRS_taskTime_obj_nm) != 0:
-            average_mRS_taskTime_obj_nm = sum(self.mRS_taskTime_obj_nm) / len(self.mRS_taskTime_obj_nm)
-        else:
-            average_mRS_taskTime_obj_nm = 10000
-        all_methods_average_taskTime_obj_nm.append(average_mRS_taskTime_obj_nm)
+        # if len(self.mRS_taskTime_obj_nm) != 0:
+        #     average_mRS_taskTime_obj_nm = sum(self.mRS_taskTime_obj_nm) / len(self.mRS_taskTime_obj_nm)
+        # else:
+        #     average_mRS_taskTime_obj_nm = 10000
+        # all_methods_average_taskTime_obj_nm.append(average_mRS_taskTime_obj_nm)
 
         ################### average success ###################
         all_methods_average_success_obj_nm = []
@@ -544,17 +544,17 @@ class FinalExperimenter(object):
             average_cirs_success_obj_nm = 0.0
         all_methods_average_success_obj_nm.append(average_cirs_success_obj_nm)
 
-        if len(self.DFSDP_success_obj_nm) != 0:
-            average_DFSDP_success_obj_nm = sum(self.DFSDP_success_obj_nm) / len(self.DFSDP_success_obj_nm)
-        else:
-            average_DFSDP_success_obj_nm = 0.0
-        all_methods_average_success_obj_nm.append(average_DFSDP_success_obj_nm)
+        # if len(self.DFSDP_success_obj_nm) != 0:
+        #     average_DFSDP_success_obj_nm = sum(self.DFSDP_success_obj_nm) / len(self.DFSDP_success_obj_nm)
+        # else:
+        #     average_DFSDP_success_obj_nm = 0.0
+        # all_methods_average_success_obj_nm.append(average_DFSDP_success_obj_nm)
 
-        if len(self.mRS_success_obj_nm) != 0:
-            average_mRS_success_obj_nm = sum(self.mRS_success_obj_nm) / len(self.mRS_success_obj_nm)
-        else:
-            average_mRS_success_obj_nm = 0.0
-        all_methods_average_success_obj_nm.append(average_mRS_success_obj_nm)
+        # if len(self.mRS_success_obj_nm) != 0:
+        #     average_mRS_success_obj_nm = sum(self.mRS_success_obj_nm) / len(self.mRS_success_obj_nm)
+        # else:
+        #     average_mRS_success_obj_nm = 0.0
+        # all_methods_average_success_obj_nm.append(average_mRS_success_obj_nm)
 
         ################### average nActions ###################
         all_methods_average_nActions_obj_nm = []
@@ -589,17 +589,17 @@ class FinalExperimenter(object):
             average_cirs_nActions_obj_nm = 0.0
         all_methods_average_nActions_obj_nm.append(average_cirs_nActions_obj_nm)
 
-        if len(self.DFSDP_nActions_obj_nm) != 0:
-            average_DFSDP_nActions_obj_nm = sum(self.DFSDP_nActions_obj_nm) / len(self.DFSDP_nActions_obj_nm)
-        else:
-            average_DFSDP_nActions_obj_nm = 0.0
-        all_methods_average_nActions_obj_nm.append(average_DFSDP_nActions_obj_nm)
+        # if len(self.DFSDP_nActions_obj_nm) != 0:
+        #     average_DFSDP_nActions_obj_nm = sum(self.DFSDP_nActions_obj_nm) / len(self.DFSDP_nActions_obj_nm)
+        # else:
+        #     average_DFSDP_nActions_obj_nm = 0.0
+        # all_methods_average_nActions_obj_nm.append(average_DFSDP_nActions_obj_nm)
 
-        if len(self.mRS_nActions_obj_nm) != 0:
-            average_mRS_nActions_obj_nm = sum(self.mRS_nActions_obj_nm) / len(self.mRS_nActions_obj_nm)
-        else:
-            average_mRS_nActions_obj_nm = 0.0
-        all_methods_average_nActions_obj_nm.append(average_mRS_nActions_obj_nm)
+        # if len(self.mRS_nActions_obj_nm) != 0:
+        #     average_mRS_nActions_obj_nm = sum(self.mRS_nActions_obj_nm) / len(self.mRS_nActions_obj_nm)
+        # else:
+        #     average_mRS_nActions_obj_nm = 0.0
+        # all_methods_average_nActions_obj_nm.append(average_mRS_nActions_obj_nm)
 
         ### save average results
         utils2.saveSolution2(
@@ -981,129 +981,129 @@ def main(args):
             reset_instance_success = utils2.resetInstance("Right_torso")
             #####################################################################
 
-            ### (5) DFSDP
-            start_time = time.time()
-            unidir_dfsdp_planner = UnidirDFSDPPlanner(
-                initial_arrangement, final_arrangement, time_allowed_for_other_methods)
-            dfsdp_planning_time = time.time() - start_time
-            dfsdp_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
-            dfsdp_task_planning_time = dfsdp_planning_time - dfsdp_motion_planning_time
-            dfsdp_isSolved = unidir_dfsdp_planner.isSolved
-            dfsdp_nActions = unidir_dfsdp_planner.best_solution_cost
-            if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
-                ############# ********************************************************** #############
-                if (dfsdp_planning_time <= final_experimenter.time_allowed_monotone): pass
-                elif (dfsdp_planning_time >= final_experimenter.time_allowed_monotone + 10):
-                    dfsdp_task_planning_time -= dfsdp_planning_time - final_experimenter.time_allowed_monotone
-                    dfsdp_planning_time = final_experimenter.time_allowed_monotone
-                    dfsdp_motion_planning_time = dfsdp_planning_time - dfsdp_task_planning_time
-                else:
-                    ### a little bit exceed...
-                    dfsdp_motion_planning_time *= ((final_experimenter.time_allowed_monotone) / (dfsdp_planning_time))
-                    dfsdp_task_planning_time *= ((final_experimenter.time_allowed_monotone) / (dfsdp_planning_time))
-                    dfsdp_planning_time = final_experimenter.time_allowed_monotone
-                ############# ********************************************************** #############
-                final_experimenter.DFSDP_time_obj_m.append(dfsdp_planning_time)
-                final_experimenter.DFSDP_motionTime_obj_m.append(dfsdp_motion_planning_time)
-                final_experimenter.DFSDP_taskTime_obj_m.append(dfsdp_task_planning_time)
-                final_experimenter.DFSDP_success_obj_m.append(dfsdp_isSolved)
-                if dfsdp_nActions != np.inf:
-                    final_experimenter.DFSDP_nActions_obj_m.append(dfsdp_nActions)
-                else:
-                    dfsdp_nActions = 5000
-            else:
-                ### non-monotone problem solution
-                ############# ********************************************************** #############
-                if (dfsdp_planning_time <= final_experimenter.time_allowed_nonMonotone): pass
-                elif (dfsdp_planning_time >= final_experimenter.time_allowed_nonMonotone + 10):
-                    dfsdp_task_planning_time -= dfsdp_planning_time - final_experimenter.time_allowed_nonMonotone
-                    dfsdp_planning_time = final_experimenter.time_allowed_nonMonotone
-                    dfsdp_motion_planning_time = dfsdp_planning_time - dfsdp_task_planning_time
-                else:
-                    ### a little bit exceed...
-                    dfsdp_motion_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (dfsdp_planning_time))
-                    dfsdp_task_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (dfsdp_planning_time))
-                    dfsdp_planning_time = final_experimenter.time_allowed_nonMonotone
-                ############# ********************************************************** #############
-                final_experimenter.DFSDP_time_obj_nm.append(dfsdp_planning_time)
-                final_experimenter.DFSDP_motionTime_obj_nm.append(dfsdp_motion_planning_time)
-                final_experimenter.DFSDP_taskTime_obj_nm.append(dfsdp_task_planning_time)
-                final_experimenter.DFSDP_success_obj_nm.append(dfsdp_isSolved)
-                if dfsdp_nActions != np.inf:
-                    final_experimenter.DFSDP_nActions_obj_nm.append(dfsdp_nActions)
-                else:
-                    dfsdp_nActions = 5000
-            all_methods_time_instance.append(dfsdp_planning_time)
-            all_methods_motionTime_instance.append(dfsdp_motion_planning_time)
-            all_methods_taskTime_instance.append(dfsdp_task_planning_time)
-            all_methods_success_instance.append(float(dfsdp_isSolved))
-            all_methods_nActions_instance.append(dfsdp_nActions)
+            # ### (5) DFSDP
+            # start_time = time.time()
+            # unidir_dfsdp_planner = UnidirDFSDPPlanner(
+            #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            # dfsdp_planning_time = time.time() - start_time
+            # dfsdp_motion_planning_time = unidir_dfsdp_planner.motion_planning_time
+            # dfsdp_task_planning_time = dfsdp_planning_time - dfsdp_motion_planning_time
+            # dfsdp_isSolved = unidir_dfsdp_planner.isSolved
+            # dfsdp_nActions = unidir_dfsdp_planner.best_solution_cost
+            # if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+            #     ############# ********************************************************** #############
+            #     if (dfsdp_planning_time <= final_experimenter.time_allowed_monotone): pass
+            #     elif (dfsdp_planning_time >= final_experimenter.time_allowed_monotone + 10):
+            #         dfsdp_task_planning_time -= dfsdp_planning_time - final_experimenter.time_allowed_monotone
+            #         dfsdp_planning_time = final_experimenter.time_allowed_monotone
+            #         dfsdp_motion_planning_time = dfsdp_planning_time - dfsdp_task_planning_time
+            #     else:
+            #         ### a little bit exceed...
+            #         dfsdp_motion_planning_time *= ((final_experimenter.time_allowed_monotone) / (dfsdp_planning_time))
+            #         dfsdp_task_planning_time *= ((final_experimenter.time_allowed_monotone) / (dfsdp_planning_time))
+            #         dfsdp_planning_time = final_experimenter.time_allowed_monotone
+            #     ############# ********************************************************** #############
+            #     final_experimenter.DFSDP_time_obj_m.append(dfsdp_planning_time)
+            #     final_experimenter.DFSDP_motionTime_obj_m.append(dfsdp_motion_planning_time)
+            #     final_experimenter.DFSDP_taskTime_obj_m.append(dfsdp_task_planning_time)
+            #     final_experimenter.DFSDP_success_obj_m.append(dfsdp_isSolved)
+            #     if dfsdp_nActions != np.inf:
+            #         final_experimenter.DFSDP_nActions_obj_m.append(dfsdp_nActions)
+            #     else:
+            #         dfsdp_nActions = 5000
+            # else:
+            #     ### non-monotone problem solution
+            #     ############# ********************************************************** #############
+            #     if (dfsdp_planning_time <= final_experimenter.time_allowed_nonMonotone): pass
+            #     elif (dfsdp_planning_time >= final_experimenter.time_allowed_nonMonotone + 10):
+            #         dfsdp_task_planning_time -= dfsdp_planning_time - final_experimenter.time_allowed_nonMonotone
+            #         dfsdp_planning_time = final_experimenter.time_allowed_nonMonotone
+            #         dfsdp_motion_planning_time = dfsdp_planning_time - dfsdp_task_planning_time
+            #     else:
+            #         ### a little bit exceed...
+            #         dfsdp_motion_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (dfsdp_planning_time))
+            #         dfsdp_task_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (dfsdp_planning_time))
+            #         dfsdp_planning_time = final_experimenter.time_allowed_nonMonotone
+            #     ############# ********************************************************** #############
+            #     final_experimenter.DFSDP_time_obj_nm.append(dfsdp_planning_time)
+            #     final_experimenter.DFSDP_motionTime_obj_nm.append(dfsdp_motion_planning_time)
+            #     final_experimenter.DFSDP_taskTime_obj_nm.append(dfsdp_task_planning_time)
+            #     final_experimenter.DFSDP_success_obj_nm.append(dfsdp_isSolved)
+            #     if dfsdp_nActions != np.inf:
+            #         final_experimenter.DFSDP_nActions_obj_nm.append(dfsdp_nActions)
+            #     else:
+            #         dfsdp_nActions = 5000
+            # all_methods_time_instance.append(dfsdp_planning_time)
+            # all_methods_motionTime_instance.append(dfsdp_motion_planning_time)
+            # all_methods_taskTime_instance.append(dfsdp_task_planning_time)
+            # all_methods_success_instance.append(float(dfsdp_isSolved))
+            # all_methods_nActions_instance.append(dfsdp_nActions)
 
-            #####################################################################
-            reset_instance_success = utils2.resetInstance("Right_torso")
-            #####################################################################
+            # #####################################################################
+            # reset_instance_success = utils2.resetInstance("Right_torso")
+            # #####################################################################
 
-            ### (6) mRS
-            start_time = time.time()
-            unidir_mrs_planner = UnidirMRSPlanner(
-                initial_arrangement, final_arrangement, time_allowed_for_other_methods)
-            mrs_planning_time = time.time() - start_time
-            mrs_motion_planning_time = unidir_mrs_planner.motion_planning_time
-            mrs_task_planning_time = mrs_planning_time - mrs_motion_planning_time
-            mrs_isSolved = unidir_mrs_planner.isSolved
-            mrs_nActions = unidir_mrs_planner.best_solution_cost
-            if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
-                ############# ********************************************************** #############
-                if (mrs_planning_time <= final_experimenter.time_allowed_monotone): pass
-                elif (mrs_planning_time >= final_experimenter.time_allowed_monotone + 10):
-                    mrs_task_planning_time -= mrs_planning_time - final_experimenter.time_allowed_monotone
-                    mrs_planning_time = final_experimenter.time_allowed_monotone
-                    mrs_motion_planning_time = mrs_planning_time - mrs_task_planning_time
-                else:
-                    ### a little bit exceed...
-                    mrs_motion_planning_time *= ((final_experimenter.time_allowed_monotone) / (mrs_planning_time))
-                    mrs_task_planning_time *= ((final_experimenter.time_allowed_monotone) / (mrs_planning_time))
-                    mrs_planning_time = final_experimenter.time_allowed_monotone
-                ############# ********************************************************** #############
-                final_experimenter.mRS_time_obj_m.append(mrs_planning_time)
-                final_experimenter.mRS_motionTime_obj_m.append(mrs_motion_planning_time)
-                final_experimenter.mRS_taskTime_obj_m.append(mrs_task_planning_time)
-                final_experimenter.mRS_success_obj_m.append(mrs_isSolved)
-                if mrs_nActions != np.inf:
-                    final_experimenter.mRS_nActions_obj_m.append(mrs_nActions)
-                else:
-                    mrs_nActions = 5000
-            else:
-                ### non-monotone problem solution
-                ############# ********************************************************** #############
-                if (mrs_planning_time <= final_experimenter.time_allowed_nonMonotone): pass
-                elif (mrs_planning_time >= final_experimenter.time_allowed_nonMonotone + 10):
-                    mrs_task_planning_time -= mrs_planning_time - final_experimenter.time_allowed_nonMonotone
-                    mrs_planning_time = final_experimenter.time_allowed_nonMonotone
-                    mrs_motion_planning_time = mrs_planning_time - mrs_task_planning_time
-                else:
-                    ### a little bit exceed...
-                    mrs_motion_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (mrs_planning_time))
-                    mrs_task_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (mrs_planning_time))
-                    mrs_planning_time = final_experimenter.time_allowed_nonMonotone
-                ############# ********************************************************** #############
-                final_experimenter.mRS_time_obj_nm.append(mrs_planning_time)
-                final_experimenter.mRS_motionTime_obj_nm.append(mrs_motion_planning_time)
-                final_experimenter.mRS_taskTime_obj_nm.append(mrs_task_planning_time)
-                final_experimenter.mRS_success_obj_nm.append(mrs_isSolved)
-                if mrs_nActions != np.inf:
-                    final_experimenter.mRS_nActions_obj_nm.append(mrs_nActions)
-                else:
-                    mrs_nActions = 5000
-            all_methods_time_instance.append(mrs_planning_time)
-            all_methods_motionTime_instance.append(mrs_motion_planning_time)
-            all_methods_taskTime_instance.append(mrs_task_planning_time)
-            all_methods_success_instance.append(float(mrs_isSolved))
-            all_methods_nActions_instance.append(mrs_nActions)
+            # ### (6) mRS
+            # start_time = time.time()
+            # unidir_mrs_planner = UnidirMRSPlanner(
+            #     initial_arrangement, final_arrangement, time_allowed_for_other_methods)
+            # mrs_planning_time = time.time() - start_time
+            # mrs_motion_planning_time = unidir_mrs_planner.motion_planning_time
+            # mrs_task_planning_time = mrs_planning_time - mrs_motion_planning_time
+            # mrs_isSolved = unidir_mrs_planner.isSolved
+            # mrs_nActions = unidir_mrs_planner.best_solution_cost
+            # if time_allowed_for_other_methods == final_experimenter.time_allowed_monotone:
+            #     ############# ********************************************************** #############
+            #     if (mrs_planning_time <= final_experimenter.time_allowed_monotone): pass
+            #     elif (mrs_planning_time >= final_experimenter.time_allowed_monotone + 10):
+            #         mrs_task_planning_time -= mrs_planning_time - final_experimenter.time_allowed_monotone
+            #         mrs_planning_time = final_experimenter.time_allowed_monotone
+            #         mrs_motion_planning_time = mrs_planning_time - mrs_task_planning_time
+            #     else:
+            #         ### a little bit exceed...
+            #         mrs_motion_planning_time *= ((final_experimenter.time_allowed_monotone) / (mrs_planning_time))
+            #         mrs_task_planning_time *= ((final_experimenter.time_allowed_monotone) / (mrs_planning_time))
+            #         mrs_planning_time = final_experimenter.time_allowed_monotone
+            #     ############# ********************************************************** #############
+            #     final_experimenter.mRS_time_obj_m.append(mrs_planning_time)
+            #     final_experimenter.mRS_motionTime_obj_m.append(mrs_motion_planning_time)
+            #     final_experimenter.mRS_taskTime_obj_m.append(mrs_task_planning_time)
+            #     final_experimenter.mRS_success_obj_m.append(mrs_isSolved)
+            #     if mrs_nActions != np.inf:
+            #         final_experimenter.mRS_nActions_obj_m.append(mrs_nActions)
+            #     else:
+            #         mrs_nActions = 5000
+            # else:
+            #     ### non-monotone problem solution
+            #     ############# ********************************************************** #############
+            #     if (mrs_planning_time <= final_experimenter.time_allowed_nonMonotone): pass
+            #     elif (mrs_planning_time >= final_experimenter.time_allowed_nonMonotone + 10):
+            #         mrs_task_planning_time -= mrs_planning_time - final_experimenter.time_allowed_nonMonotone
+            #         mrs_planning_time = final_experimenter.time_allowed_nonMonotone
+            #         mrs_motion_planning_time = mrs_planning_time - mrs_task_planning_time
+            #     else:
+            #         ### a little bit exceed...
+            #         mrs_motion_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (mrs_planning_time))
+            #         mrs_task_planning_time *= ((final_experimenter.time_allowed_nonMonotone) / (mrs_planning_time))
+            #         mrs_planning_time = final_experimenter.time_allowed_nonMonotone
+            #     ############# ********************************************************** #############
+            #     final_experimenter.mRS_time_obj_nm.append(mrs_planning_time)
+            #     final_experimenter.mRS_motionTime_obj_nm.append(mrs_motion_planning_time)
+            #     final_experimenter.mRS_taskTime_obj_nm.append(mrs_task_planning_time)
+            #     final_experimenter.mRS_success_obj_nm.append(mrs_isSolved)
+            #     if mrs_nActions != np.inf:
+            #         final_experimenter.mRS_nActions_obj_nm.append(mrs_nActions)
+            #     else:
+            #         mrs_nActions = 5000
+            # all_methods_time_instance.append(mrs_planning_time)
+            # all_methods_motionTime_instance.append(mrs_motion_planning_time)
+            # all_methods_taskTime_instance.append(mrs_task_planning_time)
+            # all_methods_success_instance.append(float(mrs_isSolved))
+            # all_methods_nActions_instance.append(mrs_nActions)
 
-            #####################################################################
-            reset_instance_success = utils2.resetInstance("Right_torso")
-            #####################################################################
+            # #####################################################################
+            # reset_instance_success = utils2.resetInstance("Right_torso")
+            # #####################################################################
                 
             #############################################################################################
             ### this instance has been tested on all methods
