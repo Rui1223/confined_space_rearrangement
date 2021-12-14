@@ -63,8 +63,8 @@ class PybulletExecutionScene(object):
         self.rosPackagePath = rospack.get_path("confined_space_rearrangement")
 
         ### set the server for the pybullet execution scene
-        self.executingClientID = p.connect(p.DIRECT)
-        # self.executingClientID = p.connect(p.GUI)
+        # self.executingClientID = p.connect(p.DIRECT)
+        self.executingClientID = p.connect(p.GUI)
         # p.setAdditionalSearchPath(pybullet_data.getDataPath())
         # self.egl_plugin = p.loadPlugin(egl.get_filename(), "_eglRendererPlugin")
         # print("plugin=", self.egl_plugin)

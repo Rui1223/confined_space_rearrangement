@@ -65,6 +65,7 @@ def main(args):
         ### reproduce the estimated object poses in the planning scene
         initial_arrangement, final_arrangement, reproduce_instance_success = \
                 utils2.serviceCall_reproduceInstanceCylinder(cylinder_objects)
+
         ### generate IK config for start positions for all objects
         ik_generate_success = utils2.serviceCall_generateConfigsForStartPositions("Right_torso")
 

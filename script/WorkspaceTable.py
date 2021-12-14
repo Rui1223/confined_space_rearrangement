@@ -42,12 +42,12 @@ class WorkspaceTable(object):
         ### MINT, LAVENDER
         ### (21 colors up to 21 objects)
 
-        self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
-                        [0.96, 0.51, 0.19], [0.604, 0.388, 0.141], [0, 0, 0], [0.66, 0.66, 0.66],
-                        [0.259, 0.831, 0.957], [0.567, 0.118, 0.706], [0.749, 0.937, 0.271],
-                        [0.502, 0, 0], [0.502, 0.502, 0], [0.275, 0.6, 0.565], [0, 0, 0.459],
-                        [0.98, 0.745, 0.831], [1.0, 0.847, 0.694], [1.0, 0.98, 0.784],
-                        [0.667, 1.0, 0.765], [0.863, 0.745, 1.0]]
+        # self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+        #                 [0.96, 0.51, 0.19], [0.604, 0.388, 0.141], [0, 0, 0], [0.66, 0.66, 0.66],
+        #                 [0.259, 0.831, 0.957], [0.567, 0.118, 0.706], [0.749, 0.937, 0.271],
+        #                 [0.502, 0, 0], [0.502, 0.502, 0], [0.275, 0.6, 0.565], [0, 0, 0.459],
+        #                 [0.98, 0.745, 0.831], [1.0, 0.847, 0.694], [1.0, 0.98, 0.784],
+        #                 [0.667, 1.0, 0.765], [0.863, 0.745, 1.0]]
 
         # self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
         #                     [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
@@ -186,6 +186,25 @@ class WorkspaceTable(object):
     def generateInstance_cylinders(self, num_objects):
         ### return: success (bool)
         self.num_objects = num_objects ### obtain the number of objects
+
+        if self.num_objects == 6:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        if self.num_objects == 8:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]]
+        if self.num_objects == 10:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]]
+        if self.num_objects == 12:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19]]
+
+
         self.object_geometries = OrderedDict()
         print("--------generate an instance---------")
         cylinder_c = p.createCollisionShape(shapeType=p.GEOM_CYLINDER,
@@ -237,6 +256,24 @@ class WorkspaceTable(object):
         ### output: success (bool)
         print("--------reproduce an instance---------")
         self.num_objects = len(cylinder_objects)
+
+        if self.num_objects == 6:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        if self.num_objects == 8:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]]
+        if self.num_objects == 10:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]]
+        if self.num_objects == 12:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19]]
+
         ### first assign goal positions
         self.object_geometries = OrderedDict()
         self.initial_object_position_meshes = OrderedDict() ### key: position_idx, value: mesh id
@@ -333,6 +370,24 @@ class WorkspaceTable(object):
 
 
     def loadInstance_cylinders(self, num_objects, instance_number):
+
+        if num_objects == 6:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+        if num_objects == 8:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]]
+        if num_objects == 10:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]]
+        if num_objects == 12:
+            self.color_pools = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19], 
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19],
+                                [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0.96, 0.51, 0.19]]
+
         instanceFile = os.path.join(self.rosPackagePath, "examples", str(num_objects)) + "/" + str(instance_number) + "/instance_info.txt"
         self.object_geometries = OrderedDict()
         print("--------load an instance---------")
@@ -429,19 +484,63 @@ class WorkspaceTable(object):
         self.incremental_x = int(object_interval_x / self.discretization_x)
         self.incremental_y = int(object_interval_y / self.discretization_y)
 
-        temp_row_start_idx = 0
-        row_counter = 1
-        candidate_idx = 0
-        for obj_i in range(self.num_objects):
-            self.all_goal_positions[obj_i] = candidate_idx
-            ### move on to the next goal
-            candidate_idx += self.incremental_y
-            row_counter += self.incremental_y
-            if row_counter > self.n_candidates_y:
-                ### switch to the next row for goals
-                candidate_idx = temp_row_start_idx + self.n_candidates_y * self.incremental_x
-                temp_row_start_idx = candidate_idx
-                row_counter = 1     
+        if self.num_objects == 6:
+            temp_row_start_idx = 3
+            candidate_idx = 3
+            self.all_goal_positions[0] = candidate_idx
+            self.all_goal_positions[1] = self.all_goal_positions[0] + self.incremental_y
+            self.all_goal_positions[2] = self.all_goal_positions[1] + self.incremental_y
+            candidate_idx = temp_row_start_idx + self.n_candidates_y * self.incremental_x
+            self.all_goal_positions[3] = candidate_idx
+            self.all_goal_positions[4] = self.all_goal_positions[3] + self.incremental_y
+            self.all_goal_positions[5] = self.all_goal_positions[4] + self.incremental_y
+
+        if self.num_objects == 8:
+            temp_row_start_idx = 2
+            candidate_idx = 2
+            self.all_goal_positions[0] = candidate_idx
+            self.all_goal_positions[1] = self.all_goal_positions[0] + self.incremental_y
+            self.all_goal_positions[2] = self.all_goal_positions[1] + self.incremental_y
+            self.all_goal_positions[3] = self.all_goal_positions[2] + self.incremental_y
+            candidate_idx = temp_row_start_idx + self.n_candidates_y * self.incremental_x
+            self.all_goal_positions[4] = candidate_idx
+            self.all_goal_positions[5] = self.all_goal_positions[4] + self.incremental_y
+            self.all_goal_positions[6] = self.all_goal_positions[5] + self.incremental_y
+            self.all_goal_positions[7] = self.all_goal_positions[6] + self.incremental_y
+
+        if self.num_objects == 10:
+            temp_row_start_idx = 1
+            candidate_idx = 1
+            self.all_goal_positions[0] = candidate_idx
+            self.all_goal_positions[1] = self.all_goal_positions[0] + self.incremental_y
+            self.all_goal_positions[2] = self.all_goal_positions[1] + self.incremental_y
+            self.all_goal_positions[3] = self.all_goal_positions[2] + self.incremental_y
+            self.all_goal_positions[4] = self.all_goal_positions[3] + self.incremental_y
+            candidate_idx = temp_row_start_idx + self.n_candidates_y * self.incremental_x
+            self.all_goal_positions[5] = candidate_idx
+            self.all_goal_positions[6] = self.all_goal_positions[5] + self.incremental_y
+            self.all_goal_positions[7] = self.all_goal_positions[6] + self.incremental_y
+            self.all_goal_positions[8] = self.all_goal_positions[7] + self.incremental_y
+            self.all_goal_positions[9] = self.all_goal_positions[8] + self.incremental_y
+
+        if self.num_objects == 12:
+            temp_row_start_idx = 1
+            candidate_idx = 0
+            self.all_goal_positions[0] = candidate_idx
+            self.all_goal_positions[1] = self.all_goal_positions[0] + self.incremental_y
+            self.all_goal_positions[2] = self.all_goal_positions[1] + self.incremental_y
+            self.all_goal_positions[3] = self.all_goal_positions[2] + self.incremental_y
+            self.all_goal_positions[4] = self.all_goal_positions[3] + self.incremental_y
+            self.all_goal_positions[5] = self.all_goal_positions[4] + self.incremental_y
+            candidate_idx = temp_row_start_idx + self.n_candidates_y * self.incremental_x
+            self.all_goal_positions[6] = candidate_idx - 1
+            self.all_goal_positions[7] = self.all_goal_positions[6] + self.incremental_y
+            self.all_goal_positions[8] = self.all_goal_positions[7] + self.incremental_y
+            self.all_goal_positions[9] = self.all_goal_positions[8] + self.incremental_y
+            self.all_goal_positions[10] = self.all_goal_positions[9] + self.incremental_y
+            self.all_goal_positions[11] = self.all_goal_positions[10] + self.incremental_y
+
+
         # print("all_goal_positions: ")
         # for obj_idx, position_idx in self.all_goal_positions.items():
         #     print(str(obj_idx) + ": " + str(position_idx))
