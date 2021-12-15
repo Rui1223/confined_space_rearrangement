@@ -2457,7 +2457,7 @@ class Planner(object):
         ### for each orientation
         for orientation in orientations:
             targetPose = [[object_position[0], object_position[1], \
-                           object_position[2] + cylinder_height/2 - 0.03], orientation]
+                           object_position[2] + cylinder_height/2 - 0.1], orientation]
             pose_candidates.append(targetPose)
 
         return pose_candidates

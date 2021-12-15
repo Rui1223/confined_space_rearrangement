@@ -524,8 +524,8 @@ class WorkspaceTable(object):
             self.all_goal_positions[9] = self.all_goal_positions[8] + self.incremental_y
 
         if self.num_objects == 12:
-            temp_row_start_idx = 1
-            candidate_idx = 0
+            temp_row_start_idx = 3
+            candidate_idx = 3
             self.all_goal_positions[0] = candidate_idx
             self.all_goal_positions[1] = self.all_goal_positions[0] + self.incremental_y
             self.all_goal_positions[2] = self.all_goal_positions[1] + self.incremental_y

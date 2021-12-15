@@ -686,7 +686,7 @@ class PybulletPlanScene(object):
         currConfig = self.robot_p.getRobotCurrSingleArmConfig(req.armType)
         placingPose = self.robot_p.getCurrentEEPose(req.armType)
         postPlacingPose = copy.deepcopy(placingPose)
-        postPlacingPose[0][2] += 0.05
+        postPlacingPose[0][2] += 0.15
         isPoseValid, FLAG, configToPostPlacingPose = self.planner_p.generateConfigBasedOnPose(
             postPlacingPose, currConfig, self.robot_p, self.workspace_p, req.armType)
         placeToPostPlaceTraj = self.planner_p.generateTrajectory_DirectConfigPath(
