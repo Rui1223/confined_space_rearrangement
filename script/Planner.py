@@ -2290,11 +2290,13 @@ class Planner(object):
         cylinder_positions_geometries = {
             candidate.position_idx : candidate.geo for candidate in workspace.candidate_geometries.values()}
         for candidate_idx, cylinder_candidate in workspace.candidate_geometries.items():
+            if candidate_idx != 137: continue 
             print("++++++++++++++CANDIDATE_IDX: " + str(candidate_idx) + "++++++++++++++")
             self.position_candidates_configPoses[candidate_idx] = PositionCandidateConfigs(candidate_idx)
             ### first generate graspingPose_candidates with different orientations
             graspingPose_candidates = self.generate_pose_candidates(cylinder_candidate.pos, workspace.cylinder_height)
             for pose_id, graspingPose in enumerate(graspingPose_candidates):
+                if pose_id != 2: continue
                 approaching_config, grasping_config, approaching_label, grasping_label, total_label = \
                     self.generateConfigBasedOnPose_candidates(
                         graspingPose, robot, workspace, armType, cylinder_positions_geometries)
