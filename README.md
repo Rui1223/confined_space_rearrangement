@@ -11,6 +11,9 @@ Below you can find a [Pybullet](https://pybullet.org/wordpress/) simulation exam
 
 **Real robot demo videos:**
 
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/9asxUDppFvQ/hqdefault.jpg)](https://www.youtube.com/watch?v=9asxUDppFvQ)
+
+
 **Paper:** (The paper link will be provided very soon)
 
 **Citation:**
