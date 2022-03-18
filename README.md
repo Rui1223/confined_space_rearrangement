@@ -85,4 +85,6 @@ For instance, if you run <br/>
 `roslaunch confined_space_rearrangement execute_task_plan.launch execute_task_plan:="10 1"` <br/>
 then the solution path in "examples/10/1/path.obj" will be executed in the execution scene.
 
+If you want to see how it works for more objects (e.g., 13-16 objects), you can switch to the branch "more objects" where the objects are a little bit smaller. The instructions on how to run the codes are the same as the master branch.
+
 Should you have any questions, feel free to contact wrui1223@gmail.com for help.
