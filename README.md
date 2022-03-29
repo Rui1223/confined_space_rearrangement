@@ -14,11 +14,19 @@ Below you can find a [Pybullet](https://pybullet.org/wordpress/) simulation exam
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/9asxUDppFvQ/hqdefault.jpg)](https://www.youtube.com/watch?v=9asxUDppFvQ)
 
 
-**Paper:** (The paper link will be provided very soon)
+**Paper:** https://arxiv.org/abs/2203.10379 (This paper has been accepted to the 32nd International Conference on Automated Planning and Scheduling (ICAPS 2022).)
 
 **Citation:**
 If you find this repository helpful to your research, I will be very happy and I gently request you to cite the paper:
-(bibTex will be provided very soon)
+
+```
+@inproceedings{wang2022lazy,
+  title={Lazy Rearrangement Planning in Confined Spaces},
+  author={Rui Wang, Kai Gao, Jingjin Yu, Kostas Bekris},
+  booktitle={International Conference on Automated Planning and Scheduling},
+  year={2022}
+}
+```
 
 ### Methods and Structures
 This project implements 7 methods, each of which is described below
