@@ -62,7 +62,7 @@ It may throw out some minor errors and if this is the case, repeat the `catkin_m
 Once the `catkin_make` is successful, do not forget to do `source devel/setup.bash` in the workspace. <br/>
 
 To try an example on any existing method, run the following <br/>
-`roslaunch uniform_object_rearrangement run_example.launch run_example:="<#object> <instance_id> <generate/load an instance> <time_allowed> <method_name>"` <br/>
+`roslaunch confined_space_rearrangement run_example.launch run_example:="<#object> <instance_id> <generate/load an instance> <time_allowed> <method_name>"` <br/>
 Here the placedholders in <> are </br>
 - **<#object>**: the number of object you want to try (options 6-12)
 - **<instance_id>**: which instance do you want to try (an integer)
