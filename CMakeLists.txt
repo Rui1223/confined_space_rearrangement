@@ -135,16 +135,17 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES confined_space_rearrangement
- CATKIN_DEPENDS roscpp rospy message_runtime std_msgs sensor_msgs roslib
+  CATKIN_DEPENDS roscpp rospy message_runtime std_msgs sensor_msgs roslib
 #  DEPENDS system_lib
 )
 
 catkin_install_python(PROGRAMS
-	script/PybulletExecutionScene.py
+  script/PybulletExecutionScene.py
   script/PybulletPlanScene.py
   script/PoseEstimator.py
-	script/RearrangementTaskPlanner.py
-    	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  script/RearrangementTaskPlanner.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ###########
 ## Build ##
@@ -182,6 +183,7 @@ add_executable(main_planner_node2 src/main_planner_node.cpp src/Graph.cpp src/As
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(main_planner_node2 ${PROJECT_NAME}_generate_messages)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(moveit_planning_scene

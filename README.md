@@ -58,7 +58,6 @@ The list of potential dependencies may not be exhaustive. Should you have any di
 Once you download the repository, you need to create a ROS workspace where this repository fits in as a ROS package. Instructions on how to create a ROS workspace can be found [here](http://wiki.ros.org/catkin/Tutorials/create_a_workspace). 
 After you create a workspace, say you name the workspace as `catkin_ws`, go to the directory of the workspace and build code in the catkin workspace by running <br/>
 `catkin_make` <br/>
-It may throw out some minor errors and if this is the case, repeat the `catkin_make` two or three more times should work. (At least it works in my case. Again, feel free to contact wrui1223@gmail.com for further help.) <br/>
 Once the `catkin_make` is successful, do not forget to do `source devel/setup.bash` in the workspace. <br/>
 
 To try an example on any existing method, run the following <br/>
